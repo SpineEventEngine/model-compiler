@@ -18,9 +18,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.tools.gradle.given;
+package io.spine.tools.gradle;
 
-import io.spine.tools.gradle.TaskName;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import org.gradle.api.Action;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
@@ -52,8 +52,9 @@ import static java.util.Arrays.asList;
  * and allows to execute Gradle tasks.
  *
  * @author Dmytro Grankin
+ * @author Dmytro Dashenkov
  */
-public class GradleProject {
+public final class GradleProject {
 
     @SuppressWarnings("DuplicateStringLiteralInspection") // Different semantics.
     public static final String JAVA_PLUGIN_ID = "java";
@@ -62,10 +63,10 @@ public class GradleProject {
     private static final String EXT_GRADLE_NAME = "ext.gradle";
     private static final String BASE_PROTO_LOCATION = "src/main/proto/";
     private static final String BASE_JAVA_LOCATION = "src/main/java/";
+    private static final String CONFIG_DIR_NAME = "config";
 
     private static final String STACKTRACE_CLI_OPTION = "--stacktrace";
     private static final String DEBUG_CLI_OPTION = "--debug";
-    private static final String CONFIG_DIR_NAME = "config";
 
     private final String name;
     private final GradleRunner gradleRunner;
@@ -77,7 +78,7 @@ public class GradleProject {
         this.gradleRunner = GradleRunner.create()
                                         .withProjectDir(builder.folder.getRoot())
                                         .withDebug(builder.debug);
-        writeBuildGradle();
+        writeGradleScripts();
         writeProtoFiles(builder.protoFileNames);
         writeJavaFiles(builder.javaFileNames);
     }
@@ -94,10 +95,12 @@ public class GradleProject {
         }
     }
 
+    @CanIgnoreReturnValue
     public BuildResult executeTask(TaskName taskName) {
         return prepareRun(taskName).build();
     }
 
+    @CanIgnoreReturnValue
     public BuildResult executeAndFail(TaskName taskName) {
         return prepareRun(taskName).buildAndFail();
     }
@@ -130,6 +133,13 @@ public class GradleProject {
         Files.copy(fileContent, resultingPath);
     }
 
+    private void writeGradleScripts() throws IOException {
+        writeBuildGradle();
+        Path projectRoot = findRoot();
+        copyExtGradle(projectRoot);
+        copyConfig(projectRoot);
+    }
+
     private void writeBuildGradle() throws IOException {
         final Path resultingPath = gradleRunner.getProjectDir()
                                                .toPath()
@@ -138,10 +148,6 @@ public class GradleProject {
                                                   .getResourceAsStream(BUILD_GRADLE_NAME);
         Files.createDirectories(resultingPath.getParent());
         Files.copy(fileContent, resultingPath);
-
-        Path projectRoot = findRoot();
-        copyExtGradle(projectRoot);
-        copyConfig(projectRoot);
     }
 
     /**
@@ -197,17 +203,15 @@ public class GradleProject {
      */
     private static Path findRoot() {
         Path workingFolderPath = Paths.get(".")
-                                            .toAbsolutePath();
+                                      .toAbsolutePath();
         Path extGradleDirPath = workingFolderPath;
         while (extGradleDirPath != null
                 && !exists(extGradleDirPath.resolve(EXT_GRADLE_NAME))) {
             extGradleDirPath = extGradleDirPath.getParent();
         }
-
         checkState(extGradleDirPath != null,
-                     "ext.gradle file not found in %s or parent directories.",
-                     workingFolderPath);
-
+                   "ext.gradle file not found in %s or parent directories.",
+                   workingFolderPath);
         return extGradleDirPath;
     }
 
@@ -283,10 +287,27 @@ public class GradleProject {
             return this;
         }
 
+        /**
+         * Creates a {@code .proto} source file with the given name and content.
+         *
+         * @param fileName the name of the file
+         * @param lines    the content of the file
+         */
         public Builder createProto(String fileName, Iterable<String> lines) {
+            String path = BASE_PROTO_LOCATION + fileName;
+            return createFile(path, lines);
+        }
+
+        /**
+         * Creates a file in the project directory under the given path and with the given content.
+         *
+         * @param path  the path to the file relative to the project dir
+         * @param lines the content of the file
+         */
+        public Builder createFile(String path, Iterable<String> lines) {
             final Path sourcePath = folder.getRoot()
                                           .toPath()
-                                          .resolve(BASE_PROTO_LOCATION + fileName);
+                                          .resolve(path);
             try {
                 Files.createDirectories(sourcePath.getParent());
                 Files.write(sourcePath, lines, Charset.forName("UTF-8"));
@@ -307,8 +328,8 @@ public class GradleProject {
 
         public GradleProject build() {
             try {
-                checkNotNull(name);
-                checkNotNull(folder);
+                checkNotNull(name, "Project name");
+                checkNotNull(folder, "Project folder");
                 return new GradleProject(this);
             } catch (IOException e) {
                 throw illegalStateWithCauseOf(e);
