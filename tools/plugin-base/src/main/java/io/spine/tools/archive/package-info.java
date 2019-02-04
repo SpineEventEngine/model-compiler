@@ -18,35 +18,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-group = 'io.spine.tools'
+/**
+ * This package contains classes working with archive files.
+ */
 
-dependencies {
-    api gradleApi()
-    
-    implementation project(':base')
+@CheckReturnValue
+@ParametersAreNonnullByDefault
+package io.spine.tools.archive;
 
-    testImplementation project(':testlib')
-    testImplementation project(':plugin-testlib')
-    testImplementation deps.test.mockito
-}
+import com.google.errorprone.annotations.CheckReturnValue;
 
-protobuf {
-    generatedFilesBaseDir = generatedRootDir
-
-    protoc {
-        artifact = deps.build.protoc
-    }
-
-    generateProtoTasks {
-        all().each { final task ->
-            task.generateDescriptorSet = true
-            task.descriptorSetOptions.path = "$buildDir/descriptors/${task.sourceSet.name}/known_types.desc"
-        }
-    }
-}
-
-sourceSets {
-    test {
-        resources.srcDirs += "$sourcesRootDir/test/resources"
-    }
-}
+import javax.annotation.ParametersAreNonnullByDefault;
