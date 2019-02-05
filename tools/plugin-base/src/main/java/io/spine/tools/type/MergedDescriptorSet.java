@@ -18,35 +18,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-group = 'io.spine.tools'
+package io.spine.tools.type;
 
-dependencies {
-    api gradleApi()
-    
-    implementation project(':base')
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.ImmutableSet;
+import com.google.protobuf.DescriptorProtos.FileDescriptorProto;
+import com.google.protobuf.DescriptorProtos.FileDescriptorSet;
+import io.spine.annotation.Internal;
+import io.spine.code.proto.FileSet;
 
-    testImplementation project(':testlib')
-    testImplementation project(':plugin-testlib')
-    testImplementation deps.test.mockito
-}
+/**
+ * A view on a {@code FileDescriptorSet} after merging.
+ */
+@Internal
+public final class MergedDescriptorSet {
 
-protobuf {
-    generatedFilesBaseDir = generatedRootDir
+    private final ImmutableSet<FileDescriptorProto> descriptors;
+    private final FileSet fileSet;
 
-    protoc {
-        artifact = deps.build.protoc
+    MergedDescriptorSet(FileDescriptorSet descriptorSet) {
+        this.descriptors = ImmutableSet.copyOf(descriptorSet.getFileList());;
+        this.fileSet = FileSet.ofFiles(descriptors);
     }
 
-    generateProtoTasks {
-        all().each { final task ->
-            task.generateDescriptorSet = true
-            task.descriptorSetOptions.path = "$buildDir/descriptors/${task.sourceSet.name}/known_types.desc"
-        }
+    public void loadIntoKnownTypes() {
+        MoreKnownTypes.extendWith(fileSet);
     }
-}
 
-sourceSets {
-    test {
-        resources.srcDirs += "$sourcesRootDir/test/resources"
+    public FileSet fileSet() {
+        return fileSet;
+    }
+
+    @VisibleForTesting
+    ImmutableSet<FileDescriptorProto> descriptors() {
+        return descriptors;
     }
 }
