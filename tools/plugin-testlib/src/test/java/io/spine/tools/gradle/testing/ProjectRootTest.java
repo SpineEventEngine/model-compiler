@@ -18,35 +18,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.tools.gradle;
+package io.spine.tools.gradle.testing;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.truth.Truth.assertThat;
 
-/**
- * Creates {@link #FILE_NAME} file in the root of the test project, copying it from resources.
- */
-final class BuildGradle {
+@DisplayName("ProjectRoot utility should")
+class ProjectRootTest {
 
-    private static final String FILE_NAME = "build.gradle";
-
-    private final Path testProjectRoot;
-
-    BuildGradle(Path root) {
-        testProjectRoot = root;
-    }
-
-    void createFile() throws IOException {
-        Path resultingPath = testProjectRoot.resolve(FILE_NAME);
-
-        InputStream fileContent = getClass().getClassLoader()
-                                            .getResourceAsStream(FILE_NAME);
-        Files.createDirectories(resultingPath.getParent());
-        checkNotNull(fileContent);
-        Files.copy(fileContent, resultingPath);
+    @Test
+    @DisplayName("locate the project root")
+    void find() {
+        assertThat(ProjectRoot.instance()
+                              .toFile()
+                              .exists()).isTrue();
     }
 }
