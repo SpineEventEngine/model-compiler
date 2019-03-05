@@ -18,35 +18,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.tools.gradle;
+package io.spine.tools.gradle.testing;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.gradle.api.Task;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.truth.Truth.assertAbout;
 
 /**
- * Creates {@link #FILE_NAME} file in the root of the test project, copying it from resources.
+ * Assertions for Gradle Subjects.
  */
-final class BuildGradle {
+public class GradleTruth {
 
-    private static final String FILE_NAME = "build.gradle";
-
-    private final Path testProjectRoot;
-
-    BuildGradle(Path root) {
-        testProjectRoot = root;
+    /**
+     * Prevents instantiation of this utility class.
+     */
+    private GradleTruth() {
     }
 
-    void createFile() throws IOException {
-        Path resultingPath = testProjectRoot.resolve(FILE_NAME);
-
-        InputStream fileContent = getClass().getClassLoader()
-                                            .getResourceAsStream(FILE_NAME);
-        Files.createDirectories(resultingPath.getParent());
-        checkNotNull(fileContent);
-        Files.copy(fileContent, resultingPath);
+    /**
+     * Creates a subject for the passed task.
+     */
+    public static TaskSubject assertThat(@Nullable Task task) {
+        return assertAbout(TaskSubject.tasks()).that(task);
     }
 }

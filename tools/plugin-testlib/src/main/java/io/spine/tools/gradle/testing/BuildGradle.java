@@ -18,12 +18,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.tools.gradle;
+package io.spine.tools.gradle.testing;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * A name of a source set scope.
+ * Creates {@link #FILE_NAME} file in the root of the test project, copying it from resources.
  */
-public enum SourceScope {
-    main,
-    test
+final class BuildGradle {
+
+    private static final String FILE_NAME = "build.gradle";
+
+    private final Path testProjectRoot;
+
+    BuildGradle(Path root) {
+        testProjectRoot = root;
+    }
+
+    void createFile() throws IOException {
+        Path resultingPath = testProjectRoot.resolve(FILE_NAME);
+
+        InputStream fileContent = getClass().getClassLoader()
+                                            .getResourceAsStream(FILE_NAME);
+        Files.createDirectories(resultingPath.getParent());
+        checkNotNull(fileContent);
+        Files.copy(fileContent, resultingPath);
+    }
 }

@@ -18,12 +18,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.tools.gradle;
+package io.spine.tools.gradle.testing;
 
-/**
- * A name of a source set scope.
- */
-public enum SourceScope {
-    main,
-    test
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import static com.google.common.truth.Truth.assertThat;
+
+@DisplayName("ProjectRoot utility should")
+class ProjectRootTest {
+
+    @Test
+    @DisplayName("locate the project root")
+    void find() {
+        assertThat(ProjectRoot.instance()
+                              .toFile()
+                              .exists()).isTrue();
+    }
 }

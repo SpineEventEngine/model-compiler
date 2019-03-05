@@ -18,9 +18,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.tools.gradle;
+package io.spine.tools.gradle.testing;
 
 import com.google.common.collect.Lists;
+import io.spine.tools.gradle.TaskName;
 
 import java.util.List;
 
@@ -50,7 +51,7 @@ final class TaskArguments {
     }
 
     String[] of(TaskName taskName) {
-        String task = taskName.getValue();
+        String task = taskName.value();
         List<String> result = Lists.newArrayList(task, STACKTRACE_CLI_OPTION);
         if (debug) {
             result.add(DEBUG_CLI_OPTION);
