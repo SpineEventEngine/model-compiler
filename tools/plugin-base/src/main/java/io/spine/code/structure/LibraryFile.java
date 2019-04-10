@@ -18,34 +18,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-group = 'io.spine.tools'
+package io.spine.code.structure;
 
-dependencies {
-    api gradleApi()
-    api project(':base')
+/**
+ * The enumeration of project files provided by the Spine framework.
+ */
+public enum LibraryFile {
 
-    testImplementation project(':testlib')
-    testImplementation project(':plugin-testlib')
-    testImplementation deps.test.mockito
-}
+    /**
+     * The index file exposing data about generated Protobuf types.
+     */
+    INDEX("index.js");
 
-protobuf {
-    generatedFilesBaseDir = generatedRootDir
+    private final FileName fileName;
 
-    protoc {
-        artifact = deps.build.protoc
+    LibraryFile(String fileName) {
+        this.fileName = FileName.of(fileName);
     }
 
-    generateProtoTasks {
-        all().each { final task ->
-            task.generateDescriptorSet = true
-            task.descriptorSetOptions.path = "$buildDir/descriptors/${task.sourceSet.name}/known_types.desc"
-        }
+    public FileName fileName() {
+        return fileName;
     }
-}
 
-sourceSets {
-    test {
-        resources.srcDirs += "$sourcesRootDir/test/resources"
+    @Override
+    public String toString() {
+        return fileName.value();
     }
 }

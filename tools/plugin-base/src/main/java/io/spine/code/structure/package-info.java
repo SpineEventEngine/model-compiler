@@ -18,34 +18,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-group = 'io.spine.tools'
+// TODO:2019-04-10:dmytro.dashenkov: Document.
 
-dependencies {
-    api gradleApi()
-    api project(':base')
+@CheckReturnValue
+@ParametersAreNonnullByDefault
+package io.spine.code.structure;
 
-    testImplementation project(':testlib')
-    testImplementation project(':plugin-testlib')
-    testImplementation deps.test.mockito
-}
+import com.google.errorprone.annotations.CheckReturnValue;
 
-protobuf {
-    generatedFilesBaseDir = generatedRootDir
-
-    protoc {
-        artifact = deps.build.protoc
-    }
-
-    generateProtoTasks {
-        all().each { final task ->
-            task.generateDescriptorSet = true
-            task.descriptorSetOptions.path = "$buildDir/descriptors/${task.sourceSet.name}/known_types.desc"
-        }
-    }
-}
-
-sourceSets {
-    test {
-        resources.srcDirs += "$sourcesRootDir/test/resources"
-    }
-}
+import javax.annotation.ParametersAreNonnullByDefault;
