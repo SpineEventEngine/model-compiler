@@ -18,48 +18,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.code.structure;
+package io.spine.code.generate.js;
 
-import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableList;
+import com.google.protobuf.DescriptorProtos.FieldDescriptorProto;
+import com.google.protobuf.Descriptors.FieldDescriptor;
 import io.spine.value.StringTypeValue;
 
-import java.util.List;
-
-import static io.spine.util.Preconditions2.checkNotEmptyOrBlank;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * A reference to a directory.
+ * A name of the generated Protobuf message field in JavaScript.
  *
- * <p>May include parent directories separated by {@linkplain FileReference#separator() slashes},
- * e.g. {@code root/sub}.
+ * <p>Represents the {@linkplain io.spine.code.generate.FieldName proto name} converted to
+ * {@code CamelCase}.
+ *
+ * @author Dmytro Kuzmin
  */
-public final class DirectoryReference extends StringTypeValue {
+public final class FieldName extends StringTypeValue {
 
     private static final long serialVersionUID = 0L;
 
-    private DirectoryReference(String value) {
+    private FieldName(String value) {
         super(value);
     }
 
-    /**
-     * Creates a new instance.
-     *
-     * @param value
-     *         the value of the reference
-     * @return a new instance
-     */
-    public static DirectoryReference of(String value) {
-        checkNotEmptyOrBlank(value);
-        return new DirectoryReference(value);
-    }
-
-    /**
-     * Obtains all directory names composing this reference.
-     */
-    public List<String> elements() {
-        Iterable<String> elements = Splitter.on(FileReference.separator())
-                                            .split(value());
-        return ImmutableList.copyOf(elements);
+    public static FieldName from(FieldDescriptor fieldDescriptor) {
+        checkNotNull(fieldDescriptor);
+        FieldDescriptorProto proto = fieldDescriptor.toProto();
+        String capitalizedName = io.spine.code.generate.FieldName.of(proto)
+                                                                 .toCamelCase();
+        return new FieldName(capitalizedName);
     }
 }
