@@ -18,34 +18,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-group = 'io.spine.tools'
+package io.spine.code.generate.java;
 
-dependencies {
-    api gradleApi()
-    compile project(':base')
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-    testImplementation project(':testlib')
-    testImplementation project(':plugin-testlib')
-    testImplementation deps.test.mockito
-}
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-protobuf {
-    generatedFilesBaseDir = generatedRootDir
+@DisplayName("GeneratedBySpine should")
+class GeneratedBySpineTest {
 
-    protoc {
-        artifact = deps.build.protoc
-    }
-
-    generateProtoTasks {
-        all().each { final task ->
-            task.generateDescriptorSet = true
-            task.descriptorSetOptions.path = "$buildDir/descriptors/${task.sourceSet.name}/known_types.desc"
-        }
-    }
-}
-
-sourceSets {
-    test {
-        resources.srcDirs += "$sourcesRootDir/test/resources"
+    @Test
+    @DisplayName("provide information for annotation spec.")
+    void byModelCompiler() {
+        GeneratedBySpine annotation = GeneratedBySpine.instance();
+        assertNotNull(annotation);
+        assertFalse(annotation.getFieldName()
+                              .isEmpty());
+        assertFalse(annotation.getCodeBlock()
+                              .isEmpty());
     }
 }
