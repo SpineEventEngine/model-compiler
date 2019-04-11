@@ -18,33 +18,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.code.generate.js;
+package io.spine.code.generate;
 
-import com.google.protobuf.DescriptorProtos.FieldDescriptorProto;
-import com.google.protobuf.Descriptors.FieldDescriptor;
-import io.spine.value.StringTypeValue;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-/**
- * A name of the generated Protobuf message field in JavaScript.
- *
- * <p>Represents the {@linkplain io.spine.code.proto.FieldName proto name} converted to
- * {@code CamelCase}.
- */
-public final class FieldName extends StringTypeValue {
+@DisplayName("GeneratedBySpine should")
+class GeneratedBySpineTest {
 
-    private static final long serialVersionUID = 0L;
-
-    private FieldName(String value) {
-        super(value);
-    }
-
-    public static FieldName from(FieldDescriptor fieldDescriptor) {
-        checkNotNull(fieldDescriptor);
-        FieldDescriptorProto proto = fieldDescriptor.toProto();
-        String capitalizedName = io.spine.code.proto.FieldName.of(proto)
-                                                              .toCamelCase();
-        return new FieldName(capitalizedName);
+    @Test
+    @DisplayName("provide information for annotation spec.")
+    void byModelCompiler() {
+        GeneratedBySpine annotation = GeneratedBySpine.instance();
+        assertNotNull(annotation);
+        assertFalse(annotation.getFieldName()
+                              .isEmpty());
+        assertFalse(annotation.getCodeBlock()
+                              .isEmpty());
     }
 }

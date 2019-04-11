@@ -20,31 +20,31 @@
 
 package io.spine.code.generate.js;
 
-import com.google.protobuf.DescriptorProtos.FieldDescriptorProto;
+import com.google.common.testing.NullPointerTester;
+import com.google.protobuf.Any;
 import com.google.protobuf.Descriptors.FieldDescriptor;
-import io.spine.value.StringTypeValue;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static io.spine.testing.DisplayNames.NOT_ACCEPT_NULLS;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/**
- * A name of the generated Protobuf message field in JavaScript.
- *
- * <p>Represents the {@linkplain io.spine.code.proto.FieldName proto name} converted to
- * {@code CamelCase}.
- */
-public final class FieldName extends StringTypeValue {
+@DisplayName("FieldName should")
+class FieldNameTest {
 
-    private static final long serialVersionUID = 0L;
-
-    private FieldName(String value) {
-        super(value);
+    @Test
+    @DisplayName(NOT_ACCEPT_NULLS)
+    void passNullToleranceCheck() {
+        new NullPointerTester().testAllPublicStaticMethods(FieldName.class);
     }
 
-    public static FieldName from(FieldDescriptor fieldDescriptor) {
-        checkNotNull(fieldDescriptor);
-        FieldDescriptorProto proto = fieldDescriptor.toProto();
-        String capitalizedName = io.spine.code.proto.FieldName.of(proto)
-                                                              .toCamelCase();
-        return new FieldName(capitalizedName);
+    @SuppressWarnings("DuplicateStringLiteralInspection") // Duplication with generated code.
+    @Test
+    @DisplayName("create CamelCase name from Protobuf field")
+    void convertToCamelCase() {
+        FieldDescriptor typeUrlDescriptor = Any.getDescriptor()
+                                               .findFieldByName("type_url");
+        FieldName fieldName = FieldName.from(typeUrlDescriptor);
+        assertEquals("TypeUrl", fieldName.value());
     }
 }
