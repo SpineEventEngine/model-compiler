@@ -17,12 +17,27 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+syntax = "proto3";
 
-group = 'io.spine.tools'
+package spine.test.code.generate.vbuilder;
 
-dependencies {
-    compile project(':base')
-    implementation deps.gen.javaPoet
+import "spine/options.proto";
 
-    testImplementation project(':testlib')
+option (type_url_prefix) = "type.spine.io";
+option (SPI_all) = true;
+option java_package = "io.spine.test.code.generate.vbuilder.rejections";
+// Keep all the rejections under the same outer class called `Rejections`.
+
+// This file defines test environment for `VBuilderMethodFactoryTest`.
+
+// A sample rejection to verify that VBuilderMethodFactory does not generate `vBuilder` method for
+// rejections.
+message VBuilderNotGenerated {
+
+    Details details = 1;
+
+    message Details {
+
+        string description = 1;
+    }
 }
