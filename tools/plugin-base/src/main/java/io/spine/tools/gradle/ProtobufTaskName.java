@@ -18,30 +18,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.tools.gradle.testing;
+package io.spine.tools.gradle;
 
-import com.google.common.collect.ImmutableSet;
-import io.spine.tools.gradle.GeneratedSourceRoot;
-import io.spine.tools.gradle.project.SourceSuperset;
-
-import java.nio.file.Path;
-import java.util.Set;
-
-import static com.google.common.collect.Sets.newHashSet;
+import io.spine.annotation.Internal;
 
 /**
- * A memoizing test-only implementation of {@link SourceSuperset}.
+ * Names of Gradle tasks defined by the Protobuf Gradle plugin.
+ *
+ * @see <a href="https://github.com/google/protobuf-gradle-plugin">the plugin doc</a>
  */
-public final class MemoizingSourceSuperset implements SourceSuperset {
+@Internal
+public enum ProtobufTaskName implements TaskName {
 
-    private final Set<Path> javaSourceDirs = newHashSet();
+    /**
+     * Generates production code from Protobuf.
+     *
+     * <p>Note that this task is not a public API of the plugin. Users should be conscious and
+     * cautious when depending on it.
+     */
+    generateProto,
 
-    @Override
-    public void register(GeneratedSourceRoot directory) {
-        javaSourceDirs.add(directory.path());
-    }
-
-    public ImmutableSet<Path> javaSourceDirs() {
-        return ImmutableSet.copyOf(javaSourceDirs);
-    }
+    /**
+     * Generates test code from Protobuf.
+     *
+     * <p>Note that this task is not a public API of the plugin. Users should be conscious and
+     * cautious when depending on it.
+     */
+    generateTestProto
 }

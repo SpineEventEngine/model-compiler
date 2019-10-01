@@ -18,30 +18,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.tools.gradle.testing;
-
-import com.google.common.collect.ImmutableSet;
-import io.spine.tools.gradle.GeneratedSourceRoot;
-import io.spine.tools.gradle.project.SourceSuperset;
-
-import java.nio.file.Path;
-import java.util.Set;
-
-import static com.google.common.collect.Sets.newHashSet;
-
 /**
- * A memoizing test-only implementation of {@link SourceSuperset}.
+ * This package contains tools for working with the structure of a Dart project.
  */
-public final class MemoizingSourceSuperset implements SourceSuperset {
 
-    private final Set<Path> javaSourceDirs = newHashSet();
+@CheckReturnValue
+@ParametersAreNonnullByDefault
+package io.spine.code.fs.dart;
 
-    @Override
-    public void register(GeneratedSourceRoot directory) {
-        javaSourceDirs.add(directory.path());
-    }
+import com.google.errorprone.annotations.CheckReturnValue;
 
-    public ImmutableSet<Path> javaSourceDirs() {
-        return ImmutableSet.copyOf(javaSourceDirs);
-    }
-}
+import javax.annotation.ParametersAreNonnullByDefault;

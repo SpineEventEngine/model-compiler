@@ -18,30 +18,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.tools.gradle.testing;
+package io.spine.tools.gradle;
 
-import com.google.common.collect.ImmutableSet;
-import io.spine.tools.gradle.GeneratedSourceRoot;
-import io.spine.tools.gradle.project.SourceSuperset;
-
-import java.nio.file.Path;
-import java.util.Set;
-
-import static com.google.common.collect.Sets.newHashSet;
+import io.spine.value.StringTypeValue;
 
 /**
- * A memoizing test-only implementation of {@link SourceSuperset}.
+ * A name of a task which is not known at compile time.
  */
-public final class MemoizingSourceSuperset implements SourceSuperset {
+final class DynamicTaskName extends StringTypeValue implements TaskName {
 
-    private final Set<Path> javaSourceDirs = newHashSet();
+    private static final long serialVersionUID = 0L;
 
-    @Override
-    public void register(GeneratedSourceRoot directory) {
-        javaSourceDirs.add(directory.path());
+    DynamicTaskName(String value) {
+        super(value);
     }
 
-    public ImmutableSet<Path> javaSourceDirs() {
-        return ImmutableSet.copyOf(javaSourceDirs);
+    @Override
+    public String name() {
+        return value();
     }
 }

@@ -18,30 +18,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.tools.gradle.testing;
+package io.spine.code.fs.dart;
 
-import com.google.common.collect.ImmutableSet;
-import io.spine.tools.gradle.GeneratedSourceRoot;
-import io.spine.tools.gradle.project.SourceSuperset;
+import io.spine.code.fs.DefaultProject;
 
 import java.nio.file.Path;
-import java.util.Set;
 
-import static com.google.common.collect.Sets.newHashSet;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * A memoizing test-only implementation of {@link SourceSuperset}.
+ * A default project layout for a Dart project.
  */
-public final class MemoizingSourceSuperset implements SourceSuperset {
+public final class DefaultDartProject extends DefaultProject {
 
-    private final Set<Path> javaSourceDirs = newHashSet();
-
-    @Override
-    public void register(GeneratedSourceRoot directory) {
-        javaSourceDirs.add(directory.path());
+    private DefaultDartProject(Path path) {
+        super(path);
     }
 
-    public ImmutableSet<Path> javaSourceDirs() {
-        return ImmutableSet.copyOf(javaSourceDirs);
+    public static DefaultDartProject at(Path root) {
+        checkNotNull(root);
+        return new DefaultDartProject(root);
     }
 }

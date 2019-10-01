@@ -18,30 +18,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.tools.gradle.testing;
+package io.spine.tools.gradle;
 
-import com.google.common.collect.ImmutableSet;
-import io.spine.tools.gradle.GeneratedSourceRoot;
-import io.spine.tools.gradle.project.SourceSuperset;
-
-import java.nio.file.Path;
-import java.util.Set;
-
-import static com.google.common.collect.Sets.newHashSet;
+import io.spine.annotation.Internal;
 
 /**
- * A memoizing test-only implementation of {@link SourceSuperset}.
+ * Names of Gradle tasks defined by the Javadoc Prettifier plugin.
  */
-public final class MemoizingSourceSuperset implements SourceSuperset {
+@Internal
+public enum JavadocPrettifierTaskName implements TaskName {
 
-    private final Set<Path> javaSourceDirs = newHashSet();
+    /**
+     * Formats the Javadoc in sources generated from {@code .proto} files in the {@code main} scope.
+     */
+    formatProtoDoc,
 
-    @Override
-    public void register(GeneratedSourceRoot directory) {
-        javaSourceDirs.add(directory.path());
-    }
-
-    public ImmutableSet<Path> javaSourceDirs() {
-        return ImmutableSet.copyOf(javaSourceDirs);
-    }
+    /**
+     * Formats the Javadoc in sources generated from {@code .proto} files in the {@code test} scope.
+     */
+    formatTestProtoDoc
 }

@@ -18,30 +18,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.tools.gradle.testing;
+package io.spine.tools.gradle;
 
-import com.google.common.collect.ImmutableSet;
-import io.spine.tools.gradle.GeneratedSourceRoot;
-import io.spine.tools.gradle.project.SourceSuperset;
-
-import java.nio.file.Path;
-import java.util.Set;
-
-import static com.google.common.collect.Sets.newHashSet;
+import io.spine.annotation.Internal;
 
 /**
- * A memoizing test-only implementation of {@link SourceSuperset}.
+ * Names of Gradle tasks defined by the Spine Protobuf JS plugin.
  */
-public final class MemoizingSourceSuperset implements SourceSuperset {
+@Internal
+public enum ProtoJsTaskName implements TaskName {
 
-    private final Set<Path> javaSourceDirs = newHashSet();
-
-    @Override
-    public void register(GeneratedSourceRoot directory) {
-        javaSourceDirs.add(directory.path());
-    }
-
-    public ImmutableSet<Path> javaSourceDirs() {
-        return ImmutableSet.copyOf(javaSourceDirs);
-    }
+    /**
+     * Generates JSON-parsing code for the JavaScript messages compiled from Protobuf in both
+     * {@code main} and {@code test} scopes.
+     */
+    generateJsonParsers
 }
