@@ -1,5 +1,5 @@
 /*
- * Copyright 2019, TeamDev. All rights reserved.
+ * Copyright 2020, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -20,27 +20,24 @@
 
 package io.spine.code.gen.java;
 
-import com.google.common.collect.ImmutableList;
-import com.google.errorprone.annotations.Immutable;
-import io.spine.tools.protoc.nested.GeneratedNestedClass;
-import io.spine.tools.protoc.nested.NestedClassFactory;
-import io.spine.type.MessageType;
+import com.squareup.javapoet.TypeSpec;
+import io.spine.code.java.PackageName;
 
-import java.util.List;
+import javax.lang.model.element.Modifier;
 
-import static javax.lang.model.element.Modifier.FINAL;
-import static javax.lang.model.element.Modifier.PUBLIC;
-import static javax.lang.model.element.Modifier.STATIC;
+/**
+ * A JavaPoet-based spec of a generated type.
+ */
+public interface GeneratedTypeSpec {
 
-@Immutable
-public final class ColumnFactory implements NestedClassFactory {
+    /**
+     * The package under which the type will be generated.
+     */
+    PackageName packageName();
 
-    @Override
-    public List<GeneratedNestedClass> createFor(MessageType messageType) {
-        String generatedCode = ColumnsSpec.of(messageType)
-                                          .typeSpec(PUBLIC, STATIC, FINAL)
-                                          .toString();
-        GeneratedNestedClass result = new GeneratedNestedClass(generatedCode);
-        return ImmutableList.of(result);
-    }
+    /**
+     * A JavaPoet spec of the type.
+     */
+    // TODO:2019-12-20:dmytro.kuzmin:WIP: Consolidate singular/plural name usage after varargs.
+    TypeSpec typeSpec(Modifier... modifiers);
 }
