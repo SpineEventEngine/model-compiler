@@ -20,26 +20,9 @@
 
 package io.spine.code.gen.java;
 
-import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.CodeBlock;
 
-import static javax.lang.model.element.Modifier.PRIVATE;
+public interface GeneratedJavadoc {
 
-public final class EmptyPrivateCtor {
-
-    private static final MethodSpec PRIVATE_CTOR = privateCtorSpec();
-
-    private EmptyPrivateCtor() {
-    }
-
-    public static MethodSpec spec() {
-        return PRIVATE_CTOR;
-    }
-
-    private static MethodSpec privateCtorSpec() {
-        MethodSpec result = MethodSpec
-                .constructorBuilder()
-                .addModifiers(PRIVATE)
-                .build();
-        return result;
-    }
+    CodeBlock spec();
 }

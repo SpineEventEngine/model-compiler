@@ -18,58 +18,46 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.code.gen.java.column;
+package io.spine.code.gen.java;
 
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.MethodSpec;
-import io.spine.code.gen.java.FieldJavadoc;
-import io.spine.code.gen.java.GeneratedJavadoc;
-import io.spine.code.gen.java.GeneratedMethodSpec;
-import io.spine.code.gen.java.JavaPoetName;
-import io.spine.code.proto.FieldDeclaration;
-import io.spine.code.proto.FieldName;
-import io.spine.gen.EntityColumn;
+import io.spine.code.javadoc.JavadocText;
 
 import javax.lang.model.element.Modifier;
 
-final class ColumnSpec implements GeneratedMethodSpec {
+import static javax.lang.model.element.Modifier.PRIVATE;
 
-    private final FieldDeclaration column;
+public final class EmptyCtorSpec implements GeneratedMethodSpec {
 
-    ColumnSpec(FieldDeclaration column) {
-        this.column = column;
+    private static final EmptyCtorSpec INSTANCE = new EmptyCtorSpec();
+
+    private EmptyCtorSpec() {
+    }
+
+    public static MethodSpec privateEmptyCtor() {
+        return INSTANCE.methodSpec(PRIVATE);
     }
 
     @Override
     public MethodSpec methodSpec(Modifier... modifiers) {
-        FieldName name = columnName();
         MethodSpec result = MethodSpec
-                .methodBuilder(name.javaCase())
+                .constructorBuilder()
                 .addModifiers(modifiers)
-                .returns(columnType().value())
                 .addJavadoc(javadoc())
-                .addStatement(methodBody())
                 .build();
-        return result;
-    }
+        return result; }
 
-    private static JavaPoetName columnType() {
-        JavaPoetName result = JavaPoetName.of(EntityColumn.class);
-        return result;
-    }
-
-    private CodeBlock methodBody() {
-        return CodeBlock.of(
-                "return new $T(\"$L\")", EntityColumn.class, columnName()
-        );
-    }
-
-    private FieldName columnName() {
-        return column.name();
-    }
-
-    private CodeBlock javadoc() {
-        GeneratedJavadoc javadoc = new FieldJavadoc(this.column, "column");
-        return javadoc.spec();
+    /**
+     * Obtains a class-level Javadoc.
+     */
+    private static CodeBlock javadoc() {
+        JavadocText javadoc = JavadocText.fromEscaped("Prevents instantiation of this class.")
+                                         .withNewLine();
+        CodeBlock value = CodeBlock
+                .builder()
+                .add(javadoc.value())
+                .build();
+        return value;
     }
 }
