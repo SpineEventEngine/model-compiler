@@ -18,17 +18,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package io.spine.code.gen.java.field;
+
+import com.google.common.collect.ImmutableList;
+import com.squareup.javapoet.CodeBlock;
+import io.spine.code.java.ClassName;
+import io.spine.code.proto.FieldDeclaration;
+
+import javax.lang.model.element.Modifier;
+
+import static javax.lang.model.element.Modifier.PUBLIC;
+
 /**
- * This package contains tools for generating Java code as well as working with already generated
- * code.
+ * A spec of the method which returns a nested message field.
  */
+final class NestedFieldAccessor extends FieldAccessor {
 
-@Internal
-@CheckReturnValue
-@ParametersAreNonnullByDefault
-package io.spine.code.gen.java;
+    NestedFieldAccessor(FieldDeclaration field, ClassName fieldSupertype) {
+        super(field, fieldSupertype);
+    }
 
-import com.google.errorprone.annotations.CheckReturnValue;
-import io.spine.annotation.Internal;
+    @Override
+    Iterable<Modifier> modifiers() {
+        return ImmutableList.of(PUBLIC);
+    }
 
-import javax.annotation.ParametersAreNonnullByDefault;
+    @Override
+    CodeBlock methodBody() {
+        return CodeBlock.of(
+                "return new $T(getField().nested($S))",
+                returnType().value(), fieldName().value()
+        );
+    }
+}

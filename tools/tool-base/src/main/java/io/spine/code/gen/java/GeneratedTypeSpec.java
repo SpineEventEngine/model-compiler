@@ -18,17 +18,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * This package contains tools for generating Java code as well as working with already generated
- * code.
- */
-
-@Internal
-@CheckReturnValue
-@ParametersAreNonnullByDefault
 package io.spine.code.gen.java;
 
-import com.google.errorprone.annotations.CheckReturnValue;
-import io.spine.annotation.Internal;
+import com.squareup.javapoet.TypeSpec;
+import io.spine.code.java.PackageName;
 
-import javax.annotation.ParametersAreNonnullByDefault;
+/**
+ * A JavaPoet-based spec of a generated type.
+ */
+public interface GeneratedTypeSpec {
+
+    /**
+     * The package under which the type will be generated.
+     */
+    PackageName packageName();
+
+    /**
+     * A JavaPoet spec of the type.
+     */
+    TypeSpec typeSpec();
+}

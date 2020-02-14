@@ -18,17 +18,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package io.spine.code.gen.java.field;
+
+import com.google.common.collect.ImmutableList;
+import com.squareup.javapoet.CodeBlock;
+import io.spine.base.Field;
+import io.spine.code.java.ClassName;
+import io.spine.code.proto.FieldDeclaration;
+
+import javax.lang.model.element.Modifier;
+
+import static javax.lang.model.element.Modifier.PUBLIC;
+import static javax.lang.model.element.Modifier.STATIC;
+
 /**
- * This package contains tools for generating Java code as well as working with already generated
- * code.
+ * A spec of the method which returns a top-level message field.
  */
+final class TopLevelFieldAccessor extends FieldAccessor {
 
-@Internal
-@CheckReturnValue
-@ParametersAreNonnullByDefault
-package io.spine.code.gen.java;
+    TopLevelFieldAccessor(FieldDeclaration field, ClassName fieldSupertype) {
+        super(field, fieldSupertype);
+    }
 
-import com.google.errorprone.annotations.CheckReturnValue;
-import io.spine.annotation.Internal;
+    @Override
+    Iterable<Modifier> modifiers() {
+        return ImmutableList.of(PUBLIC, STATIC);
+    }
 
-import javax.annotation.ParametersAreNonnullByDefault;
+    @Override
+    CodeBlock methodBody() {
+        return CodeBlock.of(
+                "return new $T($T.named($S))",
+                returnType().value(), Field.class, fieldName().value()
+        );
+    }
+}
