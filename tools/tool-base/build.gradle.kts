@@ -18,11 +18,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-group = 'io.spine.tools'
+import io.spine.gradle.internal.Deps
+
+group = "io.spine.tools"
 
 dependencies {
-    api project(':base')
-    implementation deps.gen.javaPoet
+    api(project(":base"))
+    implementation(Deps.gen.javaPoet)
 
-    testImplementation project(':testlib')
+    testImplementation(project(":testlib"))
 }
