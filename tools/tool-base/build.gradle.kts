@@ -18,9 +18,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-apply plugin: 'java'
+import io.spine.gradle.internal.Deps
 
-// NOTE: this file is copied from the root project in the test setup.
-apply from: "$rootDir/test-env.gradle"
+group = "io.spine.tools"
 
-apply from: "$enclosingRootDir/version.gradle"
+dependencies {
+    api(project(":base"))
+    implementation(Deps.gen.javaPoet)
+
+    testImplementation(project(":testlib"))
+}
