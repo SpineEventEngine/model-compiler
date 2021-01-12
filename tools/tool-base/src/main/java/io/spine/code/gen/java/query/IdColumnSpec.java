@@ -1,5 +1,5 @@
 /*
- * Copyright 2021, TeamDev. All rights reserved.
+ * Copyright 2020, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.code.gen.java.column;
+package io.spine.code.gen.java.query;
 
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.MethodSpec;
@@ -33,81 +33,78 @@ import com.squareup.javapoet.TypeName;
 import io.spine.code.gen.java.GeneratedJavadoc;
 import io.spine.code.gen.java.GeneratedMethodSpec;
 import io.spine.code.gen.java.JavaPoetName;
-import io.spine.code.proto.FieldDeclaration;
+import io.spine.code.proto.EntityIdField;
 import io.spine.code.proto.FieldName;
-import io.spine.query.EntityColumn;
+import io.spine.query.IdCriterion;
 
 import static javax.lang.model.element.Modifier.PUBLIC;
-import static javax.lang.model.element.Modifier.STATIC;
 
 /**
- * A spec of the method which returns a {@linkplain EntityColumn strongly-typed entity column}.
- *
- * <p>The name of the method matches the column name in {@code javaCase}.
+ * Generates the method which allows to restrict querying to certain entity identifiers.
  */
-final class ColumnAccessor implements GeneratedMethodSpec {
+public class IdColumnSpec implements GeneratedMethodSpec {
 
-    private final FieldDeclaration column;
-    private final TypeName entityStateName;
-    private final TypeName returningValueName;
+    private final EntityIdField idField;
+    private final TypeName queryBuilderName;
+    private final TypeName idType;
 
-    ColumnAccessor(FieldDeclaration column) {
-        this.column = column;
-        this.entityStateName = JavaPoetName.of(column.declaringType()).value();
-        this.returningValueName = JavaPoetName.of(column).value().box();
+    /**
+     * Creates the specification for the passed declaration of entity ID field and the type name
+     * of the query builder, in scope of which the created method spec exists.
+     */
+    IdColumnSpec(EntityIdField field, TypeName queryBuilderName) {
+        this.idField = field;
+        this.queryBuilderName = queryBuilderName;
+        this.idType = JavaPoetName.of(idField.declaration())
+                                  .value()
+                                  .box();
     }
 
     @Override
     public MethodSpec methodSpec() {
-        FieldName name = columnName();
+        FieldName name = idName();
         MethodSpec result = MethodSpec
                 .methodBuilder(name.javaCase())
                 .addJavadoc(javadoc().spec())
-                .addModifiers(PUBLIC, STATIC)
-                .returns(columnType())
+                .addModifiers(PUBLIC)
+                .returns(idCriterion())
                 .addStatement(methodBody())
                 .build();
         return result;
     }
 
     /**
-     * Returns the column name as defined in Protobuf.
+     * Returns the Javadoc for the generated method which would produce the {@link IdCriterion}.
      */
-    private FieldName columnName() {
-        return column.name();
+    private static GeneratedJavadoc javadoc() {
+        return GeneratedJavadoc.singleParagraph(
+                CodeBlock.of("Creates a criterion for the identifier of this entity."));
     }
 
     /**
      * Returns the name of the Java type of a column.
      */
-    private ParameterizedTypeName columnType() {
-        JavaPoetName result = JavaPoetName.of(EntityColumn.class);
+    private ParameterizedTypeName idCriterion() {
+        JavaPoetName result = JavaPoetName.of(IdCriterion.class);
         ParameterizedTypeName parameterizedResult =
-                ParameterizedTypeName.get(result.className(), entityStateName, returningValueName);
+                ParameterizedTypeName.get(result.className(), idType, queryBuilderName);
         return parameterizedResult;
     }
 
     /**
-     * Returns the method body which instantiates the {@link EntityColumn}.
+     * Returns the method body which instantiates the {@link IdCriterion}.
      */
-    private CodeBlock methodBody() {
+    private static CodeBlock methodBody() {
         return CodeBlock.of(
-                "return new $T<>($S, $T.class, $T::$L)",
-                EntityColumn.class,
-                columnName(),
-                returningValueName,
-                entityStateName,
-                "get" + columnName().toCamelCase()
+                "return new $T<>(this)",
+                IdCriterion.class
         );
     }
 
     /**
-     * Returns the method Javadoc.
+     * Returns the name of the ID field.
      */
-    private GeneratedJavadoc javadoc() {
-        return GeneratedJavadoc.twoParagraph(
-                CodeBlock.of("Returns the $S column.", column.name()),
-                CodeBlock.of("The column Java type is {@code $L}.", column.javaTypeName())
-        );
+    private FieldName idName() {
+        return idField.name();
     }
 }

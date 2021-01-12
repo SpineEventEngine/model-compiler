@@ -1,5 +1,5 @@
 /*
- * Copyright 2021, TeamDev. All rights reserved.
+ * Copyright 2020, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,31 +24,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.code.gen.java;
-
-import com.google.common.collect.ImmutableList;
-import com.google.errorprone.annotations.Immutable;
-import io.spine.code.gen.java.column.ColumnContainerSpec;
-import io.spine.tools.protoc.plugin.nested.GeneratedNestedClass;
-import io.spine.tools.protoc.plugin.nested.NestedClassFactory;
-import io.spine.type.MessageType;
-
-import java.util.List;
-
 /**
- * Generates an entity column enumeration for the given message type.
- *
- * <p>See {@link ColumnContainerSpec} for details.
+ * This package contains the routines performing the assembly of {@code Query}
+ * and {@code QueryBuilder} code generated for entity state types.
  */
-@Immutable
-public final class ColumnFactory implements NestedClassFactory {
 
-    @Override
-    public List<GeneratedNestedClass> generateClassesFor(MessageType messageType) {
-        String generatedCode = ColumnContainerSpec.of(messageType)
-                                                  .typeSpec()
-                                                  .toString();
-        GeneratedNestedClass result = new GeneratedNestedClass(generatedCode);
-        return ImmutableList.of(result);
-    }
-}
+@Internal
+@CheckReturnValue
+@ParametersAreNonnullByDefault
+package io.spine.code.gen.java.query;
+
+import io.spine.annotation.Internal;
+
+import javax.annotation.CheckReturnValue;
+import javax.annotation.ParametersAreNonnullByDefault;
