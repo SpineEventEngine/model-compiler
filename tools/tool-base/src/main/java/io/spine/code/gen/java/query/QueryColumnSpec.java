@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.code.gen.java.column;
+package io.spine.code.gen.java.query;
 
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.MethodSpec;
@@ -34,56 +34,82 @@ import io.spine.code.gen.java.GeneratedJavadoc;
 import io.spine.code.gen.java.GeneratedMethodSpec;
 import io.spine.code.gen.java.JavaPoetName;
 import io.spine.code.proto.FieldDeclaration;
-import io.spine.code.proto.FieldName;
 import io.spine.query.EntityColumn;
+import io.spine.query.EntityCriterion;
+import io.spine.query.EntityQueryBuilder;
 
 import static javax.lang.model.element.Modifier.PUBLIC;
-import static javax.lang.model.element.Modifier.STATIC;
 
 /**
- * A spec of the method which returns a {@linkplain EntityColumn strongly-typed entity column}.
- *
- * <p>The name of the method matches the column name in {@code javaCase}.
+ * Generates the method which produces a column criterion for {@link EntityQueryBuilder
+ * EntityQueryBuilder} to restrict the value of the column to some parameter.
  */
-final class ColumnAccessor implements GeneratedMethodSpec {
+final class QueryColumnSpec implements GeneratedMethodSpec {
 
     private final FieldDeclaration column;
+    private final TypeName queryBuilderName;
     private final TypeName entityStateName;
     private final TypeName returningValueName;
 
-    ColumnAccessor(FieldDeclaration column) {
+    /**
+     * Creates a new method specification which serves to generated a criterion method
+     * for the passed column in scope of a query builder with the passed type name.
+     *
+     * @param column
+     *         the name of the column, for which the criterion generation is needed
+     * @param queryBuilderName
+     *         the type name of the query builder in scope of which the generation is performed
+     */
+    QueryColumnSpec(FieldDeclaration column, TypeName queryBuilderName) {
         this.column = column;
-        this.entityStateName = JavaPoetName.of(column.declaringType()).value();
-        this.returningValueName = JavaPoetName.of(column).value().box();
+        this.queryBuilderName = queryBuilderName;
+        this.entityStateName = JavaPoetName.of(column.declaringType())
+                                           .value();
+        this.returningValueName = JavaPoetName.of(column)
+                                              .value()
+                                              .box();
     }
 
     @Override
     public MethodSpec methodSpec() {
-        FieldName name = columnName();
         MethodSpec result = MethodSpec
-                .methodBuilder(name.javaCase())
+                .methodBuilder(columnName())
                 .addJavadoc(javadoc().spec())
-                .addModifiers(PUBLIC, STATIC)
-                .returns(columnType())
+                .addModifiers(PUBLIC)
+                .returns(queryCriterion())
                 .addStatement(methodBody())
                 .build();
         return result;
     }
 
     /**
-     * Returns the column name as defined in Protobuf.
+     * Returns the column name as it looks in the generated Java code.
      */
-    private FieldName columnName() {
-        return column.name();
+    private String columnName() {
+        return column.name()
+                     .javaCase();
+    }
+
+    /**
+     * Returns the method Javadoc.
+     */
+    private GeneratedJavadoc javadoc() {
+        String columnName = column.name()
+                                  .javaCase();
+        return GeneratedJavadoc.singleParagraph(
+                CodeBlock.of("Creates a criterion for the {@link Column#$L() Column.$L()} column.",
+                             columnName, columnName)
+        );
     }
 
     /**
      * Returns the name of the Java type of a column.
      */
-    private ParameterizedTypeName columnType() {
-        JavaPoetName result = JavaPoetName.of(EntityColumn.class);
+    private ParameterizedTypeName queryCriterion() {
+        JavaPoetName result = JavaPoetName.of(EntityCriterion.class);
         ParameterizedTypeName parameterizedResult =
-                ParameterizedTypeName.get(result.className(), entityStateName, returningValueName);
+                ParameterizedTypeName.get(result.className(),
+                                          entityStateName, returningValueName, queryBuilderName);
         return parameterizedResult;
     }
 
@@ -92,22 +118,9 @@ final class ColumnAccessor implements GeneratedMethodSpec {
      */
     private CodeBlock methodBody() {
         return CodeBlock.of(
-                "return new $T<>($S, $T.class, $T::$L)",
-                EntityColumn.class,
-                columnName(),
-                returningValueName,
-                entityStateName,
-                "get" + columnName().toCamelCase()
-        );
-    }
-
-    /**
-     * Returns the method Javadoc.
-     */
-    private GeneratedJavadoc javadoc() {
-        return GeneratedJavadoc.twoParagraph(
-                CodeBlock.of("Returns the $S column.", column.name()),
-                CodeBlock.of("The column Java type is {@code $L}.", column.javaTypeName())
+                "return new $T<>(Column.$L(), this)",
+                EntityCriterion.class,
+                columnName()
         );
     }
 }

@@ -28,7 +28,10 @@ package io.spine.code.gen.java;
 
 import com.google.common.collect.ImmutableList;
 import com.google.errorprone.annotations.Immutable;
-import io.spine.code.gen.java.column.ColumnContainerSpec;
+import io.spine.code.gen.java.query.EntityQueryBuilderSpec;
+import io.spine.code.gen.java.query.EntityQuerySpec;
+import io.spine.tools.protoc.plugin.method.GeneratedMethod;
+import io.spine.tools.protoc.plugin.method.MethodFactory;
 import io.spine.tools.protoc.plugin.nested.GeneratedNestedClass;
 import io.spine.tools.protoc.plugin.nested.NestedClassFactory;
 import io.spine.type.MessageType;
@@ -36,19 +39,35 @@ import io.spine.type.MessageType;
 import java.util.List;
 
 /**
- * Generates an entity column enumeration for the given message type.
+ * Generates an entity-specific {@code Query} and {@code QueryBuilder} classes.
  *
- * <p>See {@link ColumnContainerSpec} for details.
+ * <p>Additionally, generates {@code query()} method to instantiate the {@code QueryBuilder}.
  */
 @Immutable
-public final class ColumnFactory implements NestedClassFactory {
+public final class EntityQueryFactory implements NestedClassFactory, MethodFactory {
 
     @Override
     public List<GeneratedNestedClass> generateClassesFor(MessageType messageType) {
-        String generatedCode = ColumnContainerSpec.of(messageType)
-                                                  .typeSpec()
-                                                  .toString();
-        GeneratedNestedClass result = new GeneratedNestedClass(generatedCode);
-        return ImmutableList.of(result);
+        GeneratedNestedClass generatedQueryType =
+                asGeneratedClass(new EntityQuerySpec(messageType));
+        GeneratedNestedClass generatedQueryBuilderType =
+                asGeneratedClass(new EntityQueryBuilderSpec(messageType));
+
+        return ImmutableList.of(generatedQueryType, generatedQueryBuilderType);
+    }
+
+    private static GeneratedNestedClass asGeneratedClass(GeneratedTypeSpec spec) {
+        String rawOutput = spec.typeSpec()
+                               .toString();
+        GeneratedNestedClass generatedQueryType = new GeneratedNestedClass(rawOutput);
+        return generatedQueryType;
+    }
+
+    @Override
+    public List<GeneratedMethod> generateMethodsFor(MessageType messageType) {
+        EntityQuerySpec spec = new EntityQuerySpec(messageType);
+        GeneratedMethod method = new GeneratedMethod(spec.methodSpec()
+                                                         .toString());
+        return ImmutableList.of(method);
     }
 }
