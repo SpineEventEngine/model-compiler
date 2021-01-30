@@ -24,14 +24,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.gradle.internal.Deps
+package io.spine.tools.protoc.method;
 
-group = "io.spine.tools"
+import com.google.errorprone.annotations.Immutable;
+import io.spine.value.StringTypeValue;
 
-dependencies {
-    api(project(":base"))
-    implementation(Deps.gen.javaPoet)
-    implementation(Deps.gen.javaxAnnotation)
+/**
+ * A generated Java method source code.
+ *
+ * <p>SPI users are responsible for checking that the content of the method is properly formatted
+ * and contains all the required modifiers, comments, and Javadoc.
+ *
+ * <p>The actual compilation of the generated method is performed as a part of the compilation
+ * of other Protobuf-generated sources.
+ */
+@Immutable
+public final class GeneratedMethod extends StringTypeValue {
 
-    testImplementation(project(":testlib"))
+    private static final long serialVersionUID = 0L;
+
+    /**
+     * Creates a new instance of the method value holder.
+     */
+    public GeneratedMethod(String value) {
+        super(value);
+    }
 }

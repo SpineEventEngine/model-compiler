@@ -24,14 +24,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.gradle.internal.Deps
+/**
+ * This package provides extension point for the Protoc plugins and derived custom code generation
+ * utilities.
+ *
+ * <p>One who's willing to extend the generated Protobuf classes should implement provided
+ * interfaces.
+ */
+@CheckReturnValue
+@ParametersAreNonnullByDefault
+package io.spine.tools.protoc;
 
-group = "io.spine.tools"
+import com.google.errorprone.annotations.CheckReturnValue;
 
-dependencies {
-    api(project(":base"))
-    implementation(Deps.gen.javaPoet)
-    implementation(Deps.gen.javaxAnnotation)
-
-    testImplementation(project(":testlib"))
-}
+import javax.annotation.ParametersAreNonnullByDefault;

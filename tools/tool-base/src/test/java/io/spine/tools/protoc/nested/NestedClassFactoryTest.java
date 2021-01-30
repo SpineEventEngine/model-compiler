@@ -24,14 +24,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.gradle.internal.Deps
+package io.spine.tools.protoc.nested;
 
-group = "io.spine.tools"
+import com.google.common.collect.ImmutableList;
+import com.google.errorprone.annotations.Immutable;
+import io.spine.type.MessageType;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-dependencies {
-    api(project(":base"))
-    implementation(Deps.gen.javaPoet)
-    implementation(Deps.gen.javaxAnnotation)
+import java.util.List;
 
-    testImplementation(project(":testlib"))
+import static com.google.common.truth.Truth.assertThat;
+import static io.spine.testing.TestValues.nullRef;
+
+/**
+ * With this unit test we are fixating the {@link NestedClassFactory} contract.
+ */
+@DisplayName("`NestedClassFactory` should")
+final class NestedClassFactoryTest {
+
+    @DisplayName("obey the defined contract")
+    @Test
+    void obeyTheContract() {
+        assertThat(new TestNestedClassFactory().generateClassesFor(nullRef())).isEmpty();
+    }
+
+    @Immutable
+    public static final class TestNestedClassFactory implements NestedClassFactory {
+
+        public TestNestedClassFactory() {
+        }
+
+        @Override
+        public List<GeneratedNestedClass> generateClassesFor(MessageType messageType) {
+            return ImmutableList.of();
+        }
+    }
 }

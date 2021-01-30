@@ -24,14 +24,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.gradle.internal.Deps
+/**
+ * This package provides nested class generation extension point for the Protoc plugins.
+ */
+@CheckReturnValue
+@ParametersAreNonnullByDefault
+package io.spine.tools.protoc.nested;
 
-group = "io.spine.tools"
+import com.google.errorprone.annotations.CheckReturnValue;
 
-dependencies {
-    api(project(":base"))
-    implementation(Deps.gen.javaPoet)
-    implementation(Deps.gen.javaxAnnotation)
-
-    testImplementation(project(":testlib"))
-}
+import javax.annotation.ParametersAreNonnullByDefault;

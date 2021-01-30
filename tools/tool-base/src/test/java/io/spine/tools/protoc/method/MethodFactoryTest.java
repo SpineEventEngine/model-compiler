@@ -24,14 +24,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.gradle.internal.Deps
+package io.spine.tools.protoc.method;
 
-group = "io.spine.tools"
+import com.google.common.collect.ImmutableList;
+import com.google.errorprone.annotations.Immutable;
+import io.spine.type.MessageType;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-dependencies {
-    api(project(":base"))
-    implementation(Deps.gen.javaPoet)
-    implementation(Deps.gen.javaxAnnotation)
+import java.util.List;
 
-    testImplementation(project(":testlib"))
+import static com.google.common.truth.Truth.assertThat;
+import static io.spine.testing.TestValues.nullRef;
+
+/**
+ * With this unit test we are fixating the {@link MethodFactory} contract.
+ */
+@DisplayName("`MethodFactory` should")
+final class MethodFactoryTest {
+
+    @DisplayName("obey the defined contract")
+    @Test
+    void obeyTheContract() {
+        assertThat(new TestMethodFactory().generateMethodsFor(nullRef())).isEmpty();
+    }
+
+    @Immutable
+    public static class TestMethodFactory implements MethodFactory {
+
+        public TestMethodFactory() {
+        }
+
+        @Override
+        public List<GeneratedMethod> generateMethodsFor(MessageType messageType) {
+            return ImmutableList.of();
+        }
+    }
 }
