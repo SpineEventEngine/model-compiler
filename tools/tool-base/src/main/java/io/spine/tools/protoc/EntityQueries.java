@@ -24,29 +24,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.code.gen.java;
+package io.spine.tools.protoc;
 
-import com.google.common.collect.ImmutableList;
-import com.google.errorprone.annotations.Immutable;
-import io.spine.code.gen.java.column.ColumnContainerSpec;
-import io.spine.tools.protoc.NestedClass;
-import io.spine.tools.protoc.NestedClassFactory;
-import io.spine.type.MessageType;
-
-import java.util.List;
+import io.spine.annotation.Internal;
 
 /**
- * Generates an entity column enumeration for the given message type.
- *
- * <p>See {@link ColumnContainerSpec} for details.
+ * Configuration of the entity query generation applied to the Protobuf messages, which define
+ * states of entities.
  */
-@Immutable
-public final class ColumnFactory implements NestedClassFactory {
+public final class EntityQueries extends ModelCompilerConfiguration<AddEntityQueries> {
 
+    private boolean generate = false;
+
+    /**
+     * Enables or disables the generation of entity queries for entity state {@code Message}s.
+     *
+     * <p>A usage example:
+     * <pre>
+     * modelCompiler {
+     *     entityQueries {
+     *         generate = true
+     *     }
+     * }
+     * </pre>
+     */
+    public final void generate(boolean generate) {
+        this.generate = generate;
+    }
+
+    @Internal
     @Override
-    public List<NestedClass> generateClassesFor(MessageType messageType) {
-        TypeSpec columnContainer = ColumnContainerSpec.of(messageType);
-        NestedClass result = new NestedClass(columnContainer);
-        return ImmutableList.of(result);
+    public AddEntityQueries asProtocConfig() {
+        AddEntityQueries result = AddEntityQueries
+                .newBuilder()
+                .setGenerate(generate)
+                .build();
+        return result;
     }
 }

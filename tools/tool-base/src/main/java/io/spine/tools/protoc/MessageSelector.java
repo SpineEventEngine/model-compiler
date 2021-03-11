@@ -24,23 +24,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.code.gen.java;
-
-import com.squareup.javapoet.TypeSpec;
-import io.spine.code.java.PackageName;
+package io.spine.tools.protoc;
 
 /**
- * A JavaPoet-based spec of a generated type.
+ * An abstract base for selectors targeting {@link com.google.protobuf.Message messages}.
  */
-public interface GeneratedTypeSpec {
+class MessageSelector implements Selector {
 
-    /**
-     * The package under which the type will be generated.
-     */
-    PackageName packageName();
+    private boolean enabled = true;
 
-    /**
-     * A JavaPoet spec of the type.
-     */
-    TypeSpec typeSpec();
+    @Override
+    public void disable() {
+        enabled = false;
+    }
+
+    @Override
+    public void enable() {
+        enabled = true;
+    }
+
+    @Override
+    public boolean enabled() {
+        return enabled;
+    }
 }

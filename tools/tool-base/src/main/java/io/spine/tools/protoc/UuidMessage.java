@@ -24,29 +24,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.code.gen.java;
+package io.spine.tools.protoc;
 
-import com.google.common.collect.ImmutableList;
-import com.google.errorprone.annotations.Immutable;
-import io.spine.code.gen.java.column.ColumnContainerSpec;
-import io.spine.tools.protoc.NestedClass;
-import io.spine.tools.protoc.NestedClassFactory;
-import io.spine.type.MessageType;
-
-import java.util.List;
+import io.spine.code.java.ClassName;
 
 /**
- * Generates an entity column enumeration for the given message type.
+ * A selector which signalizes that the configuration should be applied to all UUID messages.
  *
- * <p>See {@link ColumnContainerSpec} for details.
+ * <p>A UUID message is a message with a single {@code string} field named {@code uuid}.
+ *
+ * @see Interfaces#mark(UuidMessage, ClassName)
+ * @see Methods#applyFactory(String, UuidMessage)
  */
-@Immutable
-public final class ColumnFactory implements NestedClassFactory {
+public final class UuidMessage extends MessageSelector {
 
-    @Override
-    public List<NestedClass> generateClassesFor(MessageType messageType) {
-        TypeSpec columnContainer = ColumnContainerSpec.of(messageType);
-        NestedClass result = new NestedClass(columnContainer);
-        return ImmutableList.of(result);
+    UuidMessage() {
+        super();
     }
 }

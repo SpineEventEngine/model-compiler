@@ -26,27 +26,20 @@
 
 package io.spine.code.gen.java;
 
-import com.google.common.collect.ImmutableList;
-import com.google.errorprone.annotations.Immutable;
-import io.spine.code.gen.java.column.ColumnContainerSpec;
-import io.spine.tools.protoc.NestedClass;
-import io.spine.tools.protoc.NestedClassFactory;
-import io.spine.type.MessageType;
-
-import java.util.List;
+import io.spine.code.java.PackageName;
 
 /**
- * Generates an entity column enumeration for the given message type.
- *
- * <p>See {@link ColumnContainerSpec} for details.
+ * A JavaPoet-based spec of a generated type.
  */
-@Immutable
-public final class ColumnFactory implements NestedClassFactory {
+public interface TypeSpec {
 
-    @Override
-    public List<NestedClass> generateClassesFor(MessageType messageType) {
-        TypeSpec columnContainer = ColumnContainerSpec.of(messageType);
-        NestedClass result = new NestedClass(columnContainer);
-        return ImmutableList.of(result);
-    }
+    /**
+     * The package under which the type will be generated.
+     */
+    PackageName packageName();
+
+    /**
+     * A JavaPoet spec of the type.
+     */
+    com.squareup.javapoet.TypeSpec toPoet();
 }

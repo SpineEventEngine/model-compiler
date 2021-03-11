@@ -24,29 +24,47 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.code.gen.java;
+package io.spine.tools.protoc;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.errorprone.annotations.Immutable;
-import io.spine.code.gen.java.column.ColumnContainerSpec;
-import io.spine.tools.protoc.NestedClass;
-import io.spine.tools.protoc.NestedClassFactory;
-import io.spine.type.MessageType;
+import io.spine.code.gen.java.TypeSpec;
+import io.spine.value.StringTypeValue;
 
-import java.util.List;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Generates an entity column enumeration for the given message type.
+ * A generated Java nested class source code.
  *
- * <p>See {@link ColumnContainerSpec} for details.
+ * <p>SPI users are responsible for checking that the generated code is properly formatted and
+ * contains all the required modifiers, comments, and Javadoc.
+ *
+ * <p>The actual compilation of the class is performed as a part of the compilation of other
+ * Protobuf-generated sources.
  */
 @Immutable
-public final class ColumnFactory implements NestedClassFactory {
+public final class NestedClass extends StringTypeValue {
 
-    @Override
-    public List<NestedClass> generateClassesFor(MessageType messageType) {
-        TypeSpec columnContainer = ColumnContainerSpec.of(messageType);
-        NestedClass result = new NestedClass(columnContainer);
-        return ImmutableList.of(result);
+    private static final long serialVersionUID = 0L;
+
+    /**
+     * Creates a new instance of the generated code for a nested class.
+     */
+    @VisibleForTesting
+    public NestedClass(String code) {
+        super(code);
+    }
+
+    /**
+     * Creates an instance with the code of the class obtained from the passed spec.
+     */
+    public NestedClass(TypeSpec spec) {
+        this(toCode(spec));
+    }
+
+    private static String toCode(TypeSpec spec) {
+        checkNotNull(spec);
+        com.squareup.javapoet.TypeSpec poet = spec.toPoet();
+        return poet.toString();
     }
 }

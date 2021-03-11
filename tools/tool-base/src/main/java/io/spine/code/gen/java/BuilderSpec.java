@@ -26,27 +26,19 @@
 
 package io.spine.code.gen.java;
 
-import com.google.common.collect.ImmutableList;
-import com.google.errorprone.annotations.Immutable;
-import io.spine.code.gen.java.column.ColumnContainerSpec;
-import io.spine.tools.protoc.NestedClass;
-import io.spine.tools.protoc.NestedClassFactory;
-import io.spine.type.MessageType;
-
-import java.util.List;
-
 /**
- * Generates an entity column enumeration for the given message type.
- *
- * <p>See {@link ColumnContainerSpec} for details.
+ * A specification of a builder type.
  */
-@Immutable
-public final class ColumnFactory implements NestedClassFactory {
+public interface BuilderSpec extends TypeSpec {
 
-    @Override
-    public List<NestedClass> generateClassesFor(MessageType messageType) {
-        TypeSpec columnContainer = ColumnContainerSpec.of(messageType);
-        NestedClass result = new NestedClass(columnContainer);
-        return ImmutableList.of(result);
-    }
+    /**
+     * The return statement for methods of the builder.
+     */
+    String RETURN_STATEMENT = "return this";
+
+    /**
+     * The name of the producing method.
+     */
+    @SuppressWarnings("DuplicateStringLiteralInspection") // Used in other contexts.
+    String BUILD_METHOD_NAME = "build";
 }

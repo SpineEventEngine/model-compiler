@@ -24,29 +24,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.code.gen.java;
+package io.spine.tools.protoc;
 
-import com.google.common.collect.ImmutableList;
-import com.google.errorprone.annotations.Immutable;
-import io.spine.code.gen.java.column.ColumnContainerSpec;
-import io.spine.tools.protoc.NestedClass;
-import io.spine.tools.protoc.NestedClassFactory;
-import io.spine.type.MessageType;
-
-import java.util.List;
+import org.checkerframework.checker.regex.qual.Regex;
 
 /**
- * Generates an entity column enumeration for the given message type.
- *
- * <p>See {@link ColumnContainerSpec} for details.
+ * A selector of proto files whose names start with a certain prefix.
  */
-@Immutable
-public final class ColumnFactory implements NestedClassFactory {
+public final class PrefixSelector extends PatternSelector {
+
+    PrefixSelector(@Regex String prefix) {
+        super(prefix);
+    }
 
     @Override
-    public List<NestedClass> generateClassesFor(MessageType messageType) {
-        TypeSpec columnContainer = ColumnContainerSpec.of(messageType);
-        NestedClass result = new NestedClass(columnContainer);
-        return ImmutableList.of(result);
+    FilePattern toProto() {
+        return FilePatterns.filePrefix(getPattern());
     }
 }

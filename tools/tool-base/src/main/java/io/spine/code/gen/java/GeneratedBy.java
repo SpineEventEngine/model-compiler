@@ -26,27 +26,32 @@
 
 package io.spine.code.gen.java;
 
-import com.google.common.collect.ImmutableList;
-import com.google.errorprone.annotations.Immutable;
-import io.spine.code.gen.java.column.ColumnContainerSpec;
-import io.spine.tools.protoc.NestedClass;
-import io.spine.tools.protoc.NestedClassFactory;
-import io.spine.type.MessageType;
+import com.squareup.javapoet.AnnotationSpec;
+import com.squareup.javapoet.CodeBlock;
 
-import java.util.List;
+import javax.annotation.Generated;
 
 /**
- * Generates an entity column enumeration for the given message type.
- *
- * <p>See {@link ColumnContainerSpec} for details.
+ * Provides {@link javax.annotation.Generated Generated} annotation for the code produced by
+ * the Spine Model Compiler.
  */
-@Immutable
-public final class ColumnFactory implements NestedClassFactory {
+public final class GeneratedBy {
 
-    @Override
-    public List<NestedClass> generateClassesFor(MessageType messageType) {
-        TypeSpec columnContainer = ColumnContainerSpec.of(messageType);
-        NestedClass result = new NestedClass(columnContainer);
-        return ImmutableList.of(result);
+    @SuppressWarnings("DuplicateStringLiteralInspection")
+    private static final AnnotationSpec BY_MODEL_COMPILER =
+            AnnotationSpec.builder(Generated.class)
+                          .addMember("value", CodeBlock.of("\"by Spine Model Compiler\""))
+                          .build();
+
+    /** Prevents instantiation from outside. */
+    private GeneratedBy() {
+    }
+
+    /**
+     * Obtains the specification of the annotation of the code produced by
+     * Spine Model Compiler.
+     */
+    public static AnnotationSpec spineModelCompiler() {
+        return BY_MODEL_COMPILER;
     }
 }

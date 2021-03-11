@@ -24,29 +24,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.code.gen.java;
+package io.spine.tools.protoc;
 
-import com.google.common.collect.ImmutableList;
-import com.google.errorprone.annotations.Immutable;
-import io.spine.code.gen.java.column.ColumnContainerSpec;
-import io.spine.tools.protoc.NestedClass;
-import io.spine.tools.protoc.NestedClassFactory;
-import io.spine.type.MessageType;
+import com.google.common.truth.Truth;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-import java.util.List;
+@DisplayName("MessageSelector should")
+final class MessageSelectorTest {
 
-/**
- * Generates an entity column enumeration for the given message type.
- *
- * <p>See {@link ColumnContainerSpec} for details.
- */
-@Immutable
-public final class ColumnFactory implements NestedClassFactory {
+    @DisplayName("be enabled by default")
+    @Test
+    void beEnabledByDefault() {
+        Truth.assertThat(new MessageSelector().enabled()).isTrue();
+    }
 
-    @Override
-    public List<NestedClass> generateClassesFor(MessageType messageType) {
-        TypeSpec columnContainer = ColumnContainerSpec.of(messageType);
-        NestedClass result = new NestedClass(columnContainer);
-        return ImmutableList.of(result);
+    @DisplayName("allow disabling and enabling itself")
+    @Test
+    void allowDisablingAndEnablingItself() {
+        MessageSelector selector = new MessageSelector();
+        selector.disable();
+        Truth.assertThat(selector.enabled()).isFalse();
+        selector.enable();
+        Truth.assertThat(selector.enabled()).isTrue();
     }
 }

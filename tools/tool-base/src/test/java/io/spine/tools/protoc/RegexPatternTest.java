@@ -24,25 +24,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.code.gen.java;
+package io.spine.tools.protoc;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+@DisplayName("RegexPattern should")
+final class RegexPatternTest {
 
-@DisplayName("GeneratedBySpine should")
-class GeneratedBySpineTest {
-
+    @DisplayName("translate itself to Protobuf counterpart")
     @Test
-    @DisplayName("provide information for annotation spec.")
-    void byModelCompiler() {
-        GeneratedBySpine annotation = GeneratedBySpine.instance();
-        assertNotNull(annotation);
-        assertFalse(annotation.fieldName()
-                              .isEmpty());
-        assertFalse(annotation.codeBlock()
-                              .isEmpty());
+    void convertToProtobufCounterpart() {
+        String regex = ".*/spine/.*";
+        FilePattern pattern = new RegexSelector(regex).toProto();
+        Assertions.assertEquals(regex, pattern.getRegex());
     }
 }

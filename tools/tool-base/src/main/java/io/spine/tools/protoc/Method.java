@@ -24,29 +24,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.code.gen.java;
+package io.spine.tools.protoc;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.errorprone.annotations.Immutable;
-import io.spine.code.gen.java.column.ColumnContainerSpec;
-import io.spine.tools.protoc.NestedClass;
-import io.spine.tools.protoc.NestedClassFactory;
-import io.spine.type.MessageType;
-
-import java.util.List;
+import com.squareup.javapoet.MethodSpec;
+import io.spine.value.StringTypeValue;
 
 /**
- * Generates an entity column enumeration for the given message type.
+ * A generated Java method source code.
  *
- * <p>See {@link ColumnContainerSpec} for details.
+ * <p>SPI users are responsible for checking that the content of the method is properly formatted
+ * and contains all the required modifiers, comments, and Javadoc.
+ *
+ * <p>The actual compilation of the generated method is performed as a part of the compilation
+ * of other Protobuf-generated sources.
  */
 @Immutable
-public final class ColumnFactory implements NestedClassFactory {
+public class Method extends StringTypeValue {
 
-    @Override
-    public List<NestedClass> generateClassesFor(MessageType messageType) {
-        TypeSpec columnContainer = ColumnContainerSpec.of(messageType);
-        NestedClass result = new NestedClass(columnContainer);
-        return ImmutableList.of(result);
+    private static final long serialVersionUID = 0L;
+
+    /**
+     * Creates a new instance with the passed code block.
+     */
+    @VisibleForTesting
+    public Method(String code) {
+        super(code);
+    }
+
+    /**
+     * Creates an instance with the code of the method obtained from the passed spec.
+     */
+    public Method(MethodSpec spec) {
+        this(spec.toString());
     }
 }

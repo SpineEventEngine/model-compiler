@@ -24,48 +24,48 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.code.gen.java;
+package io.spine.tools.protoc;
 
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import com.squareup.javapoet.AnnotationSpec;
-import com.squareup.javapoet.CodeBlock;
+import org.checkerframework.checker.regex.qual.Regex;
 
-import javax.annotation.Generated;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * A factory for Java annotation specs.
+ * An utility for working with {@link FilePattern}.
  */
-public final class Annotations {
+public final class FilePatterns {
 
-    private static final AnnotationSpec GENERATED =
-            AnnotationSpec.builder(Generated.class)
-                          .addMember(GeneratedBySpine.instance().fieldName(),
-                                     CodeBlock.of(GeneratedBySpine.instance().codeBlock()))
-                          .build();
-
-    private static final AnnotationSpec CAN_IGNORE_RETURN_VALUE =
-            AnnotationSpec.builder(CanIgnoreReturnValue.class)
-                          .build();
-
-    /**
-     * Prevents the utility class instantiation.
-     */
-    private Annotations() {
+    /** Prevents instantiation of this utility class. */
+    private FilePatterns() {
     }
 
     /**
-     * Obtains annotation spec. for
-     * {@link javax.annotation.Generated @Generated("by Spine Model Compiler")}
+     * Creates a new {@link FilePattern} with a {@code suffix} field filled.
      */
-    public static AnnotationSpec generatedBySpineModelCompiler() {
-        return GENERATED;
+    public static FilePattern fileSuffix(@Regex String suffix) {
+        checkNotNull(suffix);
+        return FilePattern.newBuilder()
+                          .setSuffix(suffix)
+                          .build();
     }
 
     /**
-     * Obtains {@link com.google.errorprone.annotations.CanIgnoreReturnValue @CanIgnoreReturnValue}
-     * annotation spec.
+     * Creates a new {@link FilePattern} with a {@code prefix} field filled.
      */
-    public static AnnotationSpec canIgnoreReturnValue() {
-        return CAN_IGNORE_RETURN_VALUE;
+    public static FilePattern filePrefix(@Regex String prefix) {
+        checkNotNull(prefix);
+        return FilePattern.newBuilder()
+                          .setPrefix(prefix)
+                          .build();
+    }
+
+    /**
+     * Creates a new {@link FilePattern} with a {@code regex} field filled.
+     */
+    public static FilePattern fileRegex(@Regex String regex) {
+        checkNotNull(regex);
+        return FilePattern.newBuilder()
+                          .setRegex(regex)
+                          .build();
     }
 }

@@ -24,29 +24,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.code.gen.java;
+package io.spine.tools.protoc;
 
 import com.google.common.collect.ImmutableList;
 import com.google.errorprone.annotations.Immutable;
-import io.spine.code.gen.java.column.ColumnContainerSpec;
-import io.spine.tools.protoc.NestedClass;
-import io.spine.tools.protoc.NestedClassFactory;
 import io.spine.type.MessageType;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-/**
- * Generates an entity column enumeration for the given message type.
- *
- * <p>See {@link ColumnContainerSpec} for details.
- */
-@Immutable
-public final class ColumnFactory implements NestedClassFactory {
+import static com.google.common.truth.Truth.assertThat;
+import static io.spine.testing.TestValues.nullRef;
 
-    @Override
-    public List<NestedClass> generateClassesFor(MessageType messageType) {
-        TypeSpec columnContainer = ColumnContainerSpec.of(messageType);
-        NestedClass result = new NestedClass(columnContainer);
-        return ImmutableList.of(result);
+/**
+ * With this unit test we are fixating the {@link NestedClassFactory} contract.
+ */
+@DisplayName("`NestedClassFactory` should")
+final class NestedClassFactoryTest {
+
+    @DisplayName("obey the defined contract")
+    @Test
+    void obeyTheContract() {
+        assertThat(new TestNestedClassFactory().generateClassesFor(nullRef())).isEmpty();
+    }
+
+    @Immutable
+    public static final class TestNestedClassFactory implements NestedClassFactory {
+
+        public TestNestedClassFactory() {
+        }
+
+        @Override
+        public List<NestedClass> generateClassesFor(MessageType messageType) {
+            return ImmutableList.of();
+        }
     }
 }

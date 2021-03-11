@@ -24,29 +24,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.code.gen.java;
-
-import com.google.common.collect.ImmutableList;
-import com.google.errorprone.annotations.Immutable;
-import io.spine.code.gen.java.column.ColumnContainerSpec;
-import io.spine.tools.protoc.NestedClass;
-import io.spine.tools.protoc.NestedClassFactory;
-import io.spine.type.MessageType;
-
-import java.util.List;
+package io.spine.tools.protoc;
 
 /**
- * Generates an entity column enumeration for the given message type.
+ * Represents a Protoc Spine plugin configuration selector.
  *
- * <p>See {@link ColumnContainerSpec} for details.
+ * <p>Is used as a marker for selecting the required protoc configuration when creating the
+ * {@link ModelCompilerConfiguration}.
+ *
+ * <p>An example of using selector in Gradle:
+ * <pre>
+ *     mark messages().uuid(), asType("my.custom.Identifier")
+ * </pre>
+ * where {@code messages().uuid()} is a {@linkplain UuidMessage selector} for the UUID messages
+ * configuration and the rest of the expression are the additional params provided for the
+ * configuration.
  */
-@Immutable
-public final class ColumnFactory implements NestedClassFactory {
+public interface Selector {
 
-    @Override
-    public List<NestedClass> generateClassesFor(MessageType messageType) {
-        TypeSpec columnContainer = ColumnContainerSpec.of(messageType);
-        NestedClass result = new NestedClass(columnContainer);
-        return ImmutableList.of(result);
-    }
+    /**
+     * Disables current selector.
+     */
+    void disable();
+
+    /**
+     * Enables current selector.
+     */
+    void enable();
+
+    /**
+     * Determines if the current selector is enabled.
+     */
+    boolean enabled();
 }
