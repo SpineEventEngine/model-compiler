@@ -25,12 +25,12 @@
  */
 
 /**
- * This package contains tools for working with the structure of a Dart project.
+ * Types working with Dart environment and code.
  */
 
 @CheckReturnValue
 @ParametersAreNonnullByDefault
-package io.spine.code.fs.dart;
+package io.spine.tools.dart;
 
 import com.google.errorprone.annotations.CheckReturnValue;
 

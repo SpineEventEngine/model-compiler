@@ -25,11 +25,12 @@
  */
 
 /**
- * Classes which work with source code directory structure.
+ * This package provides types for working with programming tools.
  */
 @CheckReturnValue
 @ParametersAreNonnullByDefault
-package io.spine.tools.code.structure;
+package io.spine.tools;
 
 import com.google.errorprone.annotations.CheckReturnValue;
+
 import javax.annotation.ParametersAreNonnullByDefault;
