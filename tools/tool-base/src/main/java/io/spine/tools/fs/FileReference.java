@@ -24,14 +24,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.code.fs;
+package io.spine.tools.fs;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import io.spine.value.StringTypeValue;
 
+import java.nio.file.Path;
 import java.util.List;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.util.Preconditions2.checkNotEmptyOrBlank;
 
 /**
@@ -50,15 +52,19 @@ public final class FileReference extends StringTypeValue {
     }
 
     /**
-     * Creates a new instance.
-     *
-     * @param value
-     *         the value of the path
-     * @return a new instance
+     * Creates a new instance using the passed path.
      */
-    public static FileReference of(String value) {
-        checkNotEmptyOrBlank(value);
-        return new FileReference(value);
+    public static FileReference of(String path) {
+        checkNotEmptyOrBlank(path);
+        return new FileReference(path);
+    }
+
+    /**
+     * Creates a new instance using the passed file path.
+     */
+    public static FileReference of(Path path) {
+        checkNotNull(path);
+        return of(path.toString());
     }
 
     /**

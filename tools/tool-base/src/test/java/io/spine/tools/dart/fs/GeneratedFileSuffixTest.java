@@ -24,28 +24,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.code.fs.js;
+package io.spine.tools.dart.fs;
 
-import io.spine.code.fs.DirectoryReference;
+import com.google.common.truth.StringSubject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.Truth.assertThat;
-import static io.spine.testing.Assertions.assertIllegalArgument;
 
-@DisplayName("`DirectoryReference` should")
-class DirectoryReferenceTest {
-
-    @Test
-    @DisplayName("not be empty")
-    void notEmpty() {
-        assertIllegalArgument(() -> DirectoryReference.of(""));
-    }
+@DisplayName("`GeneratedFileSuffix` enum should")
+class GeneratedFileSuffixTest {
 
     @Test
-    @DisplayName("provide names it consists from")
-    void provideDirectoryNames() {
-        DirectoryReference reference = DirectoryReference.of("a/b/c");
-        assertThat(reference.elements()).containsAtLeast("a", "b", "c");
+    @DisplayName("enumerate file extensions ending with `.dart`")
+    void suffixes() {
+        for (GeneratedFileSuffix suffix : GeneratedFileSuffix.values()) {
+            StringSubject assertValue = assertThat(suffix.value());
+            assertValue.startsWith(".");
+            assertValue.endsWith(".dart");
+        }
     }
 }

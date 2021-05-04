@@ -24,13 +24,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.code.fs.js;
+package io.spine.tools.fs;
 
 import com.google.common.testing.NullPointerTester;
-import io.spine.code.fs.DirectoryReference;
-import io.spine.code.fs.FileReference;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static com.google.common.truth.Truth.assertThat;
 import static io.spine.testing.Assertions.assertIllegalArgument;
@@ -75,5 +76,13 @@ class FileReferenceTest {
         DirectoryReference directory = file.directory();
         assertThat(directory.elements())
                 .containsExactly("");
+    }
+
+    @Test
+    @DisplayName("create an instance using `Path` instance")
+    void fromPath() {
+        Path path = Paths.get("./../../fiz/baz/foo.dart");
+        assertThat(FileReference.of(path).value())
+                .endsWith("foo.dart");
     }
 }

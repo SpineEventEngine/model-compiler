@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.code.fs.dart;
+package io.spine.tools.dart.fs;
 
 import com.google.common.testing.NullPointerTester;
 import com.google.protobuf.Descriptors.FileDescriptor;
@@ -62,8 +62,7 @@ class FileNameTest {
         FileName fileName = FileName.relative(protoFileName());
         assertThat(fileName.value()).isEqualTo(GENERATED_FILE);
     }
-
-    private static io.spine.code.proto.FileName protoFileName() {
+   private static io.spine.code.proto.FileName protoFileName() {
         return io.spine.code.proto.FileName.from(protoFile);
     }
 }

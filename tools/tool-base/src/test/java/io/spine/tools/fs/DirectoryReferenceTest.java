@@ -24,14 +24,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * This package contains tools for working with the structure of a Dart project.
- */
+package io.spine.tools.fs;
 
-@CheckReturnValue
-@ParametersAreNonnullByDefault
-package io.spine.code.fs.dart;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-import com.google.errorprone.annotations.CheckReturnValue;
+import static com.google.common.truth.Truth.assertThat;
+import static io.spine.testing.Assertions.assertIllegalArgument;
 
-import javax.annotation.ParametersAreNonnullByDefault;
+@DisplayName("`DirectoryReference` should")
+class DirectoryReferenceTest {
+
+    @Test
+    @DisplayName("not be empty")
+    void notEmpty() {
+        assertIllegalArgument(() -> DirectoryReference.of(""));
+    }
+
+    @Test
+    @DisplayName("provide names it consists from")
+    void provideDirectoryNames() {
+        DirectoryReference reference = DirectoryReference.of("a/b/c");
+        assertThat(reference.elements()).containsAtLeast("a", "b", "c");
+    }
+}
