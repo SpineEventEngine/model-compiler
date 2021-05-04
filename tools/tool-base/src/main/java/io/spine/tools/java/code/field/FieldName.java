@@ -24,16 +24,43 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package io.spine.tools.java.code.field;
+
+import io.spine.code.AbstractFieldName;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+import static java.lang.Character.toUpperCase;
+
 /**
- * This package contains tools for generating Java code as well as working with
- * already generated code.
+ * A name of a field declared in a Java class.
  */
-@Internal
-@CheckReturnValue
-@ParametersAreNonnullByDefault
-package io.spine.tools.java.code;
+public final class FieldName extends AbstractFieldName {
 
-import com.google.errorprone.annotations.CheckReturnValue;
-import io.spine.annotation.Internal;
+    private static final long serialVersionUID = 0L;
+    private static final FieldName SERIAL_VERSION_UID = new FieldName("serialVersionUID");
 
-import javax.annotation.ParametersAreNonnullByDefault;
+    private FieldName(String value) {
+        super(value);
+    }
+
+    /**
+     * Creates Java field name that corresponds to the passed Proto field name.
+     */
+    public static FieldName from(io.spine.code.proto.FieldName protoField) {
+        checkNotNull(protoField);
+        String fieldName = protoField.javaCase();
+        FieldName result = new FieldName(fieldName);
+        return result;
+    }
+
+    /** Obtains this name starting with a capital letter. */
+    public String capitalize() {
+        String name = value();
+        String result = toUpperCase(name.charAt(0)) + name.substring(1);
+        return result;
+    }
+
+    public static FieldName serialVersionUID() {
+        return SERIAL_VERSION_UID;
+    }
+}

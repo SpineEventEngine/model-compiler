@@ -24,16 +24,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * This package contains tools for generating Java code as well as working with
- * already generated code.
- */
-@Internal
-@CheckReturnValue
-@ParametersAreNonnullByDefault
 package io.spine.tools.java.code;
 
-import com.google.errorprone.annotations.CheckReturnValue;
-import io.spine.annotation.Internal;
+import com.squareup.javapoet.AnnotationSpec;
+import com.squareup.javapoet.CodeBlock;
 
-import javax.annotation.ParametersAreNonnullByDefault;
+import javax.annotation.Generated;
+
+/**
+ * Provides {@link javax.annotation.Generated Generated} annotation for the code produced by
+ * the Spine Model Compiler.
+ */
+public final class GeneratedBy {
+
+    @SuppressWarnings("DuplicateStringLiteralInspection")
+    private static final AnnotationSpec BY_MODEL_COMPILER =
+            AnnotationSpec.builder(Generated.class)
+                          .addMember("value", CodeBlock.of("\"by Spine Model Compiler\""))
+                          .build();
+
+    /** Prevents instantiation from outside. */
+    private GeneratedBy() {
+    }
+
+    /**
+     * Obtains the specification of the annotation of the code produced by
+     * Spine Model Compiler.
+     */
+    public static AnnotationSpec spineModelCompiler() {
+        return BY_MODEL_COMPILER;
+    }
+}
