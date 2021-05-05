@@ -24,16 +24,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package io.spine.tools.java.code.field;
+
+import com.google.common.collect.ImmutableList;
+import com.google.errorprone.annotations.Immutable;
+import io.spine.base.SubscribableField;
+import io.spine.code.java.ClassName;
+import io.spine.tools.protoc.NestedClass;
+import io.spine.tools.protoc.NestedClassFactory;
+import io.spine.type.MessageType;
+
+import java.util.List;
+
 /**
- * This package contains tools for generating Java code as well as working with
- * already generated code.
+ * Generates a field enumeration for the given message type.
+ *
+ * <p>See {@link FieldContainerSpec} for details.
  */
-@Internal
-@CheckReturnValue
-@ParametersAreNonnullByDefault
-package io.spine.tools.java.code;
+@Immutable
+public final class FieldFactory implements NestedClassFactory {
 
-import com.google.errorprone.annotations.CheckReturnValue;
-import io.spine.annotation.Internal;
+    @Override
+    public List<NestedClass> generateClassesFor(MessageType messageType) {
+        return createFor(messageType, ClassName.of(SubscribableField.class));
+    }
 
-import javax.annotation.ParametersAreNonnullByDefault;
+    public List<NestedClass> createFor(MessageType messageType, ClassName fieldSupertype) {
+        String generatedCode =
+                new FieldContainerSpec(messageType, fieldSupertype)
+                        .toPoet()
+                        .toString();
+        NestedClass result = new NestedClass(generatedCode);
+        return ImmutableList.of(result);
+    }
+}

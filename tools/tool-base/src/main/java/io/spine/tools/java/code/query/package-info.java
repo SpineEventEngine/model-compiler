@@ -25,15 +25,16 @@
  */
 
 /**
- * This package contains tools for generating Java code as well as working with
- * already generated code.
+ * This package contains the routines performing the assembly of {@code Query}
+ * and {@code QueryBuilder} code generated for entity state types.
  */
+
 @Internal
 @CheckReturnValue
 @ParametersAreNonnullByDefault
-package io.spine.tools.java.code;
+package io.spine.tools.java.code.query;
 
-import com.google.errorprone.annotations.CheckReturnValue;
 import io.spine.annotation.Internal;
 
+import com.google.errorprone.annotations.CheckReturnValue;
 import javax.annotation.ParametersAreNonnullByDefault;

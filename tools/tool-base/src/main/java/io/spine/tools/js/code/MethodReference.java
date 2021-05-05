@@ -24,47 +24,46 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.tools.protoc;
+package io.spine.tools.js.code;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.errorprone.annotations.Immutable;
-import io.spine.tools.java.code.TypeSpec;
 import io.spine.value.StringTypeValue;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.lang.String.format;
 
 /**
- * A generated Java nested class source code.
+ * A reference to a method of a Protobuf type.
  *
- * <p>SPI users are responsible for checking that the generated code is properly formatted and
- * contains all the required modifiers, comments, and Javadoc.
- *
- * <p>The actual compilation of the class is performed as a part of the compilation of other
- * Protobuf-generated sources.
+ * <p>The reference allows to identify a method in code
+ * since it includes a type name and a method name.
  */
-@Immutable
-public final class NestedClass extends StringTypeValue {
+public final class MethodReference extends StringTypeValue {
 
     private static final long serialVersionUID = 0L;
 
-    /**
-     * Creates a new instance of the generated code for a nested class.
-     */
-    @VisibleForTesting
-    public NestedClass(String code) {
-        super(code);
+    private MethodReference(String value) {
+        super(value);
     }
 
     /**
-     * Creates an instance with the code of the class obtained from the passed spec.
+     * Obtains the reference to the instance method of the specified type.
      */
-    public NestedClass(TypeSpec spec) {
-        this(toCode(spec));
+    public static MethodReference onType(TypeName typeName, String methodName) {
+        String value = format("%s.%s", typeName, methodName);
+        return new MethodReference(value);
     }
 
-    private static String toCode(TypeSpec spec) {
-        checkNotNull(spec);
-        com.squareup.javapoet.TypeSpec poet = spec.toPoet();
-        return poet.toString();
+    /**
+     * Obtains the reference to the static method of the specified type.
+     */
+    public static MethodReference onPrototype(TypeName typeName, String methodName) {
+        String value = format("%s.prototype.%s", typeName, methodName);
+        return new MethodReference(value);
+    }
+
+    /**
+     * Obtains the reference to the constructor of the specified type.
+     */
+    public static MethodReference constructor(TypeName typeName) {
+        return new MethodReference(typeName.value());
     }
 }

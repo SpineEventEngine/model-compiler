@@ -24,16 +24,60 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package io.spine.tools.code;
+
+import com.google.common.base.Strings;
+import io.spine.value.StringTypeValue;
+
 /**
- * This package contains tools for generating Java code as well as working with
- * already generated code.
+ * A positive space-based indentation of generated code.
  */
-@Internal
-@CheckReturnValue
-@ParametersAreNonnullByDefault
-package io.spine.tools.java.code;
+public final class Indent extends StringTypeValue {
 
-import com.google.errorprone.annotations.CheckReturnValue;
-import io.spine.annotation.Internal;
+    private static final long serialVersionUID = 0L;
+    private static final String SPACE = " ";
+    private static final Indent TWO = new Indent(2);
+    private static final Indent FOUR = new Indent(4);
 
-import javax.annotation.ParametersAreNonnullByDefault;
+    private final int size;
+
+    private Indent(int indent) {
+        super(Strings.repeat(SPACE, indent));
+        this.size = indent;
+    }
+
+    /**
+     * Creates an instance for non-negative indent.
+     */
+    public static Indent of(int indent) {
+        if (indent == 4) {
+            return of4();
+        }
+        if (indent == 2) {
+            return of2();
+        }
+
+        return new Indent(indent);
+    }
+
+    /**
+     * Obtains the indent with two spaces.
+     */
+    public static Indent of2() {
+        return TWO;
+    }
+
+    /**
+     * Obtains the indent with four spaces.
+     */
+    public static Indent of4() {
+        return FOUR;
+    }
+
+    /**
+     * Obtains the size of the indentation.
+     */
+    public int getSize() {
+        return size;
+    }
+}

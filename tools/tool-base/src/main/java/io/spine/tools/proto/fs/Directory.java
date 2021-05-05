@@ -24,16 +24,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package io.spine.tools.proto.fs;
+
+import io.spine.code.AbstractDirectory;
+import io.spine.code.SourceCodeDirectory;
+
+import java.nio.file.Path;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
- * This package contains tools for generating Java code as well as working with
- * already generated code.
+ * A proto source code directory.
  */
-@Internal
-@CheckReturnValue
-@ParametersAreNonnullByDefault
-package io.spine.tools.java.code;
+public final class Directory extends SourceCodeDirectory {
 
-import com.google.errorprone.annotations.CheckReturnValue;
-import io.spine.annotation.Internal;
+    @SuppressWarnings("DuplicateStringLiteralInspection") // Same name for different directories.
+    private static final String ROOT_NAME = "proto";
 
-import javax.annotation.ParametersAreNonnullByDefault;
+    private Directory(Path path) {
+        super(path);
+    }
+
+    /**
+     * Creates a new instance.
+     */
+    static Directory at(Path path) {
+        checkNotNull(path);
+        return new Directory(path);
+    }
+
+    /**
+     * Creates an instance of the root directory named {@code "proto"}.
+     */
+    public static Directory rootIn(AbstractDirectory parent) {
+        checkNotNull(parent);
+        Path path = parent.path()
+                          .resolve(ROOT_NAME);
+        return at(path);
+    }
+}

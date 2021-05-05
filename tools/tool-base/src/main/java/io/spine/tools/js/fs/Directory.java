@@ -24,47 +24,58 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.tools.protoc;
+package io.spine.tools.js.fs;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.errorprone.annotations.Immutable;
-import io.spine.tools.java.code.TypeSpec;
-import io.spine.value.StringTypeValue;
+import io.spine.code.AbstractDirectory;
+import io.spine.code.SourceCodeDirectory;
+
+import java.nio.file.Path;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * A generated Java nested class source code.
- *
- * <p>SPI users are responsible for checking that the generated code is properly formatted and
- * contains all the required modifiers, comments, and Javadoc.
- *
- * <p>The actual compilation of the class is performed as a part of the compilation of other
- * Protobuf-generated sources.
+ * A folder with JavaScript source files.
  */
-@Immutable
-public final class NestedClass extends StringTypeValue {
+public final class Directory extends SourceCodeDirectory {
 
-    private static final long serialVersionUID = 0L;
+    private static final String ROOT_NAME = "js";
 
-    /**
-     * Creates a new instance of the generated code for a nested class.
-     */
-    @VisibleForTesting
-    public NestedClass(String code) {
-        super(code);
+    private Directory(Path path) {
+        super(path);
     }
 
     /**
-     * Creates an instance with the code of the class obtained from the passed spec.
+     * Creates a new instance at the specified location.
      */
-    public NestedClass(TypeSpec spec) {
-        this(toCode(spec));
+    public static Directory at(Path path) {
+        checkNotNull(path);
+        return new Directory(path);
     }
 
-    private static String toCode(TypeSpec spec) {
-        checkNotNull(spec);
-        com.squareup.javapoet.TypeSpec poet = spec.toPoet();
-        return poet.toString();
+    /**
+     * Creates an instance of the root directory named {@code "js"}.
+     */
+    static Directory rootIn(AbstractDirectory parent) {
+        checkNotNull(parent);
+        Path path = parent.path()
+                          .resolve(ROOT_NAME);
+        return at(path);
+    }
+
+    /**
+     * Obtains the source code path for the passed file name.
+     */
+    public Path resolve(FileName fileName) {
+        checkNotNull(fileName);
+        Path result = path().resolve(fileName.value());
+        return result;
+    }
+
+    /**
+     * Obtains the source code path for the passed library file.
+     */
+    public Path resolve(LibraryFile libraryFile) {
+        checkNotNull(libraryFile);
+        return resolve(libraryFile.fileName());
     }
 }

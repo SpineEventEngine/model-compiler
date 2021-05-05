@@ -24,16 +24,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package io.spine.tools.java.code.column;
+
+import com.google.common.collect.ImmutableList;
+import com.google.errorprone.annotations.Immutable;
+import io.spine.tools.java.code.TypeSpec;
+import io.spine.tools.protoc.NestedClass;
+import io.spine.tools.protoc.NestedClassFactory;
+import io.spine.type.MessageType;
+
+import java.util.List;
+
 /**
- * This package contains tools for generating Java code as well as working with
- * already generated code.
+ * Generates an entity column enumeration for the given message type.
+ *
+ * <p>See {@link ColumnContainerSpec} for details.
  */
-@Internal
-@CheckReturnValue
-@ParametersAreNonnullByDefault
-package io.spine.tools.java.code;
+@Immutable
+public final class ColumnFactory implements NestedClassFactory {
 
-import com.google.errorprone.annotations.CheckReturnValue;
-import io.spine.annotation.Internal;
-
-import javax.annotation.ParametersAreNonnullByDefault;
+    @Override
+    public List<NestedClass> generateClassesFor(MessageType messageType) {
+        TypeSpec columnContainer = ColumnContainerSpec.of(messageType);
+        NestedClass result = new NestedClass(columnContainer);
+        return ImmutableList.of(result);
+    }
+}

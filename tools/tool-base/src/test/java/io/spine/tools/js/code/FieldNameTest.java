@@ -24,16 +24,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * This package contains tools for generating Java code as well as working with
- * already generated code.
- */
-@Internal
-@CheckReturnValue
-@ParametersAreNonnullByDefault
-package io.spine.tools.java.code;
+package io.spine.tools.js.code;
 
-import com.google.errorprone.annotations.CheckReturnValue;
-import io.spine.annotation.Internal;
+import com.google.common.testing.NullPointerTester;
+import com.google.protobuf.Any;
+import com.google.protobuf.Descriptors.FieldDescriptor;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-import javax.annotation.ParametersAreNonnullByDefault;
+import static io.spine.testing.DisplayNames.NOT_ACCEPT_NULLS;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@DisplayName("FieldName should")
+class FieldNameTest {
+
+    @Test
+    @DisplayName(NOT_ACCEPT_NULLS)
+    void passNullToleranceCheck() {
+        new NullPointerTester().testAllPublicStaticMethods(FieldName.class);
+    }
+
+    @SuppressWarnings("DuplicateStringLiteralInspection") // Duplication with generated code.
+    @Test
+    @DisplayName("create CamelCase name from Protobuf field")
+    void convertToCamelCase() {
+        FieldDescriptor typeUrlDescriptor = Any.getDescriptor()
+                                               .findFieldByName("type_url");
+        FieldName fieldName = FieldName.from(typeUrlDescriptor);
+        assertEquals("TypeUrl", fieldName.value());
+    }
+}

@@ -24,16 +24,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package io.spine.tools.java.code.query;
+
+import com.google.common.collect.ImmutableList;
+import com.google.errorprone.annotations.Immutable;
+import io.spine.tools.protoc.Method;
+import io.spine.tools.protoc.MethodFactory;
+import io.spine.tools.protoc.NestedClass;
+import io.spine.tools.protoc.NestedClassFactory;
+import io.spine.type.MessageType;
+
+import java.util.List;
+
 /**
- * This package contains tools for generating Java code as well as working with
- * already generated code.
+ * Generates an entity-specific {@code Query} and {@code QueryBuilder} classes.
+ *
+ * <p>Additionally, generates {@code query()} method to instantiate the {@code QueryBuilder}.
  */
-@Internal
-@CheckReturnValue
-@ParametersAreNonnullByDefault
-package io.spine.tools.java.code;
+@Immutable
+public final class EntityQueryFactory implements NestedClassFactory, MethodFactory {
 
-import com.google.errorprone.annotations.CheckReturnValue;
-import io.spine.annotation.Internal;
+    @Override
+    public List<NestedClass> generateClassesFor(MessageType type) {
+        NestedClass queryType = new NestedClass(new EntityQuerySpec(type));
+        NestedClass queryBuilderType = new NestedClass(new EntityQueryBuilderSpec(type));
+        return ImmutableList.of(queryType, queryBuilderType);
+    }
 
-import javax.annotation.ParametersAreNonnullByDefault;
+    @Override
+    public List<Method> generateMethodsFor(MessageType type) {
+        EntityQuerySpec spec = new EntityQuerySpec(type);
+        Method method = new Method(spec.methodSpec());
+        return ImmutableList.of(method);
+    }
+}

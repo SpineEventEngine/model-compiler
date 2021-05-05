@@ -24,16 +24,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * This package contains tools for generating Java code as well as working with
- * already generated code.
- */
-@Internal
-@CheckReturnValue
-@ParametersAreNonnullByDefault
 package io.spine.tools.java.code;
 
-import com.google.errorprone.annotations.CheckReturnValue;
-import io.spine.annotation.Internal;
+/**
+ * A specification of a builder type.
+ */
+public interface BuilderSpec extends TypeSpec {
 
-import javax.annotation.ParametersAreNonnullByDefault;
+    /**
+     * The return statement for methods of the builder.
+     */
+    String RETURN_STATEMENT = "return this";
+
+    /**
+     * The name of the producing method.
+     */
+    @SuppressWarnings("DuplicateStringLiteralInspection") // Used in other contexts.
+    String BUILD_METHOD_NAME = "build";
+}

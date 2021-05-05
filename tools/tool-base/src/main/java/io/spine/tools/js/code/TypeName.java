@@ -24,47 +24,50 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.tools.protoc;
+package io.spine.tools.js.code;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.errorprone.annotations.Immutable;
-import io.spine.tools.java.code.TypeSpec;
+import com.google.protobuf.Descriptors.Descriptor;
+import com.google.protobuf.Descriptors.GenericDescriptor;
 import io.spine.value.StringTypeValue;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * A generated Java nested class source code.
- *
- * <p>SPI users are responsible for checking that the generated code is properly formatted and
- * contains all the required modifiers, comments, and Javadoc.
- *
- * <p>The actual compilation of the class is performed as a part of the compilation of other
- * Protobuf-generated sources.
+ * The name of a type in the JavaScript code.
  */
-@Immutable
-public final class NestedClass extends StringTypeValue {
+public final class TypeName extends StringTypeValue {
 
     private static final long serialVersionUID = 0L;
 
     /**
-     * Creates a new instance of the generated code for a nested class.
+     * The prefix which is added to all proto types in the JS generated code.
      */
-    @VisibleForTesting
-    public NestedClass(String code) {
-        super(code);
+    private static final String PREFIX = "proto.";
+
+    private TypeName(String value) {
+        super(value);
     }
 
     /**
-     * Creates an instance with the code of the class obtained from the passed spec.
+     * Obtains the type name of the specified Protobuf declaration.
+     *
+     * <p>All Protobuf types in JS are prepended with {@code proto.} prefix.
      */
-    public NestedClass(TypeSpec spec) {
-        this(toCode(spec));
+    public static TypeName from(GenericDescriptor descriptor) {
+        checkNotNull(descriptor);
+        String typeName = descriptor.getFullName();
+        String nameWithPrefix = PREFIX + typeName;
+        return new TypeName(nameWithPrefix);
     }
 
-    private static String toCode(TypeSpec spec) {
-        checkNotNull(spec);
-        com.squareup.javapoet.TypeSpec poet = spec.toPoet();
-        return poet.toString();
+    /**
+     * Obtains the type name of the parser of the specified message.
+     *
+     * <p>The parser is a static property on the corresponding message type.
+     */
+    public static TypeName ofParser(Descriptor message) {
+        checkNotNull(message);
+        TypeName messageType = from(message);
+        return new TypeName(messageType + ".Parser");
     }
 }

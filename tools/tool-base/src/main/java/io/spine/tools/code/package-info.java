@@ -25,13 +25,13 @@
  */
 
 /**
- * This package contains tools for generating Java code as well as working with
- * already generated code.
+ * This package contains tools for generating and working with source code.
  */
+
 @Internal
 @CheckReturnValue
 @ParametersAreNonnullByDefault
-package io.spine.tools.java.code;
+package io.spine.tools.code;
 
 import com.google.errorprone.annotations.CheckReturnValue;
 import io.spine.annotation.Internal;
