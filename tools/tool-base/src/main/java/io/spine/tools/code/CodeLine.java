@@ -28,68 +28,36 @@ package io.spine.tools.code;
 
 import java.util.Objects;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 /**
- * An indent level, which determines a number of {@linkplain Indent indents} to align code with.
+ * A line of a JavaScript code.
  *
- * <p>The value cannot be negative.
+ * <p>The line is not aware of
+ * {@linkplain IndentedLine indentation}.
  */
-public final class IndentLevel {
+public abstract class CodeLine {
 
-    private static final IndentLevel ZERO = of(0);
+    /**
+     * Obtains the value of the line.
+     */
+    public abstract String content();
 
-    private final int value;
-
-    private IndentLevel(int value) {
-        checkArgument(value >= 0, "An indent level cannot be negative.");
-        this.value = value;
+    /**
+     * Obtains a code line with the specified content.
+     */
+    public static CodeLine of(String content) {
+        return new CodeLine() {
+            @Override
+            public String content() {
+                return content.trim();
+            }
+        };
     }
 
     /**
-     * Creates an indent level with the specified value.
+     * Obtains an empty code line.
      */
-    public static IndentLevel of(int value) {
-        return new IndentLevel(value);
-    }
-
-    /**
-     * Creates the indent level of zero.
-     */
-    public static IndentLevel zero() {
-        return ZERO;
-    }
-
-    /**
-     * Obtains the value of the level.
-     */
-    public int value() {
-        return value;
-    }
-
-    /**
-     * Obtains the indent level by incrementing this value.
-     */
-    public IndentLevel increment() {
-        return of(value + 1);
-    }
-
-    /**
-     * Obtains the indent level by decrementing this value.
-     */
-    public IndentLevel decrement() {
-        return of(value - 1);
-    }
-
-    /**
-     * Obtains the total indent for the level.
-     *
-     * @param indentPerLevel
-     *         the indent per a level
-     */
-    public Indent totalIndent(Indent indentPerLevel) {
-        int totalSize = indentPerLevel.size() * value;
-        return Indent.of(totalSize);
+    public static CodeLine emptyLine() {
+        return of("");
     }
 
     @Override
@@ -97,20 +65,20 @@ public final class IndentLevel {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof IndentLevel)) {
+        if (!(o instanceof CodeLine)) {
             return false;
         }
-        IndentLevel level = (IndentLevel) o;
-        return value == level.value;
+        CodeLine line = (CodeLine) o;
+        return content().equals(line.content());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(value);
+        return Objects.hash(content());
     }
 
     @Override
     public String toString() {
-        return String.valueOf(value);
+        return content();
     }
 }

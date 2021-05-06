@@ -26,52 +26,22 @@
 
 package io.spine.tools.code;
 
+import com.google.common.truth.StringSubject;
+import com.google.common.truth.Truth;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.tools.code.IndentLevel.zero;
-import static io.spine.testing.Assertions.assertIllegalArgument;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-@DisplayName("`IndentationLevel` should")
-class IndentLevelTest {
+@DisplayName("CodeLine should")
+class CodeLineTest {
 
     @Test
-    @DisplayName("not be negative")
-    void notNegative() {
-        assertIllegalArgument(() -> IndentLevel.of(-1));
+    @DisplayName("provide an empty line")
+    void emptyLine() {
+        CodeLine line = CodeLine.emptyLine();
+        assertThat(line).isEqualTo("");
     }
 
-    @Test
-    @DisplayName("provide incremented value")
-    void provideIncremented() {
-        IndentLevel zero = IndentLevel.zero();
-        IndentLevel incremented = zero.increment();
-        assertEquals(0, zero.value());
-        assertEquals(1, incremented.value());
-    }
-
-    @Test
-    @DisplayName("provide decremented value")
-    void provideDecremented() {
-        IndentLevel five = IndentLevel.of(5);
-        IndentLevel decremented = five.decrement();
-        assertEquals(5, five.value());
-        assertEquals(4, decremented.value());
-    }
-
-    @Test
-    @DisplayName("not be decremented to a negative value")
-    void notAllowDecrementOfZero() {
-        assertIllegalArgument(() -> zero().decrement());
-    }
-
-    @Test
-    @DisplayName("provide the total indent")
-    void indentDepth() {
-        Indent indent = Indent.of4();
-        IndentLevel level = IndentLevel.of(2);
-        Indent totalIndent = level.totalIndent(indent);
-        assertEquals(8, totalIndent.size());
+    private static StringSubject assertThat(CodeLine line) {
+        return Truth.assertThat(line.content());
     }
 }
