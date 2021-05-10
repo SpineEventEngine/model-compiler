@@ -29,50 +29,21 @@ package io.spine.tools.code;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.testing.Assertions.assertIllegalArgument;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static com.google.common.truth.Truth.assertThat;
 
-@DisplayName("`Indent` should")
-class IndentTest {
+@DisplayName("`IndentedLine` should")
+class IndentedLineTest {
 
     @Test
-    @DisplayName("prohibit negative values")
-    void prohibitNegativeValue() {
-        assertIllegalArgument(() -> Indent.of(-1));
-    }
+    @DisplayName("create indent for code based on the level of indent")
+    void createIndent() {
+        Indent indentPerLevel = Indent.of2();
+        IndentedLine line =
+                IndentedLine.of(indentPerLevel, "content")
+                            .adjustLevelBy(2);
+        String expected = "    content";
 
-    @Test
-    @DisplayName("allow zero indent")
-    void allowZeroIndent() {
-        Indent zeroIndent = Indent.of(0);
-        assertEquals(0, zeroIndent.size());
-        assertTrue(zeroIndent.toString()
-                             .isEmpty());
-    }
-
-    @Test
-    @DisplayName("allow custom size")
-    void allowCustomSize() {
-        Indent ofThree = Indent.of(3);
-        assertEquals(3, ofThree.size());
-        assertEquals("   ", ofThree.toString());
-    }
-
-    @Test
-    @DisplayName("provide convenient methods")
-    void returnPopularConstants() {
-        assertEquals(2, Indent.of2()
-                              .size());
-        assertEquals(4, Indent.of4()
-                              .size());
-    }
-
-    @Test
-    @DisplayName("return constant for popular values")
-    void returnConstantsByPopularValues() {
-        assertSame(Indent.of2(), Indent.of(2));
-        assertSame(Indent.of4(), Indent.of(4));
+        assertThat(line.content())
+                .isEqualTo(expected);
     }
 }

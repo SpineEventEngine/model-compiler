@@ -29,50 +29,15 @@ package io.spine.tools.code;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.testing.Assertions.assertIllegalArgument;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static com.google.common.truth.Truth.assertThat;
+import static io.spine.tools.code.Line.emptyLine;
 
-@DisplayName("`Indent` should")
-class IndentTest {
+@DisplayName("`Line` should")
+class LineTest {
 
     @Test
-    @DisplayName("prohibit negative values")
-    void prohibitNegativeValue() {
-        assertIllegalArgument(() -> Indent.of(-1));
-    }
-
-    @Test
-    @DisplayName("allow zero indent")
-    void allowZeroIndent() {
-        Indent zeroIndent = Indent.of(0);
-        assertEquals(0, zeroIndent.size());
-        assertTrue(zeroIndent.toString()
-                             .isEmpty());
-    }
-
-    @Test
-    @DisplayName("allow custom size")
-    void allowCustomSize() {
-        Indent ofThree = Indent.of(3);
-        assertEquals(3, ofThree.size());
-        assertEquals("   ", ofThree.toString());
-    }
-
-    @Test
-    @DisplayName("provide convenient methods")
-    void returnPopularConstants() {
-        assertEquals(2, Indent.of2()
-                              .size());
-        assertEquals(4, Indent.of4()
-                              .size());
-    }
-
-    @Test
-    @DisplayName("return constant for popular values")
-    void returnConstantsByPopularValues() {
-        assertSame(Indent.of2(), Indent.of(2));
-        assertSame(Indent.of4(), Indent.of(4));
+    @DisplayName("provide an empty line")
+    void ofEmptyLine() {
+        assertThat(emptyLine().content()).isEqualTo("");
     }
 }

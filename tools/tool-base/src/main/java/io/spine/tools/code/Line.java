@@ -26,70 +26,47 @@
 
 package io.spine.tools.code;
 
-import java.util.Objects;
+import com.google.errorprone.annotations.Immutable;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * An indent level, which determines a number of {@linkplain Indent indents} to align code with.
+ * A source code line.
  *
- * <p>The value cannot be negative.
+ * <p>The line is not aware of {@linkplain IndentedLine indentation}.
  */
-public final class IndentLevel {
+@Immutable
+public class Line {
 
-    private static final IndentLevel ZERO = of(0);
+    private final String content;
 
-    private final int value;
-
-    private IndentLevel(int value) {
-        checkArgument(value >= 0, "An indent level cannot be negative.");
-        this.value = value;
+    /**
+     * Creates a new line with the passed text.
+     */
+    protected Line(String content) {
+        this.content = checkNotNull(content);
     }
 
     /**
-     * Creates an indent level with the specified value.
+     * Obtains the text of the line.
      */
-    public static IndentLevel of(int value) {
-        return new IndentLevel(value);
+    public final String content() {
+        return content;
     }
 
     /**
-     * Creates the indent level of zero.
+     * Obtains a code line with the specified content.
      */
-    public static IndentLevel zero() {
-        return ZERO;
+    public static Line of(String content) {
+        checkNotNull(content);
+        return new Line(content);
     }
 
     /**
-     * Obtains the value of the level.
+     * Obtains an empty code line.
      */
-    public int value() {
-        return value;
-    }
-
-    /**
-     * Obtains the indent level by incrementing this value.
-     */
-    public IndentLevel incremented() {
-        return of(value + 1);
-    }
-
-    /**
-     * Obtains the indent level by decrementing this value.
-     */
-    public IndentLevel decremented() {
-        return of(value - 1);
-    }
-
-    /**
-     * Obtains the total indent for the level.
-     *
-     * @param indentPerLevel
-     *         the indent per a level
-     */
-    public Indent totalIndent(Indent indentPerLevel) {
-        int totalSize = indentPerLevel.getSize() * value;
-        return Indent.of(totalSize);
+    public static Line emptyLine() {
+        return of("");
     }
 
     @Override
@@ -97,20 +74,20 @@ public final class IndentLevel {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof IndentLevel)) {
+        if (!(o instanceof Line)) {
             return false;
         }
-        IndentLevel level = (IndentLevel) o;
-        return value == level.value;
+        Line other = (Line) o;
+        return content.equals(other.content);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(value);
+        return content.hashCode();
     }
 
     @Override
     public String toString() {
-        return String.valueOf(value);
+        return content;
     }
 }
