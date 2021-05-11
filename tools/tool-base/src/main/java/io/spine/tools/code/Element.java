@@ -26,24 +26,10 @@
 
 package io.spine.tools.code;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+/**
+ * A part of source code text.
+ */
+public interface Element {
 
-import static com.google.common.truth.Truth.assertThat;
-
-@DisplayName("`IndentedLine` should")
-class IndentedLineTest {
-
-    @Test
-    @DisplayName("create indent for code based on the level of indent")
-    void createIndent() {
-        Indent indentPerLevel = Indent.of2();
-        IndentedLine line =
-                IndentedLine.of(indentPerLevel, "content")
-                            .adjustLevelBy(2);
-        String expected = "    content";
-
-        assertThat(line.text())
-                .isEqualTo(expected);
-    }
+    String text();
 }

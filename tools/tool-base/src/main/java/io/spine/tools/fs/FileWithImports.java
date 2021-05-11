@@ -24,58 +24,50 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.tools.js.fs;
+package io.spine.tools.fs;
 
-import io.spine.code.fs.AbstractDirectory;
-import io.spine.code.fs.SourceCodeDirectory;
+import com.google.common.collect.ImmutableList;
+import io.spine.code.fs.AbstractSourceFile;
 
 import java.nio.file.Path;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 /**
- * A folder with JavaScript source files.
+ * A source code file containing import statements that may need to
+ * be {@linkplain #resolveImports(Path, ExternalModules) resolved}.
  */
-public final class Directory extends SourceCodeDirectory {
+public abstract class FileWithImports extends AbstractSourceFile {
 
-    private static final String ROOT_NAME = "js";
-
-    private Directory(Path path) {
+    protected FileWithImports(Path path) {
         super(path);
     }
 
     /**
-     * Creates a new instance at the specified location.
+     * Resolves the relative imports in the file into absolute ones with the given modules.
      */
-    public static Directory at(Path path) {
-        checkNotNull(path);
-        return new Directory(path);
+    public void resolveImports(Path generatedRoot, ExternalModules modules) {
+        load();
+        ImmutableList.Builder<String> newLines = ImmutableList.builder();
+        for (String line : lines()) {
+            if (isImport(line)) {
+                String resolved = resolveImport(line, generatedRoot, modules);
+                newLines.add(resolved);
+            } else {
+                newLines.add(line);
+            }
+        }
+        update(newLines.build());
+        store();
     }
 
     /**
-     * Creates an instance of the root directory named {@code "js"}.
+     * Tests if the passed line contains an import statement.
      */
-    static Directory rootIn(AbstractDirectory parent) {
-        checkNotNull(parent);
-        Path path = parent.path()
-                          .resolve(ROOT_NAME);
-        return at(path);
-    }
+    protected abstract boolean isImport(String line);
 
     /**
-     * Obtains the source code path for the passed file name.
+     * Transforms the import statement of the passed line updating the imported file
+     * reference in relation to the passed root directory and external modules.
      */
-    public Path resolve(FileName fileName) {
-        checkNotNull(fileName);
-        Path result = path().resolve(fileName.value());
-        return result;
-    }
-
-    /**
-     * Obtains the source code path for the passed library file.
-     */
-    public Path resolve(LibraryFile libraryFile) {
-        checkNotNull(libraryFile);
-        return resolve(libraryFile.fileName());
-    }
+    protected abstract
+    String resolveImport(String line, Path generatedRoot, ExternalModules modules);
 }

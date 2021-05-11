@@ -24,47 +24,67 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.tools.dart.code;
+package io.spine.tools.dart.fs;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.flogger.FluentLogger;
-import io.spine.tools.fs.FileReference;
+import com.google.errorprone.annotations.Immutable;
 import io.spine.logging.Logging;
+import io.spine.tools.code.Element;
 import io.spine.tools.fs.ExternalModule;
+import io.spine.tools.fs.ExternalModules;
+import io.spine.tools.fs.FileReference;
 import org.checkerframework.checker.regex.qual.Regex;
 
 import java.nio.file.Path;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.String.format;
 import static java.util.regex.Pattern.compile;
 
 /**
- * A line of code in a Dart file.
+ * A source code line with an import statement.
  */
-final class SourceLine implements Logging {
+@Immutable
+final class ImportStatement implements Element, Logging {
 
     @Regex(2)
-    private static final Pattern IMPORT_PATTERN = compile("import [\"']([^:]+)[\"'] as (.+);");
+    private static final Pattern PATTERN = compile("import [\"']([^:]+)[\"'] as (.+);");
 
-    private final String line;
-    private final SourceFile file;
-    private final Matcher matcher;
+    private final Path sourceDirectory;
+    private final String text;
 
     /**
      * Creates a new instance with the passed value.
      *
      * @param file
      *         the file declaring the line
-     * @param line
-     *         the source code text in the line
+     * @param text
+     *         the text of the source code line with the import statement
      */
-    SourceLine(SourceFile file, String line) {
-        this.line = checkNotNull(line);
-        this.file = checkNotNull(file);
-        this.matcher = IMPORT_PATTERN.matcher(line);
+    ImportStatement(DartFile file, String text) {
+        this(file.directory(), text);
+    }
+
+    private ImportStatement(Path sourceDirectory, String text) {
+        this.sourceDirectory = sourceDirectory;
+        this.text = checkNotNull(text);
+        Matcher matcher = PATTERN.matcher(text);
+        checkArgument(
+                matcher.matches(),
+                "The passed text is not recognized as an import statement (`%s`).", text
+        );
+    }
+
+    /**
+     * Tells if the passed text is an import statement.
+     */
+    static boolean isDeclaredIn(String text) {
+        checkNotNull(text);
+        Matcher matcher = PATTERN.matcher(text);
+        return matcher.matches();
     }
 
     /**
@@ -85,18 +105,15 @@ final class SourceLine implements Logging {
      *         the modules of the project to check the file referenced in
      *         the {@code import} statement
      */
-    String resolveImport(Path libPath, ImmutableList<ExternalModule> modules) {
-        if (!matcher.matches()) {
-            return line;
-        }
+    public ImportStatement resolve(Path libPath, ExternalModules modules) {
         Path relativePath = importRelativeTo(libPath);
         FileReference reference = FileReference.of(relativePath);
-        for (ExternalModule module : modules) {
+        for (ExternalModule module : modules.asList()) {
             if (module.provides(reference)) {
-                return resolveImport(module, relativePath);
+                return resolve(module, relativePath);
             }
         }
-        return line;
+        return this;
     }
 
     /**
@@ -105,30 +122,36 @@ final class SourceLine implements Logging {
      */
     private Path importRelativeTo(Path libPath) {
         FluentLogger.Api debug = _debug();
-        debug.log("Import statement found in line: `%s`.", line);
-        String path = matcher.group(1);
-        Path absolutePath = file.path()
-                                .getParent()
-                                .resolve(path)
-                                .normalize();
+        debug.log("Import statement found in line: `%s`.", text);
+        String path = matcher().group(1);
+        Path absolutePath = sourceDirectory.resolve(path).normalize();
         debug.log("Resolved against this file: `%s`.", absolutePath);
         Path relativePath = libPath.relativize(absolutePath);
         debug.log("Relative path: `%s`.", relativePath);
         return relativePath;
     }
 
-    private String resolveImport(ExternalModule module, Path relativePath) {
-        String importStatement = format(
+    private ImportStatement resolve(ExternalModule module, Path relativePath) {
+        String resolved = format(
                 "import 'package:%s/%s' as %s;",
-                module.name(), relativePath, matcher.group(2)
+                module.name(), relativePath, matcher().group(2)
         );
-        _debug().log("Replacing with `%s`.", importStatement);
-        return importStatement;
+        _debug().log("Replacing with `%s`.", resolved);
+        return new ImportStatement(sourceDirectory, resolved);
+    }
+
+    private Matcher matcher() {
+        return PATTERN.matcher(text);
+    }
+
+    @Override
+    public String text() {
+        return text;
     }
 
     @Override
     public String toString() {
-        return line;
+        return text;
     }
 
     @Override
@@ -136,15 +159,15 @@ final class SourceLine implements Logging {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof ImportStatement)) {
             return false;
         }
-        SourceLine other = (SourceLine) o;
-        return line.equals(other.line) && file.equals(other.file);
+        ImportStatement other = (ImportStatement) o;
+        return text.equals(other.text) && sourceDirectory.equals(other.sourceDirectory);
     }
 
     @Override
     public int hashCode() {
-        return line.hashCode();
+        return text.hashCode();
     }
 }
