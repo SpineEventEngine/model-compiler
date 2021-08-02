@@ -24,17 +24,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-group = "io.spine.tools"
+@file:JvmName("Projects")
 
-dependencies {
-    implementation(project(":plugin-base"))
-    implementation(project(":testlib"))
-    implementation(gradleApi())
-    implementation(gradleTestKit())
-}
+package io.spine.tools.gradle
 
-//TODO:2021-07-22:alexander.yevsyukov: Turn to WARN and investigate duplicates.
-// see https://github.com/SpineEventEngine/base/issues/657
-val dupStrategy = DuplicatesStrategy.INCLUDE
-tasks.processTestResources.get().duplicatesStrategy = dupStrategy
-tasks.sourceJar.get().duplicatesStrategy = dupStrategy
+import org.gradle.api.Project
+import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.api.tasks.SourceSet
+import org.gradle.api.tasks.SourceSetContainer
+
+/**
+ * Obtains the Java plugin extension of the project.
+ */
+public fun Project.javaPluginExtension(): JavaPluginExtension =
+    extensions.getByType(JavaPluginExtension::class.java)
+
+/**
+ * Obtains source set container of the Java project.
+ */
+public fun Project.sourceSets(): SourceSetContainer = javaPluginExtension().sourceSets
+
+/**
+ * Obtains a source set by the passed scope.
+ */
+public fun Project.sourceSet(scope: SourceScope): SourceSet = sourceSets().getByName(scope.name)
+
+/**
+ * Obtains a source set by the passed scope name.
+ */
+public fun Project.sourceSet(scope: String): SourceSet = sourceSets().getByName(scope)
