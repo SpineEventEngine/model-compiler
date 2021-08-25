@@ -27,44 +27,25 @@
 package io.spine.tools.fs;
 
 import com.google.errorprone.annotations.Immutable;
-import io.spine.code.fs.AbstractDirectory;
 
-import java.io.File;
-import java.nio.file.Path;
-
-import static io.spine.tools.fs.DirectoryName.dotSpine;
+import static io.spine.tools.fs.DirectoryName.main;
+import static io.spine.tools.fs.DirectoryName.test;
 
 /**
- * This class represents a default directory structure for a Spine-based project of any language.
- *
- * <p>The descendants of the class contain the language-specific project structures.
- *
- * <p>The {@code DefaultProject} helps resolving names of the directories and files under the
- * project directory. It is expected that for most projects, the default values of paths remain
- * unchanged.
+ * A root source code directory in a project or a module.
  */
 @Immutable
-@SuppressWarnings("AbstractClassWithoutAbstractMethods")
-// Only stores common elements of subclasses.
-public abstract class DefaultPaths extends AbstractDirectory {
+public class SourceRoot extends SourceDir {
 
-    protected DefaultPaths(Path path) {
-        super(path);
+    protected SourceRoot(DefaultPaths parent, String name) {
+        super(parent, name);
     }
 
-    public BuildRoot buildRoot() {
-        return BuildRoot.of(this);
+    protected SourceDir getMain() {
+        return new SourceDir(this, main.value());
     }
 
-    /**
-     * Obtains the directory for temporary Spine build artifacts.
-     *
-     * <p>Spine Gradle tasks may write some temporary files into this directory.
-     *
-     * <p>The directory is deleted on {@code :pre-clean"}.
-     */
-    public File tempArtifacts() {
-        File result = new File(path().toFile(), dotSpine.value());
-        return result;
+    protected SourceDir getTest() {
+        return new SourceDir(this, test.value());
     }
 }

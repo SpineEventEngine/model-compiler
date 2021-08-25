@@ -29,42 +29,32 @@ package io.spine.tools.fs;
 import com.google.errorprone.annotations.Immutable;
 import io.spine.code.fs.AbstractDirectory;
 
-import java.io.File;
-import java.nio.file.Path;
-
-import static io.spine.tools.fs.DirectoryName.dotSpine;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static io.spine.tools.fs.DirectoryName.build;
 
 /**
- * This class represents a default directory structure for a Spine-based project of any language.
- *
- * <p>The descendants of the class contain the language-specific project structures.
- *
- * <p>The {@code DefaultProject} helps resolving names of the directories and files under the
- * project directory. It is expected that for most projects, the default values of paths remain
- * unchanged.
+ * The root directory for build output.
  */
 @Immutable
-@SuppressWarnings("AbstractClassWithoutAbstractMethods")
-// Only stores common elements of subclasses.
-public abstract class DefaultPaths extends AbstractDirectory {
+public final class BuildRoot extends AbstractDirectory {
 
-    protected DefaultPaths(Path path) {
-        super(path);
-    }
-
-    public BuildRoot buildRoot() {
-        return BuildRoot.of(this);
+    private BuildRoot(DefaultPaths module) {
+        super(module.path()
+                    .resolve(build.value()));
     }
 
     /**
-     * Obtains the directory for temporary Spine build artifacts.
-     *
-     * <p>Spine Gradle tasks may write some temporary files into this directory.
-     *
-     * <p>The directory is deleted on {@code :pre-clean"}.
+     * Creates an instance under the specified project root directory.
      */
-    public File tempArtifacts() {
-        File result = new File(path().toFile(), dotSpine.value());
-        return result;
+    static BuildRoot of(DefaultPaths project) {
+        checkNotNull(project);
+        return new BuildRoot(project);
+    }
+
+    /**
+     * Obtains the instance referencing the {@code build/descriptors} directory.
+     */
+    public DescriptorsDir descriptors() {
+        return new DescriptorsDir(this);
     }
 }

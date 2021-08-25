@@ -24,47 +24,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.tools.fs;
+package io.spine.tools.java.fs;
 
 import com.google.errorprone.annotations.Immutable;
-import io.spine.code.fs.AbstractDirectory;
-
-import java.io.File;
-import java.nio.file.Path;
-
-import static io.spine.tools.fs.DirectoryName.dotSpine;
+import io.spine.tools.fs.DefaultPaths;
 
 /**
- * This class represents a default directory structure for a Spine-based project of any language.
+ * A root source code directory for manually written code.
  *
- * <p>The descendants of the class contain the language-specific project structures.
- *
- * <p>The {@code DefaultProject} helps resolving names of the directories and files under the
- * project directory. It is expected that for most projects, the default values of paths remain
- * unchanged.
+ * <p>Adds a root directory for the proto code in addition to those exposed
+ * by {@code DefaultProject.SourceRoot}.
  */
 @Immutable
-@SuppressWarnings("AbstractClassWithoutAbstractMethods")
-// Only stores common elements of subclasses.
-public abstract class DefaultPaths extends AbstractDirectory {
+public class HandmadeCodeRoot extends JavaCodeRoot {
 
-    protected DefaultPaths(Path path) {
-        super(path);
-    }
-
-    public BuildRoot buildRoot() {
-        return BuildRoot.of(this);
+    HandmadeCodeRoot(DefaultPaths parent, String name) {
+        super(parent, name);
     }
 
     /**
-     * Obtains the directory for temporary Spine build artifacts.
-     *
-     * <p>Spine Gradle tasks may write some temporary files into this directory.
-     *
-     * <p>The directory is deleted on {@code :pre-clean"}.
+     * A root for the main proto code.
      */
-    public File tempArtifacts() {
-        File result = new File(path().toFile(), dotSpine.value());
-        return result;
+    public io.spine.tools.proto.fs.Directory mainProto() {
+        return io.spine.tools.proto.fs.Directory.rootIn(getMain());
+    }
+
+    /**
+     * A root for the test proto code.
+     */
+    public io.spine.tools.proto.fs.Directory testProto() {
+        return io.spine.tools.proto.fs.Directory.rootIn(getTest());
     }
 }

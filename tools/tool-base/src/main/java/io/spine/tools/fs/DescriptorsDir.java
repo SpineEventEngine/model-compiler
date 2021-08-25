@@ -29,42 +29,37 @@ package io.spine.tools.fs;
 import com.google.errorprone.annotations.Immutable;
 import io.spine.code.fs.AbstractDirectory;
 
-import java.io.File;
 import java.nio.file.Path;
 
-import static io.spine.tools.fs.DirectoryName.dotSpine;
+import static io.spine.tools.fs.DirectoryName.descriptors;
+import static io.spine.tools.fs.DirectoryName.main;
+import static io.spine.tools.fs.DirectoryName.test;
 
 /**
- * This class represents a default directory structure for a Spine-based project of any language.
- *
- * <p>The descendants of the class contain the language-specific project structures.
- *
- * <p>The {@code DefaultProject} helps resolving names of the directories and files under the
- * project directory. It is expected that for most projects, the default values of paths remain
- * unchanged.
+ * A directory with descriptor files.
  */
 @Immutable
-@SuppressWarnings("AbstractClassWithoutAbstractMethods")
-// Only stores common elements of subclasses.
-public abstract class DefaultPaths extends AbstractDirectory {
+public final class DescriptorsDir extends AbstractDirectory {
 
-    protected DefaultPaths(Path path) {
-        super(path);
+    private DescriptorsDir(BuildRoot parent, String name) {
+        super(parent.path().resolve(name));
     }
 
-    public BuildRoot buildRoot() {
-        return BuildRoot.of(this);
+    DescriptorsDir(BuildRoot parent) {
+        this(parent, descriptors.value());
     }
 
     /**
-     * Obtains the directory for temporary Spine build artifacts.
-     *
-     * <p>Spine Gradle tasks may write some temporary files into this directory.
-     *
-     * <p>The directory is deleted on {@code :pre-clean"}.
+     * Obtains the path to the sub-directory under the {@code main}.
      */
-    public File tempArtifacts() {
-        File result = new File(path().toFile(), dotSpine.value());
-        return result;
+    public Path mainDescriptors() {
+        return path().resolve(main.value());
+    }
+
+    /**
+     * Obtains the path to the sub-directory under the {@code test}.
+     */
+    public Path testDescriptors() {
+        return path().resolve(test.value());
     }
 }
