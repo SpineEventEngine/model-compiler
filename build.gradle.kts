@@ -41,6 +41,8 @@ import io.spine.internal.gradle.forceVersions
 import io.spine.internal.gradle.spinePublishing
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+repositories.applyStandard()
+
 plugins {
     `java-library`
     idea
@@ -55,11 +57,18 @@ plugins {
 
 spinePublishing {
     projectsToPublish.addAll(
+        ":mc",
+        ":tool-base",
+        ":plugin-base",
+        ":plugin-testlib"
     )
     targetRepositories.addAll(
         PublishingRepos.cloudRepo,
         PublishingRepos.cloudArtifactRegistry
     )
+    // Skip the `spine-` part of the artifact name to avoid collisions with the currently "live"
+    // versions.
+    spinePrefix.set(false)
 }
 
 allprojects {
@@ -67,7 +76,7 @@ allprojects {
         plugin("jacoco")
         plugin("idea")
         plugin("project-report")
-        apply(from = "$rootDir/version.gradle.kts")
+        from("$rootDir/version.gradle.kts")
     }
 
     group = "io.spine.tools"
@@ -118,6 +127,10 @@ subprojects {
         targetCompatibility = javaVersion
     }
 
+    kotlin {
+        explicitApi()
+    }
+
     tasks.withType<KotlinCompile>().configureEach {
         kotlinOptions {
             jvmTarget = javaVersion.toString()
@@ -139,13 +152,14 @@ subprojects {
 }
 
 apply {
-
-    // Aggregated coverage report across all subprojects.
-    from(Scripts.jacoco(project))
-
     // Generate a repository-wide report of 3rd-party dependencies and their licenses.
     from(Scripts.repoLicenseReport(project))
 
     // Generate a `pom.xml` file containing first-level dependency of all projects in the repository.
     from(Scripts.generatePom(project))
+}
+
+afterEvaluate {
+    // Aggregated coverage report across all subprojects.
+    apply(from = Scripts.jacoco(project))
 }
