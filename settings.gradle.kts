@@ -25,3 +25,10 @@
  */
 
 rootProject.name = "model-compiler"
+
+include(
+    "tool-base",
+    "plugin-base",
+    "mc",
+    "plugin-testlib"
+)
