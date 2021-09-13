@@ -53,11 +53,6 @@ plugins {
     kotlin("jvm") version io.spine.internal.dependency.Kotlin.version
 }
 
-apply(from = "version.gradle.kts")
-val spineCoreVersion: String by extra
-val spineBaseVersion: String by extra
-val spineTimeVersion: String by extra
-
 spinePublishing {
     projectsToPublish.addAll(
     )
@@ -75,7 +70,7 @@ allprojects {
         apply(from = "$rootDir/version.gradle.kts")
     }
 
-    group = "io.spine.codegen"
+    group = "io.spine.tools"
     version = extra["versionToPublish"]!!
 }
 
@@ -93,16 +88,6 @@ subprojects {
         from(Scripts.javadocOptions(project))
 
         from(Scripts.testArtifacts(project))
-    }
-
-    val isTravis = System.getenv("TRAVIS") == "true"
-    if (isTravis) {
-        tasks.javadoc {
-            val opt = options
-            if (opt is CoreJavadocOptions) {
-                opt.addStringOption("Xmaxwarns", "1")
-            }
-        }
     }
 
     repositories.applyStandard()
@@ -150,23 +135,6 @@ subprojects {
         from(Scripts.slowTests(project))
         from(Scripts.testOutput(project))
         from(Scripts.javadocOptions(project))
-    }
-
-    tasks.register("sourceJar", Jar::class) {
-        from(sourceSets.main.get().allJava)
-        archiveClassifier.set("sources")
-    }
-
-    tasks.register("testOutputJar", Jar::class) {
-        from(sourceSets.test.get().output)
-        archiveClassifier.set("test")
-    }
-
-    tasks.register("javadocJar", Jar::class) {
-        from("$projectDir/build/docs/javadoc")
-        archiveClassifier.set("javadoc")
-
-        dependsOn(tasks.javadoc)
     }
 }
 
