@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, TeamDev. All rights reserved.
+ * Copyright 2021, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,4 +24,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-rootProject.name = "model-compiler"
+package io.spine.internal.dependency
+
+// https://github.com/protocolbuffers/protobuf
+@Suppress("MemberVisibilityCanBePrivate") // used directly from outside
+object Protobuf {
+    const val version    = "3.17.3"
+    val libs = listOf(
+        "com.google.protobuf:protobuf-java:${version}",
+        "com.google.protobuf:protobuf-java-util:${version}"
+    )
+    const val compiler = "com.google.protobuf:protoc:${version}"
+
+    // https://github.com/google/protobuf-gradle-plugin/releases
+    object GradlePlugin {
+        const val version = "0.8.17"
+        const val id = "com.google.protobuf"
+        const val lib = "com.google.protobuf:protobuf-gradle-plugin:${version}"
+    }
+}

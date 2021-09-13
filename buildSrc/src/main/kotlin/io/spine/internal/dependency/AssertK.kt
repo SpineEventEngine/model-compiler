@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, TeamDev. All rights reserved.
+ * Copyright 2021, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,4 +24,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-rootProject.name = "model-compiler"
+package io.spine.internal.dependency
+
+/**
+ * Assertion library for tests in Kotlin
+ *
+ * [AssertK](https://github.com/willowtreeapps/assertk)
+ */
+object AssertK {
+    private const val version = "0.23.1"
+    const val libJvm = "com.willowtreeapps.assertk:assertk-jvm:${version}"
+}

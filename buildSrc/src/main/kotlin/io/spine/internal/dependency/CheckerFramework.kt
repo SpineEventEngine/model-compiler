@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, TeamDev. All rights reserved.
+ * Copyright 2021, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,4 +24,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-rootProject.name = "model-compiler"
+package io.spine.internal.dependency
+
+// https://checkerframework.org/
+object CheckerFramework {
+    private const val version = "3.12.0"
+    const val annotations = "org.checkerframework:checker-qual:${version}"
+    @Suppress("unused")
+    val dataflow = listOf(
+        "org.checkerframework:dataflow:${version}",
+        "org.checkerframework:javacutil:${version}"
+    )
+    /**
+     * This is discontinued artifact, which we do not use directly.
+     * This is a transitive dependency for us, which we force in
+     * [DependencyResolution.forceConfiguration]
+     */
+    const val compatQual = "org.checkerframework:checker-compat-qual:2.5.5"
+}

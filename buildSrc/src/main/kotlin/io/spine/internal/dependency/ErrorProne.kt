@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, TeamDev. All rights reserved.
+ * Copyright 2021, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,4 +24,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-rootProject.name = "model-compiler"
+package io.spine.internal.dependency
+
+// https://errorprone.info/
+@Suppress("unused")
+object ErrorProne {
+    // https://github.com/google/error-prone
+    private const val version = "2.8.0"
+    // https://github.com/tbroyer/gradle-errorprone-plugin/blob/v0.8/build.gradle.kts
+    private const val javacPluginVersion = "9+181-r4173-1"
+
+    val annotations = listOf(
+        "com.google.errorprone:error_prone_annotations:${version}",
+        "com.google.errorprone:error_prone_type_annotations:${version}"
+    )
+    const val core = "com.google.errorprone:error_prone_core:${version}"
+    const val checkApi = "com.google.errorprone:error_prone_check_api:${version}"
+    const val testHelpers = "com.google.errorprone:error_prone_test_helpers:${version}"
+    const val javacPlugin  = "com.google.errorprone:javac:${javacPluginVersion}"
+
+    // https://github.com/tbroyer/gradle-errorprone-plugin/releases
+    object GradlePlugin {
+        const val id = "net.ltgt.errorprone"
+        const val version = "2.0.2"
+        const val lib = "net.ltgt.gradle:gradle-errorprone-plugin:${version}"
+    }
+}

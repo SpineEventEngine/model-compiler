@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, TeamDev. All rights reserved.
+ * Copyright 2021, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,4 +24,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-rootProject.name = "model-compiler"
+package io.spine.internal.dependency
+
+/**
+ * A Java implementation of JSON Web Token (JWT) - RFC 7519.
+ *
+ * [Java JWT](https://github.com/auth0/java-jwt)
+ */
+object JavaJwt {
+    private const val version = "3.14.0"
+    const val lib = "com.auth0:java-jwt:${version}"
+}

@@ -26,38 +26,31 @@
 
 @file:Suppress("RemoveRedundantQualifierName") // To prevent IDEA replacing FQN imports.
 
-import io.spine.gradle.internal.DependencyResolution
-import io.spine.gradle.internal.Deps
-import io.spine.gradle.internal.PublishingRepos
-
-buildscript {
-    apply(from = "version.gradle.kts")
-    apply(from = "$rootDir/config/gradle/dependencies.gradle")
-
-    val dependencyResolution = io.spine.gradle.internal.DependencyResolution
-
-    val spineBaseVersion: String by extra
-    val spineTimeVersion: String by extra
-
-    dependencyResolution.defaultRepositories(repositories)
-    dependencyResolution.forceConfiguration(configurations)
-
-    configurations.all {
-        resolutionStrategy {
-            force(
-                    "io.spine:spine-base:$spineBaseVersion",
-                    "io.spine:spine-time:$spineTimeVersion"
-            )
-        }
-    }
-}
+import io.spine.internal.dependency.CheckerFramework
+import io.spine.internal.dependency.ErrorProne
+import io.spine.internal.dependency.FindBugs
+import io.spine.internal.dependency.Guava
+import io.spine.internal.dependency.JUnit
+import io.spine.internal.dependency.Protobuf
+import io.spine.internal.dependency.Truth
+import io.spine.internal.gradle.PublishingRepos
+import io.spine.internal.gradle.Scripts
+import io.spine.internal.gradle.applyStandard
+import io.spine.internal.gradle.excludeProtobufLite
+import io.spine.internal.gradle.forceVersions
+import io.spine.internal.gradle.spinePublishing
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     `java-library`
     idea
-    id("com.google.protobuf").version(io.spine.gradle.internal.Deps.versions.protobufPlugin)
-    id("net.ltgt.errorprone").version(io.spine.gradle.internal.Deps.versions.errorPronePlugin)
-    id("io.spine.tools.gradle.bootstrap") version "1.7.0" apply false
+    io.spine.internal.dependency.Protobuf.GradlePlugin.apply {
+        id(id).version(version)
+    }
+    io.spine.internal.dependency.ErrorProne.GradlePlugin.apply {
+        id(id).version(version)
+    }
+    kotlin("jvm") version io.spine.internal.dependency.Kotlin.version
 }
 
 apply(from = "version.gradle.kts")
@@ -65,11 +58,14 @@ val spineCoreVersion: String by extra
 val spineBaseVersion: String by extra
 val spineTimeVersion: String by extra
 
-extra["projectsToPublish"] = listOf(
-        "template-client",
-        "template-server"
-)
-extra["credentialsPropertyFile"] = PublishingRepos.cloudRepo.credentials
+spinePublishing {
+    projectsToPublish.addAll(
+    )
+    targetRepositories.addAll(
+        PublishingRepos.cloudRepo,
+        PublishingRepos.cloudArtifactRegistry
+    )
+}
 
 allprojects {
     apply {
@@ -79,24 +75,24 @@ allprojects {
         apply(from = "$rootDir/version.gradle.kts")
     }
 
-    group = "io.spine.template"
+    group = "io.spine.codegen"
     version = extra["versionToPublish"]!!
 }
 
 subprojects {
     apply {
         plugin("java-library")
+        plugin("kotlin")
         plugin("net.ltgt.errorprone")
-        plugin("pmd")
-        plugin("io.spine.tools.gradle.bootstrap")
+        plugin("pmd-settings")
+        plugin(Protobuf.GradlePlugin.id)
 
-        from(Deps.scripts.javacArgs(project))
-        from(Deps.scripts.pmd(project))
-        from(Deps.scripts.projectLicenseReport(project))
-        from(Deps.scripts.testOutput(project))
-        from(Deps.scripts.javadocOptions(project))
+        from(Scripts.javacArgs(project))
+        from(Scripts.projectLicenseReport(project))
+        from(Scripts.testOutput(project))
+        from(Scripts.javadocOptions(project))
 
-        from(Deps.scripts.testArtifacts(project))
+        from(Scripts.testArtifacts(project))
     }
 
     val isTravis = System.getenv("TRAVIS") == "true"
@@ -109,44 +105,40 @@ subprojects {
         }
     }
 
-    java {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-
-    DependencyResolution.defaultRepositories(repositories)
+    repositories.applyStandard()
 
     dependencies {
-        errorprone(Deps.build.errorProneCore)
-        errorproneJavac(Deps.build.errorProneJavac)
+        errorprone(ErrorProne.core)
+        errorproneJavac(ErrorProne.javacPlugin)
 
-        implementation(Deps.build.guava)
-        compileOnlyApi(Deps.build.jsr305Annotations)
-        compileOnlyApi(Deps.build.checkerAnnotations)
-        Deps.build.errorProneAnnotations.forEach { compileOnlyApi(it) }
+        compileOnlyApi(FindBugs.annotations)
+        compileOnlyApi(CheckerFramework.annotations)
+        ErrorProne.annotations.forEach { compileOnlyApi(it) }
 
-        testImplementation(Deps.test.guavaTestlib)
-        Deps.test.junit5Api.forEach { testImplementation(it) }
-        Deps.test.truth.forEach { testImplementation(it) }
-        testImplementation("io.spine.tools:spine-mute-logging:$spineBaseVersion")
+        implementation(Guava.lib)
 
-        testRuntimeOnly(Deps.test.junit5Runner)
+        testImplementation(Guava.testLib)
+        JUnit.api.forEach { testImplementation(it) }
+        Truth.libs.forEach { testImplementation(it) }
+        testRuntimeOnly(JUnit.runner)
     }
 
-    DependencyResolution.forceConfiguration(configurations)
-    configurations {
-        all {
-            resolutionStrategy {
-                force(
-                        "io.spine:spine-base:$spineBaseVersion",
-                        "io.spine:spine-testlib:$spineBaseVersion",
-                        "io.spine:spine-base:$spineBaseVersion",
-                        "io.spine:spine-time:$spineTimeVersion"
-                )
-            }
+    configurations.forceVersions()
+    configurations.excludeProtobufLite()
+
+    val javaVersion = JavaVersion.VERSION_1_8
+
+    java {
+        sourceCompatibility = javaVersion
+        targetCompatibility = javaVersion
+    }
+
+    tasks.withType<KotlinCompile>().configureEach {
+        kotlinOptions {
+            jvmTarget = javaVersion.toString()
+            freeCompilerArgs = listOf("-Xskip-prerelease-check", "-Xjvm-default=all")
         }
     }
-    DependencyResolution.excludeProtobufLite(configurations)
 
     tasks.test {
         useJUnitPlatform {
@@ -155,9 +147,9 @@ subprojects {
     }
 
     apply {
-        from(Deps.scripts.slowTests(project))
-        from(Deps.scripts.testOutput(project))
-        from(Deps.scripts.javadocOptions(project))
+        from(Scripts.slowTests(project))
+        from(Scripts.testOutput(project))
+        from(Scripts.javadocOptions(project))
     }
 
     tasks.register("sourceJar", Jar::class) {
@@ -179,14 +171,13 @@ subprojects {
 }
 
 apply {
-    from(Deps.scripts.publish(project))
 
     // Aggregated coverage report across all subprojects.
-    from(Deps.scripts.jacoco(project))
+    from(Scripts.jacoco(project))
 
     // Generate a repository-wide report of 3rd-party dependencies and their licenses.
-    from(Deps.scripts.repoLicenseReport(project))
+    from(Scripts.repoLicenseReport(project))
 
     // Generate a `pom.xml` file containing first-level dependency of all projects in the repository.
-    from(Deps.scripts.generatePom(project))
+    from(Scripts.generatePom(project))
 }

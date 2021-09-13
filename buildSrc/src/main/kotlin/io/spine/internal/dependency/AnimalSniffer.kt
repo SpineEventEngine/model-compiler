@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, TeamDev. All rights reserved.
+ * Copyright 2021, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,4 +24,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-rootProject.name = "model-compiler"
+package io.spine.internal.dependency
+
+// https://www.mojohaus.org/animal-sniffer/animal-sniffer-maven-plugin/
+object AnimalSniffer {
+    private const val version = "1.19"
+    const val lib = "org.codehaus.mojo:animal-sniffer-annotations:${version}"
+}

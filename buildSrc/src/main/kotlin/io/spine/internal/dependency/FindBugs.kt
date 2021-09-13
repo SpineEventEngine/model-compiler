@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, TeamDev. All rights reserved.
+ * Copyright 2021, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,4 +24,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-rootProject.name = "model-compiler"
+package io.spine.internal.dependency
+
+/**
+ * The FindBugs project is dead since 2017. It has a successor called SpotBugs, but we don't use it.
+ * We use ErrorProne for static analysis instead. The only reason for having this dependency is
+ * the annotations for null-checking introduced by JSR-305. These annotations are troublesome,
+ * but no alternatives are known for some of them so far.  Please see
+ * [this issue](https://github.com/SpineEventEngine/base/issues/108) for more details.
+ */
+object FindBugs {
+    private const val version = "3.0.2"
+    const val annotations = "com.google.code.findbugs:jsr305:${version}"
+}
