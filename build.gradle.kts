@@ -26,6 +26,8 @@
 
 @file:Suppress("RemoveRedundantQualifierName") // To prevent IDEA replacing FQN imports.
 
+import com.google.protobuf.gradle.protobuf
+import com.google.protobuf.gradle.protoc
 import io.spine.internal.dependency.CheckerFramework
 import io.spine.internal.dependency.ErrorProne
 import io.spine.internal.dependency.FindBugs
@@ -142,6 +144,19 @@ subprojects {
         useJUnitPlatform {
             includeEngines("junit-jupiter")
         }
+    }
+
+    val generatedDir = "$projectDir/generated"
+
+    protobuf {
+        generatedFilesBaseDir = generatedDir
+        protoc {
+            artifact = Protobuf.compiler
+        }
+    }
+
+    tasks.clean {
+        delete(generatedDir)
     }
 
     apply {
