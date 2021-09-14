@@ -2,5 +2,14 @@
 
 This module provides the common base for language-specific build-time tools for Spine.
 
-At this stage, the files for the modules under `tools` are copied from `base` as is. Later, we're
-going to restructure the structure with accordance to needs of this project.
+## Structure
+
+`tool-base` provides common components for building build-time tools, including file manipulations,
+Protobuf reflection, simple code generation, etc.
+
+`plugin-base` provides abstractions for building Gradle plugins.
+
+`plugin-testlib` provides test fixtures for Gradle plugins.
+
+`mc` is the base Model Compiler Gradle plugin, which constitutes the shared language-agnostic parts
+of the "Greater" Model Compiler
