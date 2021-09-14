@@ -32,52 +32,41 @@ import io.spine.tools.gradle.defaultTestDescriptors
 import io.spine.tools.mc.gradle.McExtension.Companion.name
 import java.io.File
 import org.gradle.api.Project
-import org.gradle.api.file.Directory
 import org.gradle.api.file.RegularFileProperty
 
 /**
  * Extends a Gradle project with the [`modelCompiler`][name] block.
  */
-class McExtension private constructor(private val project: Project) {
+abstract class McExtension {
 
     /**
      * The absolute path to the main Protobuf descriptor set file.
      *
      * The file must have the `.desc` extension.
      */
-    val mainDescriptorSetFile: RegularFileProperty
+    abstract val mainDescriptorSetFile: RegularFileProperty
 
     /**
      * The absolute path to the test Protobuf descriptor set file.
      *
      * The file must have the `.desc` extension.
      */
-    val testDescriptorSetFile: RegularFileProperty
-
-    init {
-        val projectDir: Directory = project.layout.projectDirectory
-        val file = { f: File -> projectDir.file(f.toString()) }
-        val of = project.objects
-
-        mainDescriptorSetFile = of.fileProperty()
-            .convention(file(project.defaultMainDescriptors))
-
-        testDescriptorSetFile = of.fileProperty()
-            .convention(file(project.defaultTestDescriptors))
-    }
-
-    private fun register() {
-        project.extensions.add(javaClass, name, this)
-    }
+    abstract val testDescriptorSetFile: RegularFileProperty
 
     companion object : Logging {
 
         const val name = "modelCompiler2"
 
-        fun createIn(project: Project) {
-            _debug().log("Adding the `$name` extension to the project `$project`.")
-            val extension = McExtension(project)
-            extension.register()
+        fun createIn(p: Project): Unit = with(p) {
+            _debug().log("Adding the `$name` extension to the project `$p`.")
+            val extension = extensions.create(name, McExtension::class.java)
+            extension.mainDescriptorSetFile
+                .convention(regularFile(defaultMainDescriptors))
+            extension.testDescriptorSetFile
+                .convention(regularFile(defaultTestDescriptors))
         }
+
+        private fun Project.regularFile(file: File) =
+            layout.projectDirectory.file(file.toString())
     }
 }
