@@ -1,6 +1,6 @@
 # Spine Model Compiler
 
-This module provides the common base for language-specific build-time tools for Spine.
+This repository provides the common base for language-specific build-time tools for Spine.
 
 ## Structure
 
