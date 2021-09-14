@@ -13,3 +13,8 @@ Protobuf reflection, simple code generation, etc.
 
 `mc` is the base Model Compiler Gradle plugin, which constitutes the shared language-agnostic parts
 of the "Greater" Model Compiler
+
+## Related repositories
+
+See [SpineEventEngine/mc-java](https://github.com/SpineEventEngine/mc-java) for the Java-specific
+tools.
