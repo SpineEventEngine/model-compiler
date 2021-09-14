@@ -136,7 +136,11 @@ subprojects {
     tasks.withType<KotlinCompile>().configureEach {
         kotlinOptions {
             jvmTarget = javaVersion.toString()
-            freeCompilerArgs = listOf("-Xskip-prerelease-check", "-Xjvm-default=all")
+            freeCompilerArgs = listOf(
+                "-Xskip-prerelease-check",
+                "-Xjvm-default=all",
+                "-Xopt-in=kotlin.contracts.ExperimentalContracts"
+            )
         }
     }
 
