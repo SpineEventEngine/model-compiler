@@ -84,7 +84,7 @@ abstract class McExtension {
      * Configure Model Compiler specifically for the given target language, e.g. Java, JavaScript,
      * Dart, etc.
      *
-     * When using this API from Kotlin, consider a Kotlin-specific overload (a inlined method with
+     * When using this API from Kotlin, consider a Kotlin-specific overload (an inlined method with
      * a reified type parameter).
      */
     @Suppress("UNCHECKED_CAST")
