@@ -1,5 +1,3 @@
-import io.spine.internal.dependency.Spine
-
 /*
  * Copyright 2021, TeamDev. All rights reserved.
  *
@@ -26,11 +24,23 @@ import io.spine.internal.dependency.Spine
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-val spineVersion: String by extra
+package io.spine.internal.dependency
 
-dependencies {
-    implementation(project(":plugin-base"))
-    implementation(Spine(project).testlib)
-    implementation(gradleApi())
-    implementation(gradleTestKit())
+import org.gradle.api.Project
+import org.gradle.kotlin.dsl.extra
+
+/**
+ * Dependencies on Spine `base` modules.
+ *
+ * @constructor
+ * Creates a new instance of `Spine` taking the `spineVersion` from the given project's
+ * extra properties.
+ */
+class Spine(p: Project) {
+
+    val base = "io.spine:spine-base:${p.spineVersion}"
+    val testlib = "io.spine.tools:spine-testlib:${p.spineVersion}"
+
+    private val Project.spineVersion: String
+        get() = extra["spineVersion"] as String
 }

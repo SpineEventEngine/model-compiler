@@ -25,14 +25,15 @@
  */
 
 import io.spine.internal.dependency.Protobuf
+import io.spine.internal.dependency.Spine
 
 val spineVersion: String by extra
 
 dependencies {
     api(project(":plugin-base"))
 
+    testImplementation(project(":plugin-testlib"))
     implementation(Protobuf.GradlePlugin.lib)
-    testImplementation("io.spine.tools:spine-testlib:$spineVersion")
+    testImplementation(Spine(project).testlib)
     testImplementation(gradleTestKit())
-    testImplementation("io.spine.tools:spine-plugin-testlib:$spineVersion")
 }
