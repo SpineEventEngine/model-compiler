@@ -69,7 +69,7 @@ spinePublishing {
         PublishingRepos.cloudArtifactRegistry
     )
     // Skip the `spine-` part of the artifact name to avoid collisions with the currently "live"
-    // versions.
+    // versions. See https://github.com/SpineEventEngine/model-compiler/issues/3
     spinePrefix.set(false)
 }
 
