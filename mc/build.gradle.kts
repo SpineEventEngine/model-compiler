@@ -26,8 +26,6 @@
 
 import io.spine.internal.dependency.Protobuf
 
-group = "io.spine.tools"
-
 val spineVersion: String by extra
 
 dependencies {
