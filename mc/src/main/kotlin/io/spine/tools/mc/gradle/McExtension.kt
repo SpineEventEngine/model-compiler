@@ -104,7 +104,7 @@ abstract class McExtension {
     /**
      * Obtains the Model Compiler configuration specific for a certain target language.
      *
-     * Returns `null` if the Model Compiler hasn't been configured fot the given language.
+     * Returns `null` if the Model Compiler hasn't been configured for the given language.
      */
     @Suppress("UNCHECKED_CAST")
     fun <T : LanguageSpecificExtension> languageConfig(cls: Class<T>): T? {
