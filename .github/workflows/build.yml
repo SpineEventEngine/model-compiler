@@ -11,7 +11,7 @@ jobs:
         with:
           java-version: 8
           distribution: zulu
-          cache: gradle
+#          cache: gradle
       - run: git submodule update --init --recursive
       - name: Build project and run tests
         run: ./gradlew build --stacktrace
