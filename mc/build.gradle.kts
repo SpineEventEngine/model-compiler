@@ -27,8 +27,6 @@
 import io.spine.internal.dependency.Protobuf
 import io.spine.internal.dependency.Spine
 
-val spineVersion: String by extra
-
 dependencies {
     api(project(":plugin-base"))
 
