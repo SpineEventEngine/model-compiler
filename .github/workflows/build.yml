@@ -10,6 +10,7 @@ jobs:
       - uses: actions/setup-java@v2
         with:
           java-version: 1.8
+          distribution: 'zulu'
           cache: gradle
       - run: git submodule update --init --recursive
       - name: Build project and run tests
