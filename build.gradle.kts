@@ -178,6 +178,10 @@ apply {
     from(Scripts.generatePom(project))
 }
 
+// The JaCoCo config script uses `evaluationDependsOnChildren()` to scan subprojects to find all
+// the Java projects. Such an evaluation-time dependency, in some cases, causes Gradle to fail.
+// When applying the JaCoCo script after the evaluation is done, the error goes away.
+// See this Gradle discussion for the description of the issue: https://discuss.gradle.org/t/gradle-7-fails-with-cannot-run-project-afterevaluate-action-when-the-project-is-already-evaluated/40296
 afterEvaluate {
     // Aggregated coverage report across all subprojects.
     apply(from = Scripts.jacoco(project))
