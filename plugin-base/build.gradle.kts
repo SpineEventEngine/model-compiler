@@ -27,11 +27,11 @@
 import com.google.common.io.Files
 import com.google.protobuf.gradle.generateProtoTasks
 import com.google.protobuf.gradle.protobuf
+import io.spine.gradle.internal.IncrementGuard
 import io.spine.internal.dependency.Grpc
 import io.spine.internal.dependency.Protobuf
+import io.spine.internal.dependency.Spine
 import java.util.*
-
-group = "io.spine.tools"
 
 kotlin { explicitApi() }
 
@@ -40,8 +40,8 @@ dependencies {
     api(Protobuf.GradlePlugin.lib)
     api(project(":tool-base"))
 
-    testImplementation(project(":testlib"))
     testImplementation(project(":plugin-testlib"))
+    testImplementation(Spine(project).testlib)
 }
 
 protobuf {
@@ -80,12 +80,4 @@ val prepareProtocConfigVersions by tasks.registering {
 
 tasks.processResources.get().dependsOn(prepareProtocConfigVersions)
 
-//TODO:2021-07-22:alexander.yevsyukov: Turn to WARN and investigate duplicates.
-// see https://github.com/SpineEventEngine/base/issues/657
-val dupStrategy = DuplicatesStrategy.INCLUDE
-tasks.processTestResources.get().duplicatesStrategy = dupStrategy
-tasks.sourceJar.get().duplicatesStrategy = dupStrategy
-
-sourceSets.test {
-    resources.srcDir("$projectDir/src/test/resources")
-}
+apply<IncrementGuard>()

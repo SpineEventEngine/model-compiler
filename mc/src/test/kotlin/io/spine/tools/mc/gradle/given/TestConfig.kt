@@ -24,20 +24,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.internal.dependency.Protobuf
+package io.spine.tools.mc.gradle.given
 
-group = "io.spine.tools"
+import io.spine.tools.mc.gradle.LanguageSpecificExtension
+import javax.inject.Inject
 
-dependencies {
-    api(project(":plugin-base"))
+open class TestConfig @Inject constructor() : LanguageSpecificExtension {
 
-    implementation(Protobuf.GradlePlugin.lib)
-    testImplementation(project(":testlib"))
-    testImplementation(gradleTestKit())
-    testImplementation(project(":plugin-testlib"))
+    var payload: String = ""
 }
-
-//TODO:2021-07-22:alexander.yevsyukov: Turn to WARN and investigate duplicates.
-// see https://github.com/SpineEventEngine/base/issues/657
-val dupStrategy = DuplicatesStrategy.INCLUDE
-tasks.processResources.get().duplicatesStrategy = dupStrategy

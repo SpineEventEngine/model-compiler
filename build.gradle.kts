@@ -26,6 +26,8 @@
 
 @file:Suppress("RemoveRedundantQualifierName") // To prevent IDEA replacing FQN imports.
 
+import com.google.protobuf.gradle.protobuf
+import com.google.protobuf.gradle.protoc
 import io.spine.internal.dependency.CheckerFramework
 import io.spine.internal.dependency.ErrorProne
 import io.spine.internal.dependency.FindBugs
@@ -41,6 +43,8 @@ import io.spine.internal.gradle.forceVersions
 import io.spine.internal.gradle.spinePublishing
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+repositories.applyStandard()
+
 plugins {
     `java-library`
     idea
@@ -55,11 +59,18 @@ plugins {
 
 spinePublishing {
     projectsToPublish.addAll(
+        ":mc",
+        ":tool-base",
+        ":plugin-base",
+        ":plugin-testlib"
     )
     targetRepositories.addAll(
         PublishingRepos.cloudRepo,
         PublishingRepos.cloudArtifactRegistry
     )
+    // Skip the `spine-` part of the artifact name to avoid collisions with the currently "live"
+    // versions. See https://github.com/SpineEventEngine/model-compiler/issues/3
+    spinePrefix.set(false)
 }
 
 allprojects {
@@ -67,7 +78,7 @@ allprojects {
         plugin("jacoco")
         plugin("idea")
         plugin("project-report")
-        apply(from = "$rootDir/version.gradle.kts")
+        from("$rootDir/version.gradle.kts")
     }
 
     group = "io.spine.tools"
@@ -118,10 +129,18 @@ subprojects {
         targetCompatibility = javaVersion
     }
 
+    kotlin {
+        explicitApi()
+    }
+
     tasks.withType<KotlinCompile>().configureEach {
         kotlinOptions {
             jvmTarget = javaVersion.toString()
-            freeCompilerArgs = listOf("-Xskip-prerelease-check", "-Xjvm-default=all")
+            freeCompilerArgs = listOf(
+                "-Xskip-prerelease-check",
+                "-Xjvm-default=all",
+                "-Xopt-in=kotlin.contracts.ExperimentalContracts"
+            )
         }
     }
 
@@ -129,6 +148,19 @@ subprojects {
         useJUnitPlatform {
             includeEngines("junit-jupiter")
         }
+    }
+
+    val generatedDir = "$projectDir/generated"
+
+    protobuf {
+        generatedFilesBaseDir = generatedDir
+        protoc {
+            artifact = Protobuf.compiler
+        }
+    }
+
+    tasks.clean {
+        delete(generatedDir)
     }
 
     apply {
@@ -139,13 +171,18 @@ subprojects {
 }
 
 apply {
-
-    // Aggregated coverage report across all subprojects.
-    from(Scripts.jacoco(project))
-
     // Generate a repository-wide report of 3rd-party dependencies and their licenses.
     from(Scripts.repoLicenseReport(project))
 
     // Generate a `pom.xml` file containing first-level dependency of all projects in the repository.
     from(Scripts.generatePom(project))
+}
+
+// The JaCoCo config script uses `evaluationDependsOnChildren()` to scan subprojects to find all
+// the Java projects. Such an evaluation-time dependency, in some cases, causes Gradle to fail.
+// When applying the JaCoCo script after the evaluation is done, the error goes away.
+// See this Gradle discussion for the description of the issue: https://discuss.gradle.org/t/gradle-7-fails-with-cannot-run-project-afterevaluate-action-when-the-project-is-already-evaluated/40296
+afterEvaluate {
+    // Aggregated coverage report across all subprojects.
+    apply(from = Scripts.jacoco(project))
 }

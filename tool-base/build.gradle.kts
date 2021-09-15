@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, TeamDev. All rights reserved.
+ * Copyright 2021, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,11 +24,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-rootProject.name = "model-compiler"
+import io.spine.gradle.internal.IncrementGuard
+import io.spine.internal.dependency.JavaPoet
+import io.spine.internal.dependency.JavaX
+import io.spine.internal.dependency.Spine
 
-include(
-    "tool-base",
-    "plugin-base",
-    "mc",
-    "plugin-testlib"
-)
+dependencies {
+    val spineDeps = Spine(project)
+
+    api(spineDeps.base)
+    api(JavaPoet.lib)
+    api(JavaX.annotations)
+
+    testImplementation(spineDeps.testlib)
+}
+
+apply<IncrementGuard>()

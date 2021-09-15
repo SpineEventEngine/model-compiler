@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, TeamDev. All rights reserved.
+ * Copyright 2021, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,11 +24,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-rootProject.name = "model-compiler"
+import io.spine.internal.dependency.Protobuf
+import io.spine.internal.dependency.Spine
 
-include(
-    "tool-base",
-    "plugin-base",
-    "mc",
-    "plugin-testlib"
-)
+dependencies {
+    api(project(":plugin-base"))
+
+    testImplementation(project(":plugin-testlib"))
+    implementation(Protobuf.GradlePlugin.lib)
+    testImplementation(Spine(project).testlib)
+    testImplementation(gradleTestKit())
+}

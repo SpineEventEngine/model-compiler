@@ -24,19 +24,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.internal.dependency.JavaPoet
-import io.spine.internal.dependency.JavaX
+package io.spine.tools.mc.gradle.given
 
-group = "io.spine.tools"
+import io.spine.tools.mc.gradle.LanguageSpecificExtension
+import javax.inject.Inject
+import org.gradle.api.file.RegularFileProperty
 
-dependencies {
-    api(project(":base"))
-    api(JavaPoet.lib)
-    api(JavaX.annotations)
+abstract class AbstractConfig
+@Inject constructor() : LanguageSpecificExtension {
 
-    testImplementation(project(":testlib"))
+    abstract val property: RegularFileProperty
 }
-
-//TODO:2021-07-22:alexander.yevsyukov: Turn to WARN and investigate duplicates.
-// see https://github.com/SpineEventEngine/base/issues/657
-tasks.sourceJar.get().duplicatesStrategy = DuplicatesStrategy.INCLUDE
