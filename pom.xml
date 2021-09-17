@@ -12,7 +12,7 @@ all modules and does not describe the project structure per-subproject.
 
 <groupId>io.spine.tools</groupId>
 <artifactId>model-compiler</artifactId>
-<version>0.0.1</version>
+<version>0.0.2</version>
 
 <inceptionYear>2015</inceptionYear>
 
@@ -146,7 +146,7 @@ all modules and does not describe the project structure per-subproject.
   <dependency>
     <groupId>com.google.protobuf</groupId>
     <artifactId>protoc</artifactId>
-    <version>3.17.3</version>
+    <version>3.18.0</version>
   </dependency>
   <dependency>
     <groupId>net.sourceforge.pmd</groupId>
