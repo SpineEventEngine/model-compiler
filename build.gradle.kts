@@ -58,15 +58,18 @@ plugins {
 }
 
 spinePublishing {
+    with(PublishingRepos) {
+        targetRepositories.addAll(
+            cloudRepo,
+            gitHub("model-compiler"),
+            cloudArtifactRegistry
+        )
+    }
     projectsToPublish.addAll(
         ":mc",
         ":tool-base",
         ":plugin-base",
         ":plugin-testlib"
-    )
-    targetRepositories.addAll(
-        PublishingRepos.cloudRepo,
-        PublishingRepos.cloudArtifactRegistry
     )
     // Skip the `spine-` part of the artifact name to avoid collisions with the currently "live"
     // versions. See https://github.com/SpineEventEngine/model-compiler/issues/3
