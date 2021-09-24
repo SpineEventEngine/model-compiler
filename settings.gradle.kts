@@ -29,6 +29,6 @@ rootProject.name = "model-compiler"
 include(
     "tool-base",
     "plugin-base",
-    "mc",
+    "model-compiler",
     "plugin-testlib"
 )
