@@ -30,6 +30,7 @@ import com.google.common.truth.Truth.assertThat
 import io.spine.testing.Correspondences.type
 import io.spine.tools.mc.gradle.given.AbstractConfig
 import io.spine.tools.mc.gradle.given.TestConfig
+import java.io.File
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -53,16 +54,18 @@ class `McExtension should` {
     @Test
     fun `provide default mainDescriptorSetFile`() {
         val file = ext.mainDescriptorSetFile.asFile.get()
-        assertThat(file.path)
+        assertPath(file)
             .endsWith("/build/descriptors/main/org.example_ext-test_42.desc")
     }
 
     @Test
     fun `provide default testDescriptorSetFile`() {
         val file = ext.testDescriptorSetFile.asFile.get()
-        assertThat(file.path)
+        assertPath(file)
             .endsWith("/build/descriptors/test/org.example_ext-test_42_test.desc")
     }
+
+    private fun assertPath(file: File) = assertThat(file.invariantSeparatorsPath)
 
     @Test
     fun `allow to register custom language-specific configs`() {
