@@ -24,39 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.google.protobuf.gradle.generateProtoTasks
-import com.google.protobuf.gradle.protobuf
-import io.spine.gradle.internal.IncrementGuard
-import io.spine.internal.dependency.Protobuf
-import io.spine.internal.dependency.Spine
-import io.spine.internal.gradle.VersionWriter
-import io.spine.internal.gradle.WriteVersions
-import java.util.*
+package io.spine.internal.dependency
 
-kotlin { explicitApi() }
-
-dependencies {
-    api(gradleApi())
-    api(Protobuf.GradlePlugin.lib)
-    api(project(":tool-base"))
-
-    testImplementation(project(":plugin-testlib"))
-    testImplementation(Spine(project).testlib)
-}
-
-protobuf {
-    generateProtoTasks {
-        for (task in all()) {
-            task.generateDescriptorSet = true
-            task.descriptorSetOptions.path =
-                "$buildDir/descriptors/${task.sourceSet.name}/known_types.desc"
-        }
-    }
-}
-
-apply<IncrementGuard>()
-apply<VersionWriter>()
-
-tasks.withType<WriteVersions> {
-    version(Protobuf.compiler)
+// https://github.com/Kotlin/dokka
+@Suppress("unused")
+object Dokka {
+    const val version = "1.5.0"
+    const val pluginId = "org.jetbrains.dokka"
 }

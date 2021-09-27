@@ -24,39 +24,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.google.protobuf.gradle.generateProtoTasks
-import com.google.protobuf.gradle.protobuf
-import io.spine.gradle.internal.IncrementGuard
-import io.spine.internal.dependency.Protobuf
-import io.spine.internal.dependency.Spine
-import io.spine.internal.gradle.VersionWriter
-import io.spine.internal.gradle.WriteVersions
-import java.util.*
+package io.spine.internal.gradle
 
-kotlin { explicitApi() }
+import org.gradle.api.Project
+import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.api.tasks.SourceSetContainer
+import org.gradle.kotlin.dsl.getByType
 
-dependencies {
-    api(gradleApi())
-    api(Protobuf.GradlePlugin.lib)
-    api(project(":tool-base"))
+/**
+ * This file contains extension methods and properties for the Gradle `Project`.
+ */
 
-    testImplementation(project(":plugin-testlib"))
-    testImplementation(Spine(project).testlib)
-}
+/**
+ * Obtains the Java plugin extension of the project.
+ */
+val Project.javaPluginExtension: JavaPluginExtension
+    get() = extensions.getByType()
 
-protobuf {
-    generateProtoTasks {
-        for (task in all()) {
-            task.generateDescriptorSet = true
-            task.descriptorSetOptions.path =
-                "$buildDir/descriptors/${task.sourceSet.name}/known_types.desc"
-        }
-    }
-}
-
-apply<IncrementGuard>()
-apply<VersionWriter>()
-
-tasks.withType<WriteVersions> {
-    version(Protobuf.compiler)
-}
+/**
+ * Obtains source set container of the Java project.
+ */
+val Project.sourceSets: SourceSetContainer
+    get() = javaPluginExtension.sourceSets
