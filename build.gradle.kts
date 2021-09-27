@@ -37,6 +37,7 @@ import io.spine.internal.dependency.Protobuf
 import io.spine.internal.dependency.Truth
 import io.spine.internal.gradle.PublishingRepos
 import io.spine.internal.gradle.Scripts
+import io.spine.internal.gradle.applyGitHubPackages
 import io.spine.internal.gradle.applyStandard
 import io.spine.internal.gradle.excludeProtobufLite
 import io.spine.internal.gradle.forceVersions
@@ -58,15 +59,18 @@ plugins {
 }
 
 spinePublishing {
+    with(PublishingRepos) {
+        targetRepositories.addAll(
+            cloudRepo,
+            gitHub("model-compiler"),
+            cloudArtifactRegistry
+        )
+    }
     projectsToPublish.addAll(
-        ":mc",
+        ":model-compiler",
         ":tool-base",
         ":plugin-base",
         ":plugin-testlib"
-    )
-    targetRepositories.addAll(
-        PublishingRepos.cloudRepo,
-        PublishingRepos.cloudArtifactRegistry
     )
     // Skip the `spine-` part of the artifact name to avoid collisions with the currently "live"
     // versions. See https://github.com/SpineEventEngine/model-compiler/issues/3
@@ -93,15 +97,20 @@ subprojects {
         plugin("pmd-settings")
         plugin(Protobuf.GradlePlugin.id)
 
-        from(Scripts.javacArgs(project))
-        from(Scripts.projectLicenseReport(project))
-        from(Scripts.testOutput(project))
-        from(Scripts.javadocOptions(project))
-
-        from(Scripts.testArtifacts(project))
+        with(Scripts) {
+            from(javacArgs(project))
+            from(projectLicenseReport(project))
+            from(testOutput(project))
+            from(javadocOptions(project))
+            from(testArtifacts(project))
+            from(slowTests(project))
+        }
     }
 
-    repositories.applyStandard()
+    with(repositories) {
+        applyGitHubPackages("base", project)
+        applyStandard()
+    }
 
     dependencies {
         errorprone(ErrorProne.core)
@@ -119,8 +128,10 @@ subprojects {
         testRuntimeOnly(JUnit.runner)
     }
 
-    configurations.forceVersions()
-    configurations.excludeProtobufLite()
+    with(configurations) {
+        forceVersions()
+        excludeProtobufLite()
+    }
 
     val javaVersion = JavaVersion.VERSION_1_8
 
@@ -162,26 +173,24 @@ subprojects {
     tasks.clean {
         delete(generatedDir)
     }
-
-    apply {
-        from(Scripts.slowTests(project))
-        from(Scripts.testOutput(project))
-        from(Scripts.javadocOptions(project))
-    }
 }
 
 apply {
-    // Generate a repository-wide report of 3rd-party dependencies and their licenses.
-    from(Scripts.repoLicenseReport(project))
+    with(Scripts) {
+        // Generate a repository-wide report of 3rd-party dependencies and their licenses.
+        from(repoLicenseReport(project))
 
-    // Generate a `pom.xml` file containing first-level dependency of all projects in the repository.
-    from(Scripts.generatePom(project))
+        // Generate a `pom.xml` file containing first-level dependency of all projects
+        // in the repository.
+        from(generatePom(project))
+    }
 }
 
 // The JaCoCo config script uses `evaluationDependsOnChildren()` to scan subprojects to find all
 // the Java projects. Such an evaluation-time dependency, in some cases, causes Gradle to fail.
 // When applying the JaCoCo script after the evaluation is done, the error goes away.
-// See this Gradle discussion for the description of the issue: https://discuss.gradle.org/t/gradle-7-fails-with-cannot-run-project-afterevaluate-action-when-the-project-is-already-evaluated/40296
+// See this Gradle discussion for the description of the issue:
+// https://discuss.gradle.org/t/gradle-7-fails-with-cannot-run-project-afterevaluate-action-when-the-project-is-already-evaluated/40296
 afterEvaluate {
     // Aggregated coverage report across all subprojects.
     apply(from = Scripts.jacoco(project))

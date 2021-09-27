@@ -24,39 +24,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.google.protobuf.gradle.generateProtoTasks
-import com.google.protobuf.gradle.protobuf
-import io.spine.gradle.internal.IncrementGuard
-import io.spine.internal.dependency.Protobuf
-import io.spine.internal.dependency.Spine
-import io.spine.internal.gradle.VersionWriter
-import io.spine.internal.gradle.WriteVersions
-import java.util.*
+import org.gradle.api.Project
+import org.gradle.api.tasks.javadoc.Javadoc
+import org.gradle.external.javadoc.CoreJavadocOptions
+import org.gradle.kotlin.dsl.named
 
-kotlin { explicitApi() }
+@Suppress("unused")
+object TravisLogs {
 
-dependencies {
-    api(gradleApi())
-    api(Protobuf.GradlePlugin.lib)
-    api(project(":tool-base"))
-
-    testImplementation(project(":plugin-testlib"))
-    testImplementation(Spine(project).testlib)
-}
-
-protobuf {
-    generateProtoTasks {
-        for (task in all()) {
-            task.generateDescriptorSet = true
-            task.descriptorSetOptions.path =
-                "$buildDir/descriptors/${task.sourceSet.name}/known_types.desc"
+    /**
+     * Specific setup for a Travis build, which prevents warning messages related to
+     * `javadoc` tasks in build logs.
+     *
+     * It is expected that warnings are viewed and analyzed during local builds.
+     */
+    fun hideJavadocWarnings(p: Project) {
+        //
+        val isTravis = System.getenv("TRAVIS") == "true"
+        if (isTravis) {
+            // Set the maximum number of Javadoc warnings to print.
+            // If the parameter value is zero, all warnings will be printed.
+            p.tasks.named<Javadoc>("javadoc") {
+                val opt = options
+                if (opt is CoreJavadocOptions) {
+                    opt.addStringOption("Xmaxwarns", "1")
+                }
+            }
         }
     }
-}
-
-apply<IncrementGuard>()
-apply<VersionWriter>()
-
-tasks.withType<WriteVersions> {
-    version(Protobuf.compiler)
 }
