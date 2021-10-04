@@ -35,20 +35,25 @@ import io.spine.internal.dependency.Guava
 import io.spine.internal.dependency.JUnit
 import io.spine.internal.dependency.Protobuf
 import io.spine.internal.dependency.Truth
-import io.spine.internal.gradle.PublishingRepos
+import io.spine.internal.gradle.JavadocConfig
 import io.spine.internal.gradle.Scripts
 import io.spine.internal.gradle.applyGitHubPackages
 import io.spine.internal.gradle.applyStandard
 import io.spine.internal.gradle.excludeProtobufLite
 import io.spine.internal.gradle.forceVersions
-import io.spine.internal.gradle.spinePublishing
+import io.spine.internal.gradle.github.pages.updateGitHubPages
+import io.spine.internal.gradle.publish.PublishingRepos
+import io.spine.internal.gradle.publish.spinePublishing
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 repositories.applyStandard()
 
 plugins {
     `java-library`
+    jacoco
     idea
+    pmd
+    `project-report`
     io.spine.internal.dependency.Protobuf.GradlePlugin.apply {
         id(id).version(version)
     }
@@ -101,7 +106,6 @@ subprojects {
             from(javacArgs(project))
             from(projectLicenseReport(project))
             from(testOutput(project))
-            from(javadocOptions(project))
             from(testArtifacts(project))
             from(slowTests(project))
         }
@@ -140,6 +144,8 @@ subprojects {
         targetCompatibility = javaVersion
     }
 
+    JavadocConfig.applyTo(project)
+
     kotlin {
         explicitApi()
     }
@@ -173,6 +179,25 @@ subprojects {
     tasks.clean {
         delete(generatedDir)
     }
+
+//TODO:2021-10-04:alexander.yevsyukov: Uncomment `updateGitHubPages` when this build
+// error is resolved:
+/*
+
+* Where:
+Script '/Users/sanders/Projects/Spine/model-compiler/buildSrc/src/main/groovy/jacoco.gradle' line: 48
+
+* What went wrong:
+A problem occurred evaluating script.
+> A problem occurred configuring project ':model-compiler'.
+   > Task with name 'noInternalJavadoc' not found in project ':model-compiler'.
+
+*/
+
+//    updateGitHubPages {
+//        allowInternalJavadoc.set(true)
+//        rootFolder.set(rootDir)
+//    }
 }
 
 apply {
