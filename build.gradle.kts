@@ -180,24 +180,10 @@ subprojects {
         delete(generatedDir)
     }
 
-//TODO:2021-10-04:alexander.yevsyukov: Uncomment `updateGitHubPages` when this build
-// error is resolved:
-/*
-
-* Where:
-Script '/Users/sanders/Projects/Spine/model-compiler/buildSrc/src/main/groovy/jacoco.gradle' line: 48
-
-* What went wrong:
-A problem occurred evaluating script.
-> A problem occurred configuring project ':model-compiler'.
-   > Task with name 'noInternalJavadoc' not found in project ':model-compiler'.
-
-*/
-
-//    updateGitHubPages {
-//        allowInternalJavadoc.set(true)
-//        rootFolder.set(rootDir)
-//    }
+    updateGitHubPages {
+        allowInternalJavadoc.set(false)
+        rootFolder.set(rootDir)
+    }
 }
 
 apply {
