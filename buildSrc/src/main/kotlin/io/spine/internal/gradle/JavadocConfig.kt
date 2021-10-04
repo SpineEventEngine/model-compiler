@@ -34,6 +34,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
+import org.gradle.kotlin.dsl.extra
 
 /**
  * Javadoc processing settings.
@@ -132,10 +133,12 @@ object InternalJavadocFilter {
     private fun registerConfiguration(project: Project): Configuration {
         val configurations = project.configurations
         val excludeInternalDoclet = configurations.create(excludeDocletConfig)
-        val projectVersion = project.version.toString()
+
+        val spineBaseVersion = project.extra["spineBaseVersion"]
+
         project.dependencies.add(
             excludeInternalDoclet.name,
-            "io.spine.tools:spine-javadoc-filter:$projectVersion"
+            "io.spine.tools:spine-javadoc-filter:$spineBaseVersion"
         )
         return excludeInternalDoclet
     }
