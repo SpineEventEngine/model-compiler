@@ -119,6 +119,10 @@
      * **POM Project URL:** [https://www.github.com/KevinStern/software-and-algorithms](https://www.github.com/KevinStern/software-and-algorithms)
      * **POM License: MIT License** - [http://www.opensource.org/licenses/mit-license.php](http://www.opensource.org/licenses/mit-license.php)
 
+1. **Group:** com.google.android **Name:** annotations **Version:** 4.1.1.4
+     * **POM Project URL:** [http://source.android.com/](http://source.android.com/)
+     * **POM License: Apache 2.0** - [http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0)
+
 1. **Group:** com.google.auto **Name:** auto-common **Version:** 1.0
      * **POM Project URL:** [https://github.com/google/auto/tree/master/common](https://github.com/google/auto/tree/master/common)
      * **POM License: Apache 2.0** - [http://www.apache.org/licenses/LICENSE-2.0.txt](http://www.apache.org/licenses/LICENSE-2.0.txt)
@@ -236,6 +240,22 @@
      * **POM Project URL:** [https://github.com/java-diff-utils/java-diff-utils](https://github.com/java-diff-utils/java-diff-utils)
      * **POM License: The Apache Software License, Version 2.0** - [http://www.apache.org/licenses/LICENSE-2.0.txt](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
+1. **Group:** io.grpc **Name:** grpc-api **Version:** 1.38.0
+     * **POM Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
+     * **POM License: Apache 2.0** - [https://opensource.org/licenses/Apache-2.0](https://opensource.org/licenses/Apache-2.0)
+
+1. **Group:** io.grpc **Name:** grpc-context **Version:** 1.38.0
+     * **POM Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
+     * **POM License: Apache 2.0** - [https://opensource.org/licenses/Apache-2.0](https://opensource.org/licenses/Apache-2.0)
+
+1. **Group:** io.grpc **Name:** grpc-core **Version:** 1.38.0
+     * **POM Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
+     * **POM License: Apache 2.0** - [https://opensource.org/licenses/Apache-2.0](https://opensource.org/licenses/Apache-2.0)
+
+1. **Group:** io.perfmark **Name:** perfmark-api **Version:** 0.23.0
+     * **POM Project URL:** [https://github.com/perfmark/perfmark](https://github.com/perfmark/perfmark)
+     * **POM License: Apache 2.0** - [https://opensource.org/licenses/Apache-2.0](https://opensource.org/licenses/Apache-2.0)
+
 1. **Group:** javax.annotation **Name:** javax.annotation-api **Version:** 1.3.2
      * **Manifest Project URL:** [https://javaee.github.io/glassfish](https://javaee.github.io/glassfish)
      * **POM Project URL:** [http://jcp.org/en/jsr/detail?id=250](http://jcp.org/en/jsr/detail?id=250)
@@ -285,6 +305,10 @@
      * **Manifest License:** (GPL-2.0-only WITH Classpath-exception-2.0) (Not packaged)
      * **POM Project URL:** [https://checkerframework.org](https://checkerframework.org)
      * **POM License: GNU General Public License, version 2 (GPL2), with the classpath exception** - [http://www.gnu.org/software/classpath/license.html](http://www.gnu.org/software/classpath/license.html)
+
+1. **Group:** org.codehaus.mojo **Name:** animal-sniffer-annotations **Version:** 1.19
+     * **POM License: MIT license** - [http://www.opensource.org/licenses/mit-license.php](http://www.opensource.org/licenses/mit-license.php)
+     * **POM License: The Apache Software License, Version 2.0** - [http://www.apache.org/licenses/LICENSE-2.0.txt](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 1. **Group:** org.eclipse.jgit **Name:** org.eclipse.jgit **Version:** 4.4.1.201607150455-r
      * **POM License: Eclipse Distribution License (New BSD License)**
@@ -432,7 +456,7 @@
  The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
 
-This report was generated on **Mon Oct 04 21:50:12 EEST 2021** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Tue Oct 05 16:03:23 EEST 2021** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
 
 
 
@@ -556,6 +580,10 @@ This report was generated on **Mon Oct 04 21:50:12 EEST 2021** using [Gradle-Lic
      * **POM Project URL:** [https://www.github.com/KevinStern/software-and-algorithms](https://www.github.com/KevinStern/software-and-algorithms)
      * **POM License: MIT License** - [http://www.opensource.org/licenses/mit-license.php](http://www.opensource.org/licenses/mit-license.php)
 
+1. **Group:** com.google.android **Name:** annotations **Version:** 4.1.1.4
+     * **POM Project URL:** [http://source.android.com/](http://source.android.com/)
+     * **POM License: Apache 2.0** - [http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0)
+
 1. **Group:** com.google.auto **Name:** auto-common **Version:** 1.0
      * **POM Project URL:** [https://github.com/google/auto/tree/master/common](https://github.com/google/auto/tree/master/common)
      * **POM License: Apache 2.0** - [http://www.apache.org/licenses/LICENSE-2.0.txt](http://www.apache.org/licenses/LICENSE-2.0.txt)
@@ -673,6 +701,22 @@ This report was generated on **Mon Oct 04 21:50:12 EEST 2021** using [Gradle-Lic
      * **POM Project URL:** [https://github.com/java-diff-utils/java-diff-utils](https://github.com/java-diff-utils/java-diff-utils)
      * **POM License: The Apache Software License, Version 2.0** - [http://www.apache.org/licenses/LICENSE-2.0.txt](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
+1. **Group:** io.grpc **Name:** grpc-api **Version:** 1.38.0
+     * **POM Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
+     * **POM License: Apache 2.0** - [https://opensource.org/licenses/Apache-2.0](https://opensource.org/licenses/Apache-2.0)
+
+1. **Group:** io.grpc **Name:** grpc-context **Version:** 1.38.0
+     * **POM Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
+     * **POM License: Apache 2.0** - [https://opensource.org/licenses/Apache-2.0](https://opensource.org/licenses/Apache-2.0)
+
+1. **Group:** io.grpc **Name:** grpc-core **Version:** 1.38.0
+     * **POM Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
+     * **POM License: Apache 2.0** - [https://opensource.org/licenses/Apache-2.0](https://opensource.org/licenses/Apache-2.0)
+
+1. **Group:** io.perfmark **Name:** perfmark-api **Version:** 0.23.0
+     * **POM Project URL:** [https://github.com/perfmark/perfmark](https://github.com/perfmark/perfmark)
+     * **POM License: Apache 2.0** - [https://opensource.org/licenses/Apache-2.0](https://opensource.org/licenses/Apache-2.0)
+
 1. **Group:** javax.annotation **Name:** javax.annotation-api **Version:** 1.3.2
      * **Manifest Project URL:** [https://javaee.github.io/glassfish](https://javaee.github.io/glassfish)
      * **POM Project URL:** [http://jcp.org/en/jsr/detail?id=250](http://jcp.org/en/jsr/detail?id=250)
@@ -722,6 +766,10 @@ This report was generated on **Mon Oct 04 21:50:12 EEST 2021** using [Gradle-Lic
      * **Manifest License:** (GPL-2.0-only WITH Classpath-exception-2.0) (Not packaged)
      * **POM Project URL:** [https://checkerframework.org](https://checkerframework.org)
      * **POM License: GNU General Public License, version 2 (GPL2), with the classpath exception** - [http://www.gnu.org/software/classpath/license.html](http://www.gnu.org/software/classpath/license.html)
+
+1. **Group:** org.codehaus.mojo **Name:** animal-sniffer-annotations **Version:** 1.19
+     * **POM License: MIT license** - [http://www.opensource.org/licenses/mit-license.php](http://www.opensource.org/licenses/mit-license.php)
+     * **POM License: The Apache Software License, Version 2.0** - [http://www.apache.org/licenses/LICENSE-2.0.txt](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 1. **Group:** org.eclipse.jgit **Name:** org.eclipse.jgit **Version:** 4.4.1.201607150455-r
      * **POM License: Eclipse Distribution License (New BSD License)**
@@ -869,7 +917,7 @@ This report was generated on **Mon Oct 04 21:50:12 EEST 2021** using [Gradle-Lic
  The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
 
-This report was generated on **Mon Oct 04 21:50:14 EEST 2021** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Tue Oct 05 16:03:25 EEST 2021** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
 
 
 
@@ -1048,6 +1096,10 @@ This report was generated on **Mon Oct 04 21:50:14 EEST 2021** using [Gradle-Lic
      * **POM Project URL:** [https://www.github.com/KevinStern/software-and-algorithms](https://www.github.com/KevinStern/software-and-algorithms)
      * **POM License: MIT License** - [http://www.opensource.org/licenses/mit-license.php](http://www.opensource.org/licenses/mit-license.php)
 
+1. **Group:** com.google.android **Name:** annotations **Version:** 4.1.1.4
+     * **POM Project URL:** [http://source.android.com/](http://source.android.com/)
+     * **POM License: Apache 2.0** - [http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0)
+
 1. **Group:** com.google.auto **Name:** auto-common **Version:** 1.0
      * **POM Project URL:** [https://github.com/google/auto/tree/master/common](https://github.com/google/auto/tree/master/common)
      * **POM License: Apache 2.0** - [http://www.apache.org/licenses/LICENSE-2.0.txt](http://www.apache.org/licenses/LICENSE-2.0.txt)
@@ -1165,6 +1217,22 @@ This report was generated on **Mon Oct 04 21:50:14 EEST 2021** using [Gradle-Lic
      * **POM Project URL:** [https://github.com/java-diff-utils/java-diff-utils](https://github.com/java-diff-utils/java-diff-utils)
      * **POM License: The Apache Software License, Version 2.0** - [http://www.apache.org/licenses/LICENSE-2.0.txt](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
+1. **Group:** io.grpc **Name:** grpc-api **Version:** 1.38.0
+     * **POM Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
+     * **POM License: Apache 2.0** - [https://opensource.org/licenses/Apache-2.0](https://opensource.org/licenses/Apache-2.0)
+
+1. **Group:** io.grpc **Name:** grpc-context **Version:** 1.38.0
+     * **POM Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
+     * **POM License: Apache 2.0** - [https://opensource.org/licenses/Apache-2.0](https://opensource.org/licenses/Apache-2.0)
+
+1. **Group:** io.grpc **Name:** grpc-core **Version:** 1.38.0
+     * **POM Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
+     * **POM License: Apache 2.0** - [https://opensource.org/licenses/Apache-2.0](https://opensource.org/licenses/Apache-2.0)
+
+1. **Group:** io.perfmark **Name:** perfmark-api **Version:** 0.23.0
+     * **POM Project URL:** [https://github.com/perfmark/perfmark](https://github.com/perfmark/perfmark)
+     * **POM License: Apache 2.0** - [https://opensource.org/licenses/Apache-2.0](https://opensource.org/licenses/Apache-2.0)
+
 1. **Group:** javax.annotation **Name:** javax.annotation-api **Version:** 1.3.2
      * **Manifest Project URL:** [https://javaee.github.io/glassfish](https://javaee.github.io/glassfish)
      * **POM Project URL:** [http://jcp.org/en/jsr/detail?id=250](http://jcp.org/en/jsr/detail?id=250)
@@ -1214,6 +1282,10 @@ This report was generated on **Mon Oct 04 21:50:14 EEST 2021** using [Gradle-Lic
      * **Manifest License:** (GPL-2.0-only WITH Classpath-exception-2.0) (Not packaged)
      * **POM Project URL:** [https://checkerframework.org](https://checkerframework.org)
      * **POM License: GNU General Public License, version 2 (GPL2), with the classpath exception** - [http://www.gnu.org/software/classpath/license.html](http://www.gnu.org/software/classpath/license.html)
+
+1. **Group:** org.codehaus.mojo **Name:** animal-sniffer-annotations **Version:** 1.19
+     * **POM License: MIT license** - [http://www.opensource.org/licenses/mit-license.php](http://www.opensource.org/licenses/mit-license.php)
+     * **POM License: The Apache Software License, Version 2.0** - [http://www.apache.org/licenses/LICENSE-2.0.txt](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 1. **Group:** org.eclipse.jgit **Name:** org.eclipse.jgit **Version:** 4.4.1.201607150455-r
      * **POM License: Eclipse Distribution License (New BSD License)**
@@ -1361,7 +1433,7 @@ This report was generated on **Mon Oct 04 21:50:14 EEST 2021** using [Gradle-Lic
  The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
 
-This report was generated on **Mon Oct 04 21:50:15 EEST 2021** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Tue Oct 05 16:03:26 EEST 2021** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
 
 
 
@@ -1469,6 +1541,10 @@ This report was generated on **Mon Oct 04 21:50:15 EEST 2021** using [Gradle-Lic
      * **POM Project URL:** [https://www.github.com/KevinStern/software-and-algorithms](https://www.github.com/KevinStern/software-and-algorithms)
      * **POM License: MIT License** - [http://www.opensource.org/licenses/mit-license.php](http://www.opensource.org/licenses/mit-license.php)
 
+1. **Group:** com.google.android **Name:** annotations **Version:** 4.1.1.4
+     * **POM Project URL:** [http://source.android.com/](http://source.android.com/)
+     * **POM License: Apache 2.0** - [http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0)
+
 1. **Group:** com.google.auto **Name:** auto-common **Version:** 1.0
      * **POM Project URL:** [https://github.com/google/auto/tree/master/common](https://github.com/google/auto/tree/master/common)
      * **POM License: Apache 2.0** - [http://www.apache.org/licenses/LICENSE-2.0.txt](http://www.apache.org/licenses/LICENSE-2.0.txt)
@@ -1574,6 +1650,22 @@ This report was generated on **Mon Oct 04 21:50:15 EEST 2021** using [Gradle-Lic
      * **POM Project URL:** [https://github.com/java-diff-utils/java-diff-utils](https://github.com/java-diff-utils/java-diff-utils)
      * **POM License: The Apache Software License, Version 2.0** - [http://www.apache.org/licenses/LICENSE-2.0.txt](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
+1. **Group:** io.grpc **Name:** grpc-api **Version:** 1.38.0
+     * **POM Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
+     * **POM License: Apache 2.0** - [https://opensource.org/licenses/Apache-2.0](https://opensource.org/licenses/Apache-2.0)
+
+1. **Group:** io.grpc **Name:** grpc-context **Version:** 1.38.0
+     * **POM Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
+     * **POM License: Apache 2.0** - [https://opensource.org/licenses/Apache-2.0](https://opensource.org/licenses/Apache-2.0)
+
+1. **Group:** io.grpc **Name:** grpc-core **Version:** 1.38.0
+     * **POM Project URL:** [https://github.com/grpc/grpc-java](https://github.com/grpc/grpc-java)
+     * **POM License: Apache 2.0** - [https://opensource.org/licenses/Apache-2.0](https://opensource.org/licenses/Apache-2.0)
+
+1. **Group:** io.perfmark **Name:** perfmark-api **Version:** 0.23.0
+     * **POM Project URL:** [https://github.com/perfmark/perfmark](https://github.com/perfmark/perfmark)
+     * **POM License: Apache 2.0** - [https://opensource.org/licenses/Apache-2.0](https://opensource.org/licenses/Apache-2.0)
+
 1. **Group:** javax.annotation **Name:** javax.annotation-api **Version:** 1.3.2
      * **Manifest Project URL:** [https://javaee.github.io/glassfish](https://javaee.github.io/glassfish)
      * **POM Project URL:** [http://jcp.org/en/jsr/detail?id=250](http://jcp.org/en/jsr/detail?id=250)
@@ -1619,6 +1711,10 @@ This report was generated on **Mon Oct 04 21:50:15 EEST 2021** using [Gradle-Lic
      * **Manifest License:** (GPL-2.0-only WITH Classpath-exception-2.0) (Not packaged)
      * **POM Project URL:** [https://checkerframework.org](https://checkerframework.org)
      * **POM License: GNU General Public License, version 2 (GPL2), with the classpath exception** - [http://www.gnu.org/software/classpath/license.html](http://www.gnu.org/software/classpath/license.html)
+
+1. **Group:** org.codehaus.mojo **Name:** animal-sniffer-annotations **Version:** 1.19
+     * **POM License: MIT license** - [http://www.opensource.org/licenses/mit-license.php](http://www.opensource.org/licenses/mit-license.php)
+     * **POM License: The Apache Software License, Version 2.0** - [http://www.apache.org/licenses/LICENSE-2.0.txt](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 1. **Group:** org.eclipse.jgit **Name:** org.eclipse.jgit **Version:** 4.4.1.201607150455-r
      * **POM License: Eclipse Distribution License (New BSD License)**
@@ -1766,4 +1862,4 @@ This report was generated on **Mon Oct 04 21:50:15 EEST 2021** using [Gradle-Lic
  The dependencies distributed under several licenses, are used according their commercial-use-friendly license.
 
 
-This report was generated on **Mon Oct 04 21:50:17 EEST 2021** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
+This report was generated on **Tue Oct 05 16:03:28 EEST 2021** using [Gradle-License-Report plugin](https://github.com/jk1/Gradle-License-Report) by Evgeny Naumenko, licensed under [Apache 2.0 License](https://github.com/jk1/Gradle-License-Report/blob/master/LICENSE).
