@@ -38,10 +38,12 @@ import org.gradle.kotlin.dsl.property
  * Configures the `updateGitHubPages` extension.
  */
 @Suppress("unused")
-fun Project.updateGitHubPages(action: UpdateGitHubPagesExtension.() -> Unit) {
+fun Project.updateGitHubPages(excludeInternalDocletVersion: String,
+                              action: UpdateGitHubPagesExtension.() -> Unit) {
     apply<UpdateGitHubPages>()
 
     val extension = extensions.getByType(UpdateGitHubPagesExtension::class)
+    extension.excludeInternalDocletVersion = excludeInternalDocletVersion
     extension.action()
 }
 
@@ -71,6 +73,17 @@ private constructor(
      */
     var includeInputs: SetProperty<Any>
 ) {
+
+    /**
+     * The version of the
+     * [ExcludeInternalDoclet][io.spine.internal.gradle.javadoc.ExcludeInternalDoclet]
+     * used when updating documentation at GitHub Pages.
+     *
+     * This value is used when adding dependency on the doclet when the plugin tasks
+     * are registered. Since the doclet dependency is required, its value passed as a parameter for
+     * the extension, rather than a property.
+     */
+    internal lateinit var excludeInternalDocletVersion: String
 
     internal companion object {
 

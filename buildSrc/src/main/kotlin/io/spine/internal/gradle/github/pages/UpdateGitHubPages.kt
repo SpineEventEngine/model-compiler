@@ -30,7 +30,7 @@ import io.spine.internal.gradle.fs.LazyTempPath
 import io.spine.internal.gradle.github.pages.TaskName.copyJavadoc
 import io.spine.internal.gradle.github.pages.TaskName.updateGitHubPages
 import io.spine.internal.gradle.isSnapshot
-import io.spine.internal.gradle.javadoc.InternalJavadocFilter
+import io.spine.internal.gradle.javadoc.ExcludeInternalDoclet
 import io.spine.internal.gradle.javadoc.javadocTask
 import java.io.File
 import org.gradle.api.Plugin
@@ -131,9 +131,8 @@ class UpdateGitHubPages : Plugin<Project> {
         includedInputs = extension.includedInputs()
         val tasks = project.tasks
         if (!includeInternal) {
-            //TODO:2021-10-05:alexander.yevsyukov: Pass as a parameter
-            val filter = InternalJavadocFilter("2.0.0-SNAPSHOT.67")
-            filter.registerTaskIn(project)
+            val doclet = ExcludeInternalDoclet(extension.excludeInternalDocletVersion)
+            doclet.registerTaskIn(project)
         }
         registerCopyJavadoc(includeInternal, tasks)
         val updatePagesTask = registerUpdateTask(project)
@@ -180,7 +179,7 @@ class UpdateGitHubPages : Plugin<Project> {
     ): MutableList<Any> {
         val inputs = mutableListOf<Any>()
         if (allowInternalJavadoc) {
-            inputs.add(tasks.javadocTask(InternalJavadocFilter.taskName))
+            inputs.add(tasks.javadocTask(ExcludeInternalDoclet.taskName))
         } else {
             inputs.add(tasks.javadocTask())
         }

@@ -180,7 +180,8 @@ subprojects {
         delete(generatedDir)
     }
 
-    updateGitHubPages {
+    val spineBaseVersion: String by extra
+    updateGitHubPages(spineBaseVersion) {
         allowInternalJavadoc.set(false)
         rootFolder.set(rootDir)
     }

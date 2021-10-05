@@ -26,8 +26,12 @@
 
 package io.spine.internal.gradle.javadoc
 
+import io.spine.internal.gradle.javadoc.ExcludeInternalDoclet.Companion.taskName
+import io.spine.internal.gradle.sourceSets
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.tasks.javadoc.Javadoc
+import org.gradle.external.javadoc.StandardJavadocDocletOptions
 
 /**
  * The doclet which removes Javadoc for `@Internal` things in the Java code.
@@ -49,9 +53,26 @@ class ExcludeInternalDoclet(val version: String) {
          */
         const val className = "io.spine.tools.javadoc.ExcludeInternalDoclet"
 
+        /**
+         * The name of the helper task which configures the Javadoc processing
+         * to exclude `@Internal` types.
+         */
+        const val taskName = "noInternalJavadoc"
+
         private fun createConfiguration(project: Project): Configuration {
             return project.configurations.create(configurationName)
         }
+    }
+
+    /**
+     * Creates a custom Javadoc task for the [project] which excludes the the types
+     * annotated as `@Internal`.
+     *
+     * The task is registered under [taskName].
+     */
+    fun registerTaskIn(project: Project) {
+        val configuration = addTo(project)
+        project.appendCustomJavadocTask(configuration)
     }
 
     /**
@@ -59,9 +80,34 @@ class ExcludeInternalDoclet(val version: String) {
      *
      * @return added configuration
      */
-    fun addTo(project: Project): Configuration {
+    private fun addTo(project: Project): Configuration {
         val configuration = createConfiguration(project)
         project.dependencies.add(configuration.name, dependency)
         return configuration
+    }
+}
+
+private fun Project.appendCustomJavadocTask(excludeInternalDoclet: Configuration) {
+    val javadocTask = tasks.javadocTask()
+    tasks.register(taskName, Javadoc::class.java) {
+
+        source = sourceSets.getByName("main").allJava.filter {
+            !it.absolutePath.contains("generated")
+        }.asFileTree
+
+        classpath = javadocTask.classpath
+
+        options {
+            encoding = JavadocConfig.encoding.name
+
+            // Doclet fully qualified name.
+            doclet = ExcludeInternalDoclet.className
+
+            // Path to the JAR containing the doclet.
+            docletpath = excludeInternalDoclet.files.toList()
+        }
+
+        val docletOptions = options as StandardJavadocDocletOptions
+        JavadocConfig.registerCustomTags(docletOptions)
     }
 }
