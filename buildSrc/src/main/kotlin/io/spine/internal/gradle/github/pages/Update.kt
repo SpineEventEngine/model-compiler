@@ -61,7 +61,7 @@ private class Operation(
     private val mostRecentDocDir = File("$ghRepoFolder/$docDirPostfix")
 
     fun run() {
-        registerSshKey()
+        SshKey(rootFolder).register()
         checkoutDocs()
         val generatedDocs = replaceMostRecentDocs()
         copyIntoVersionDir(generatedDocs)
@@ -69,66 +69,11 @@ private class Operation(
         logger.debug("The GitHub Pages contents were successfully updated.")
     }
 
-    /**
-     * Executes a command in the project [rootFolder].
-     */
+    /** Executes a command in the project [rootFolder]. */
     private fun execute(vararg command: String): String = Cli(rootFolder).execute(*command)
 
-    /**
-     * Executes a command in the [ghRepoFolder]
-     */
+    /** Executes a command in the [ghRepoFolder] */
     private fun pagesExecute(vararg command: String): String = Cli(ghRepoFolder).execute(*command)
-
-    /**
-     * Creates an SSH key with the credentials and registers it
-     * by invoking the `register-ssh-key.sh` script.
-     */
-    private fun registerSshKey() {
-        val gitHubAccessKey = gitHubKey()
-
-        val sshConfigFile = File("${System.getProperty("user.home")}/.ssh/config")
-        if (!sshConfigFile.exists()) {
-            val parentDir = sshConfigFile.canonicalFile.parentFile
-            parentDir.mkdirs()
-            sshConfigFile.createNewFile()
-        }
-        sshConfigFile.appendText(
-            System.lineSeparator() +
-                    "Host github.com-publish" + System.lineSeparator() +
-                    "User git" + System.lineSeparator() +
-                    "IdentityFile ${gitHubAccessKey.absolutePath}" + System.lineSeparator()
-        )
-
-        execute(
-            "${rootFolder.absolutePath}/config/scripts/register-ssh-key.sh",
-            gitHubAccessKey.absolutePath
-        )
-    }
-
-    /**
-     * Locates `deploy_key_rsa` in the [rootFolder] and returns it as a [File].
-     *
-     * If it is not found, a [GradleException] is thrown.
-     *
-     * <p>A CI instance comes with an RSA key. However, of course, the default key has no
-     * privileges in Spine repositories. Thus, we add our own RSA key — `deploy_rsa_key`.
-     * It must have `write` rights in the associated repository.
-     * Also, we don't want that key to be used for anything else but GitHub Pages publishing.
-     *
-     * Thus, we configure the SSH agent to use the `deploy_rsa_key`
-     * only for specific references, namely in `github.com-publish`.
-     */
-    private fun gitHubKey(): File {
-        val gitHubAccessKey = File("${rootFolder.absolutePath}/deploy_key_rsa")
-
-        if (!gitHubAccessKey.exists()) {
-            throw GradleException(
-                "File $gitHubAccessKey does not exist. It should be encrypted" +
-                        " in the repository and decrypted on CI."
-            )
-        }
-        return gitHubAccessKey
-    }
 
     private fun checkoutDocs() {
         val gitHost = RepoSlug.fromVar().gitHost()
@@ -184,4 +129,69 @@ private class Operation(
         )
         pagesExecute("git", "push")
     }
+}
+
+/**
+ * Registers SSH key for further operations with GitHub Pages.
+ */
+private class SshKey(private val rootFolder: File) {
+
+    /**
+     * Creates an SSH key with the credentials and registers it
+     * by invoking the `register-ssh-key.sh` script.
+     */
+    fun register() {
+        val gitHubAccessKey = gitHubKey()
+        val sshConfigFile = sshConfigFile()
+        val nl = System.lineSeparator()
+        sshConfigFile.appendText(
+            nl +
+                    "Host github.com-publish" + nl +
+                    "User git" + nl +
+                    "IdentityFile ${gitHubAccessKey.absolutePath}" + nl
+        )
+
+        execute(
+            "${rootFolder.absolutePath}/config/scripts/register-ssh-key.sh",
+            gitHubAccessKey.absolutePath
+        )
+    }
+
+    /**
+     * Locates `deploy_key_rsa` in the [rootFolder] and returns it as a [File].
+     *
+     * If it is not found, a [GradleException] is thrown.
+     *
+     * <p>A CI instance comes with an RSA key. However, of course, the default key has no
+     * privileges in Spine repositories. Thus, we add our own RSA key — `deploy_rsa_key`.
+     * It must have `write` rights in the associated repository.
+     * Also, we don't want that key to be used for anything else but GitHub Pages publishing.
+     *
+     * Thus, we configure the SSH agent to use the `deploy_rsa_key`
+     * only for specific references, namely in `github.com-publish`.
+     */
+    private fun gitHubKey(): File {
+        val gitHubAccessKey = File("${rootFolder.absolutePath}/deploy_key_rsa")
+
+        if (!gitHubAccessKey.exists()) {
+            throw GradleException(
+                "File $gitHubAccessKey does not exist. It should be encrypted" +
+                        " in the repository and decrypted on CI."
+            )
+        }
+        return gitHubAccessKey
+    }
+
+    private fun sshConfigFile(): File {
+        val sshConfigFile = File("${System.getProperty("user.home")}/.ssh/config")
+        if (!sshConfigFile.exists()) {
+            val parentDir = sshConfigFile.canonicalFile.parentFile
+            parentDir.mkdirs()
+            sshConfigFile.createNewFile()
+        }
+        return sshConfigFile
+    }
+
+    /** Executes a command in the project [rootFolder]. */
+    private fun execute(vararg command: String): String = Cli(rootFolder).execute(*command)
 }
