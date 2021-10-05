@@ -27,6 +27,7 @@
 package io.spine.internal.gradle.github.pages
 
 import io.spine.internal.gradle.Cli
+import io.spine.internal.gradle.RepoSlug
 import io.spine.internal.gradle.fs.LazyTempPath
 import io.spine.internal.gradle.javadoc.InternalJavadocFilter
 import io.spine.internal.gradle.javadoc.javadocTask
@@ -112,6 +113,7 @@ class UpdateGitHubPages : Plugin<Project> {
     private val checkoutTempFolder = LazyTempPath("repoTemp")
 
     companion object {
+
         /**
          * The name of the task which updates the GitHub Pages.
          */
@@ -127,12 +129,6 @@ class UpdateGitHubPages : Plugin<Project> {
          * the commits to the GitHub Pages branch.
          */
         const val formalGitHubPagesAuthorVar = "FORMAL_GIT_HUB_PAGES_AUTHOR"
-
-        /**
-         * The name of the environment variable containing the repository slug, for which
-         * the Gradle build is performed.
-         */
-        const val repoSlugVar = "REPO_SLUG"
 
         /**
          * The branch to use when pushing the updates to the documentation.
@@ -199,8 +195,6 @@ class UpdateGitHubPages : Plugin<Project> {
         javadocOutputPath: Path
     ) {
         val gitHubAccessKey = gitHubKey(rootFolder)
-        val repoSlug = repoSlug()
-        val gitHost = gitHost(repoSlug)
         val ghRepoFolder = File("$checkoutTempFolder/$gitHubPagesBranch")
         val docDirPostfix = "reference/$project.name"
         val mostRecentDocDir = File("$ghRepoFolder/$docDirPostfix")
@@ -209,6 +203,8 @@ class UpdateGitHubPages : Plugin<Project> {
 
         // Create SSH config file to allow pushing commits to the repository.
         registerSshKey(gitHubAccessKey)
+
+        val gitHost = RepoSlug.fromVar().gitHost()
         checkoutDocs(gitHost, ghRepoFolder)
 
         logger.debug("Replacing the most recent docs in `$mostRecentDocDir`.")
@@ -310,36 +306,17 @@ class UpdateGitHubPages : Plugin<Project> {
     }
 
     /**
-     * Reads `REPO_SLUG` environment variable and returns its value.
-     *
-     * In case it is not set, a [GradleException] is thrown.
-     */
-    private fun repoSlug(): String {
-        val repoSlug = System.getenv(repoSlugVar)
-        if (repoSlug == null || repoSlug.isEmpty()) {
-            throw GradleException("`REPO_SLUG` environment variable is not set.")
-        }
-        return repoSlug
-    }
-
-    /**
-     * Returns the GitHub URL to the project repository.
-     *
-     * <p>A CI instance comes with an RSA key. However, of course, the default key has no
-     * privileges in Spine repositories. Thus, we add our own RSA key — `deploy_rsa_key`.
-     * It must have write rights in the associated repository. Also, we don't want that key
-     * to be used for anything else but GitHub Pages publishing.
-     * Thus, we configure the SSH agent to use the `deploy_rsa_key`
-     * only for specific references, namely in `github.com-publish`.
-     */
-    private fun gitHost(repoSlug: String): String {
-        return "git@github.com-publish:${repoSlug}.git"
-    }
-
-    /**
      * Locates `deploy_key_rsa` in the passed [rootFolder] and returns it as a [File].
      *
      * If it is not found, a [GradleException] is thrown.
+     *
+     * <p>A CI instance comes with an RSA key. However, of course, the default key has no
+     * privileges in Spine repositories. Thus, we add our own RSA key — `deploy_rsa_key`.
+     * It must have `write` rights in the associated repository.
+     * Also, we don't want that key to be used for anything else but GitHub Pages publishing.
+     *
+     * Thus, we configure the SSH agent to use the `deploy_rsa_key`
+     * only for specific references, namely in `github.com-publish`.
      */
     private fun gitHubKey(rootFolder: File): File {
         val gitHubAccessKey = File("${rootFolder.absolutePath}/deploy_key_rsa")
