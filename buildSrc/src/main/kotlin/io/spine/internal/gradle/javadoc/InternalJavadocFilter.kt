@@ -54,14 +54,10 @@ class InternalJavadocFilter(val version: String) {
      * The task is registered under [taskName].
      */
     fun registerTask(project: Project) {
-        val excludeInternalDoclet = project.registerConfiguration(version)
-        project.appendCustomJavadocTask(excludeInternalDoclet)
+        val doclet = ExcludeInternalDoclet(version)
+        val configuration = doclet.addTo(project)
+        project.appendCustomJavadocTask(configuration)
     }
-}
-
-private fun Project.registerConfiguration(filterVersion: String): Configuration {
-    val doclet = ExcludeInternalDoclet(filterVersion)
-    return doclet.addTo(this)
 }
 
 private fun Project.appendCustomJavadocTask(excludeInternalDoclet: Configuration) {
@@ -78,7 +74,7 @@ private fun Project.appendCustomJavadocTask(excludeInternalDoclet: Configuration
             encoding = JavadocConfig.encoding.name
 
             // Doclet fully qualified name.
-            doclet = "io.spine.tools.javadoc.ExcludeInternalDoclet"
+            doclet = ExcludeInternalDoclet.className
 
             // Path to the JAR containing the doclet.
             docletpath = excludeInternalDoclet.files.toList()

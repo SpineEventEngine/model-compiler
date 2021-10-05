@@ -24,44 +24,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.internal.gradle.javadoc
-
-import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
+package io.spine.internal.gradle
 
 /**
- * The doclet which removes Javadoc for `@Internal` things in the Java code.
+ * Returns `true` if the version of a project contains `snapshot` (in any case),
+ * `false` otherwise.
  */
-class ExcludeInternalDoclet(val version: String) {
-
-    private val dependency = "io.spine.tools:spine-javadoc-filter:${version}"
-
-    companion object {
-
-        /**
-         * The name of the custom configuration in scope of which the exclusion of
-         * `@Internal` types is performed.
-         */
-        private const val configurationName = "excludeInternalDoclet"
-
-        /**
-         * The fully-qualified class name of the doclet.
-         */
-        const val className = "io.spine.tools.javadoc.ExcludeInternalDoclet"
-
-        private fun createConfiguration(project: Project): Configuration {
-            return project.configurations.create(configurationName)
-        }
-    }
-
-    /**
-     * Creates a configuration for the doclet in the given project and adds it to its dependencies.
-     *
-     * @return added configuration
-     */
-    fun addTo(project: Project): Configuration {
-        val configuration = createConfiguration(project)
-        project.dependencies.add(configuration.name, dependency)
-        return configuration
-    }
+fun String.isSnapshot(): Boolean {
+    return contains("snapshot", true)
 }

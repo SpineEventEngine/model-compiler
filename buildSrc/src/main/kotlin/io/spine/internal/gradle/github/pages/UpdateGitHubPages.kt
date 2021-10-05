@@ -30,6 +30,7 @@ import io.spine.internal.gradle.Cli
 import io.spine.internal.gradle.fs.LazyTempPath
 import io.spine.internal.gradle.javadoc.InternalJavadocFilter
 import io.spine.internal.gradle.javadoc.javadocTask
+import io.spine.internal.gradle.isSnapshot
 import java.io.File
 import java.lang.System.lineSeparator
 import java.nio.file.Path
@@ -148,32 +149,15 @@ class UpdateGitHubPages : Plugin<Project> {
         val extension = UpdateGitHubPagesExtension.createIn(project)
         project.afterEvaluate {
             val projectVersion = project.version.toString()
-            val isSnapshot = isSnapshot(projectVersion)
-            if (isSnapshot) {
+            if (projectVersion.isSnapshot()) {
                 registerNoOpTask()
             } else {
-                registerTasks(extension, project)
+                registerTasksIn(extension, project)
             }
         }
     }
 
-    /**
-     * Registers `updateGitHubPages` task which performs no actual update, but prints the message
-     * telling the update is skipped, since the project is in its `SNAPSHOT` version.
-     */
-    private fun Project.registerNoOpTask() {
-        tasks.register(taskName) {
-            doLast {
-                val project = this@registerNoOpTask
-                println(
-                    "GitHub Pages update will be skipped since this project is a snapshot: " +
-                            "`${project.name}-${project.version}`."
-                )
-            }
-        }
-    }
-
-    private fun registerTasks(extension: UpdateGitHubPagesExtension, project: Project) {
+    private fun registerTasksIn(extension: UpdateGitHubPagesExtension, project: Project) {
         val includeInternal = extension.allowInternalJavadoc()
         rootFolder = extension.rootFolder()
         includedInputs = extension.includedInputs()
@@ -183,7 +167,7 @@ class UpdateGitHubPages : Plugin<Project> {
             val filter = InternalJavadocFilter("2.0.0-SNAPSHOT.67")
             filter.registerTask(project)
         }
-        registerCopyJavadoc(includeInternal, copyJavadoc, tasks)
+        registerCopyJavadoc(includeInternal, tasks)
         val updatePagesTask = registerUpdateTask(project)
         updatePagesTask.configure {
             dependsOn(copyJavadoc)
@@ -241,11 +225,10 @@ class UpdateGitHubPages : Plugin<Project> {
 
     private fun registerCopyJavadoc(
         allowInternalJavadoc: Boolean,
-        taskName: String,
         tasks: TaskContainer
     ) {
         val inputs = composeInputs(tasks, allowInternalJavadoc)
-        tasks.register(taskName, Copy::class.java) {
+        tasks.register(copyJavadoc, Copy::class.java) {
             doLast {
                 from(*inputs.toTypedArray())
                 into(javadocOutputPath)
@@ -369,8 +352,20 @@ class UpdateGitHubPages : Plugin<Project> {
         }
         return gitHubAccessKey
     }
-
-    private fun isSnapshot(version: String): Boolean {
-        return version.contains("snapshot", true)
+}
+/**
+ * Registers `updateGitHubPages` task which performs no actual update, but prints the message
+ * telling the update is skipped, since the project is in its `SNAPSHOT` version.
+ */
+private fun Project.registerNoOpTask() {
+    tasks.register(UpdateGitHubPages.taskName) {
+        doLast {
+            val project = this@registerNoOpTask
+            println(
+                "GitHub Pages update will be skipped since this project is a snapshot: " +
+                        "`${project.name}-${project.version}`."
+            )
+        }
     }
 }
+
