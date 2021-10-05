@@ -53,7 +53,7 @@ class InternalJavadocFilter(val version: String) {
      *
      * The task is registered under [taskName].
      */
-    fun registerTask(project: Project) {
+    fun registerTaskIn(project: Project) {
         val doclet = ExcludeInternalDoclet(version)
         val configuration = doclet.addTo(project)
         project.appendCustomJavadocTask(configuration)
