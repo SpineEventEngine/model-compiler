@@ -29,33 +29,30 @@ package io.spine.internal.gradle.github.pages
 import io.spine.internal.gradle.Cli
 import io.spine.internal.gradle.RepoSlug
 import java.io.File
-import java.nio.file.Path
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.FileCollection
 
 /**
- * Performs the update of GitHub pages
+ * Performs the update of GitHub pages.
  */
-fun Task.updateGhPages(
-    project: Project,
-    rootFolder: File,
-    javadocOutputPath: Path,
-    checkoutTempFolder: Path
-) {
+fun Task.updateGhPages(project: Project) {
+    val plugin = project.plugins.getPlugin(UpdateGitHubPages::class.java)
+
     // Create SSH config file to allow pushing commits to the repository.
+    val rootFolder = plugin.rootFolder
     val gitHubAccessKey = gitHubKey(rootFolder)
     registerSshKey(rootFolder, gitHubAccessKey)
 
-    val ghRepoFolder = File("$checkoutTempFolder/${Branch.ghPages}")
+    val ghRepoFolder = File("${plugin.checkoutTempFolder}/${Branch.ghPages}")
     val gitHost = RepoSlug.fromVar().gitHost()
     checkoutDocs(rootFolder, gitHost, ghRepoFolder)
 
     val docDirPostfix = "reference/$project.name"
     val mostRecentDocDir = File("$ghRepoFolder/$docDirPostfix")
     logger.debug("Replacing the most recent docs in `$mostRecentDocDir`.")
-    val generatedDocs = project.files(javadocOutputPath)
+    val generatedDocs = project.files(plugin.javadocOutputPath)
     copyDocs(project, generatedDocs, mostRecentDocDir)
 
     val versionedDocDir = File("$mostRecentDocDir/v/$project.version")

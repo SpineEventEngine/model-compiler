@@ -88,30 +88,34 @@ class UpdateGitHubPages : Plugin<Project> {
     /**
      * Root folder of the repository, to which this `Project` belongs.
      */
-    private lateinit var rootFolder: File
+    internal lateinit var rootFolder: File
 
     /**
      * The external inputs to include into the publishing.
      *
      * The inputs are evaluated according to [Copy.from] specification.
      */
-    private lateinit var includedInputs: Set<Any>
+    internal  lateinit var includedInputs: Set<Any>
 
     /**
      * Path to the temp folder used to gather the Javadoc output
      * before submitting it to the GitHub Pages update.
      */
-    private val javadocOutputPath = LazyTempPath("javadoc")
+    internal  val javadocOutputPath = LazyTempPath("javadoc")
 
     /**
      * Path to the temp folder used checkout the original GitHub Pages branch.
      */
-    private val checkoutTempFolder = LazyTempPath("repoTemp")
+    internal val checkoutTempFolder = LazyTempPath("repoTemp")
 
     /**
      * Applies the plugin to the specified [project].
      *
-     * If the project version says it is a snapshot, the plugin is not applied.
+     * If the project version says it is a snapshot, the plugin registers a no-op task.
+     *
+     * Even in such a case, the extension object is still created in the given project, to allow
+     * customization of the parameters in its build script, for later usage when the project
+     * version changes to non-snapshot.
      */
     override fun apply(project: Project) {
         val extension = UpdateGitHubPagesExtension.createIn(project)
@@ -120,33 +124,29 @@ class UpdateGitHubPages : Plugin<Project> {
             if (projectVersion.isSnapshot()) {
                 registerNoOpTask()
             } else {
-                registerTasksIn(project, extension)
+                registerTasks(extension)
             }
         }
     }
 
-    private fun registerTasksIn(project: Project, extension: UpdateGitHubPagesExtension) {
+    private fun Project.registerTasks(extension: UpdateGitHubPagesExtension) {
         val includeInternal = extension.allowInternalJavadoc()
         rootFolder = extension.rootFolder()
         includedInputs = extension.includedInputs()
-        val tasks = project.tasks
         if (!includeInternal) {
             val doclet = ExcludeInternalDoclet(extension.excludeInternalDocletVersion)
-            doclet.registerTaskIn(project)
+            doclet.registerTaskIn(this)
         }
-        registerCopyJavadoc(includeInternal, tasks)
-        val updatePagesTask = registerUpdateTask(project)
+        tasks.registerCopyJavadoc(includeInternal)
+        val updatePagesTask = tasks.registerUpdateTask()
         updatePagesTask.configure {
             dependsOn(copyJavadoc)
         }
     }
 
-    private fun registerCopyJavadoc(
-        allowInternalJavadoc: Boolean,
-        tasks: TaskContainer
-    ) {
-        val inputs = composeInputs(tasks, allowInternalJavadoc)
-        tasks.register(copyJavadoc, Copy::class.java) {
+    private fun TaskContainer.registerCopyJavadoc(allowInternalJavadoc: Boolean) {
+        val inputs = composeInputs(allowInternalJavadoc)
+        register(copyJavadoc, Copy::class.java) {
             doLast {
                 from(*inputs.toTypedArray())
                 into(javadocOutputPath)
@@ -154,11 +154,22 @@ class UpdateGitHubPages : Plugin<Project> {
         }
     }
 
-    private fun registerUpdateTask(project: Project): TaskProvider<Task> {
-        return project.tasks.register(updateGitHubPages) {
+    private fun TaskContainer.composeInputs(allowInternalJavadoc: Boolean): MutableList<Any> {
+        val inputs = mutableListOf<Any>()
+        if (allowInternalJavadoc) {
+            inputs.add(javadocTask(ExcludeInternalDoclet.taskName))
+        } else {
+            inputs.add(javadocTask())
+        }
+        inputs.addAll(includedInputs)
+        return inputs
+    }
+
+    private fun TaskContainer.registerUpdateTask(): TaskProvider<Task> {
+        return register(updateGitHubPages) {
             doLast {
                 try {
-                    updateGhPages(project, rootFolder, checkoutTempFolder,  javadocOutputPath,)
+                    updateGhPages(project)
                 } finally {
                     cleanup()
                 }
@@ -171,20 +182,6 @@ class UpdateGitHubPages : Plugin<Project> {
         folders.forEach {
             it.toFile().deleteRecursively()
         }
-    }
-
-    private fun composeInputs(
-        tasks: TaskContainer,
-        allowInternalJavadoc: Boolean
-    ): MutableList<Any> {
-        val inputs = mutableListOf<Any>()
-        if (allowInternalJavadoc) {
-            inputs.add(tasks.javadocTask(ExcludeInternalDoclet.taskName))
-        } else {
-            inputs.add(tasks.javadocTask())
-        }
-        inputs.addAll(includedInputs)
-        return inputs
     }
 }
 
