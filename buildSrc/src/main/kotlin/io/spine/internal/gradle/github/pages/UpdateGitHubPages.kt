@@ -27,10 +27,9 @@
 package io.spine.internal.gradle.github.pages
 
 import io.spine.internal.gradle.Cli
-import io.spine.internal.gradle.InternalJavadocFilter
-import io.spine.internal.gradle.JavadocTask
 import io.spine.internal.gradle.fs.LazyTempPath
-import io.spine.internal.gradle.javadocTask
+import io.spine.internal.gradle.javadoc.InternalJavadocFilter
+import io.spine.internal.gradle.javadoc.javadocTask
 import java.io.File
 import java.lang.System.lineSeparator
 import java.nio.file.Path
@@ -42,7 +41,6 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.kotlin.dsl.add
 
 /**
  * Registers the `updateGitHubPages` task which performs the update of the GitHub Pages
@@ -147,8 +145,7 @@ class UpdateGitHubPages : Plugin<Project> {
      * If the project version says it is a snapshot, the plugin is not applied.
      */
     override fun apply(project: Project) {
-        val extension = UpdateGitHubPagesExtension.create(project)
-        project.extensions.add(UpdateGitHubPagesExtension::class, "updateGitHubPages", extension)
+        val extension = UpdateGitHubPagesExtension.createIn(project)
         project.afterEvaluate {
             val projectVersion = project.version.toString()
             val isSnapshot = isSnapshot(projectVersion)
@@ -182,7 +179,9 @@ class UpdateGitHubPages : Plugin<Project> {
         includedInputs = extension.includedInputs()
         val tasks = project.tasks
         if (!includeInternal) {
-            InternalJavadocFilter.registerTask(project)
+            //TODO:2021-10-05:alexander.yevsyukov: Pass as a parameter
+            val filter = InternalJavadocFilter("2.0.0-SNAPSHOT.67")
+            filter.registerTask(project)
         }
         registerCopyJavadoc(includeInternal, copyJavadoc, tasks)
         val updatePagesTask = registerUpdateTask(project)
@@ -262,7 +261,7 @@ class UpdateGitHubPages : Plugin<Project> {
         if (allowInternalJavadoc) {
             inputs.add(tasks.javadocTask(InternalJavadocFilter.taskName))
         } else {
-            inputs.add(tasks.javadocTask(JavadocTask.name))
+            inputs.add(tasks.javadocTask())
         }
         inputs.addAll(includedInputs)
         return inputs

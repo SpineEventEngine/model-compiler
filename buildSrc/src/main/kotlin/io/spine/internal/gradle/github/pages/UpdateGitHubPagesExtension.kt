@@ -73,13 +73,20 @@ private constructor(
 ) {
 
     internal companion object {
-        fun create(project: Project): UpdateGitHubPagesExtension {
+
+        /** The name of the extension. */
+        const val name = "updateGitHubPages"
+
+        /** Creates a new extension and adds it to the passed project. */
+        fun createIn(project: Project): UpdateGitHubPagesExtension {
             val factory = project.objects
-            return UpdateGitHubPagesExtension(
+            val result = UpdateGitHubPagesExtension(
                 allowInternalJavadoc = factory.property(Boolean::class),
                 rootFolder = factory.property(File::class),
                 includeInputs = factory.setProperty(Any::class.java)
             )
+            project.extensions.add(result.javaClass, name, result)
+            return result
         }
     }
 

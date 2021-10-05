@@ -35,13 +35,13 @@ import io.spine.internal.dependency.Guava
 import io.spine.internal.dependency.JUnit
 import io.spine.internal.dependency.Protobuf
 import io.spine.internal.dependency.Truth
-import io.spine.internal.gradle.JavadocConfig
 import io.spine.internal.gradle.Scripts
 import io.spine.internal.gradle.applyGitHubPackages
 import io.spine.internal.gradle.applyStandard
 import io.spine.internal.gradle.excludeProtobufLite
 import io.spine.internal.gradle.forceVersions
 import io.spine.internal.gradle.github.pages.updateGitHubPages
+import io.spine.internal.gradle.javadoc.JavadocConfig
 import io.spine.internal.gradle.publish.PublishingRepos
 import io.spine.internal.gradle.publish.spinePublishing
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
