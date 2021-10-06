@@ -39,7 +39,7 @@ import org.gradle.api.file.RegularFileProperty
 /**
  * Extends a Gradle project with the [`modelCompiler`][name] block.
  */
-abstract class McExtension {
+public abstract class McExtension {
 
     private val languageSpecificConfig: MutableMap<String, LanguageSpecificExtension> =
         mutableMapOf()
@@ -55,14 +55,14 @@ abstract class McExtension {
      *
      * The file must have the `.desc` extension.
      */
-    abstract val mainDescriptorSetFile: RegularFileProperty
+    public abstract val mainDescriptorSetFile: RegularFileProperty
 
     /**
      * The absolute path to the test Protobuf descriptor set file.
      *
      * The file must have the `.desc` extension.
      */
-    abstract val testDescriptorSetFile: RegularFileProperty
+    public abstract val testDescriptorSetFile: RegularFileProperty
 
     private lateinit var project: Project
 
@@ -72,7 +72,7 @@ abstract class McExtension {
      *
      * This method is a Kotlin-specific API. Use the overload from Java and Groovy.
      */
-    inline fun <reified T : LanguageSpecificExtension> forLanguage(noinline config: T.() -> Unit) {
+    public inline fun <reified T : LanguageSpecificExtension> forLanguage(noinline config: T.() -> Unit) {
         contract {
             callsInPlace(config, EXACTLY_ONCE)
         }
@@ -88,7 +88,7 @@ abstract class McExtension {
      * a reified type parameter).
      */
     @Suppress("UNCHECKED_CAST")
-    fun <T : LanguageSpecificExtension> forLanguage(cls: Class<T>, config: (T) -> Unit) {
+    public fun <T : LanguageSpecificExtension> forLanguage(cls: Class<T>, config: (T) -> Unit) {
         contract {
             callsInPlace(config, EXACTLY_ONCE)
         }
@@ -107,15 +107,15 @@ abstract class McExtension {
      * Returns `null` if the Model Compiler hasn't been configured for the given language.
      */
     @Suppress("UNCHECKED_CAST")
-    fun <T : LanguageSpecificExtension> languageConfig(cls: Class<T>): T? {
+    public fun <T : LanguageSpecificExtension> languageConfig(cls: Class<T>): T? {
         return languageSpecificConfig[key(cls)] as T?
     }
 
     private fun key(cls: Class<*>) = cls.canonicalName
 
-    companion object : Logging {
+    public companion object : Logging {
 
-        const val name = "modelCompiler2"
+        public const val name: String = "modelCompiler2"
 
         /**
          * Adds this extension to the given [Project] and initializes the default values.
