@@ -26,6 +26,8 @@
 
 package io.spine.tools.mc.gradle
 
+import io.spine.tools.mc.Language
+
 /**
  * A part of the Model Compiler configuration specific for a certain target language.
  *
@@ -36,4 +38,8 @@ package io.spine.tools.mc.gradle
  * the implementation class and the property must be `abstract`. Gradle will take care of
  * instantiating the properties.
  */
-public interface LanguageConfig
+public interface LanguageConfig<L: Language> {
+
+    /** The programming language for which this Model Compiler configuration is supplied. */
+    public val language: L
+}

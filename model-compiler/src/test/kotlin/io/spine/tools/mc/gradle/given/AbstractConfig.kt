@@ -26,12 +26,16 @@
 
 package io.spine.tools.mc.gradle.given
 
+import io.spine.tools.mc.Language
 import io.spine.tools.mc.gradle.LanguageConfig
 import javax.inject.Inject
 import org.gradle.api.file.RegularFileProperty
 
-abstract class AbstractConfig
-@Inject constructor() : LanguageConfig {
+abstract class AbstractConfig<L: Language>
+@Inject constructor() : LanguageConfig<L> {
 
     abstract val property: RegularFileProperty
+
+    override val language: L
+        get() = throw NotImplementedError("Cannot get language from ${this::class}.")
 }
