@@ -29,4 +29,4 @@ package io.spine.tools.mc
 /**
  * A programming language supported by Model Compiler.
  */
-interface Language
+public interface Language

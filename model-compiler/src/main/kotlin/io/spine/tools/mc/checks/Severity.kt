@@ -29,7 +29,7 @@ package io.spine.tools.mc.checks
 /**
  * The severity of Spine Model Compiler checks.
  */
-enum class Severity {
+public enum class Severity {
 
     /** The check is not used. */
     OFF,
