@@ -39,4 +39,4 @@ package io.spine.tools.mc.gradle
  * the implementation class and the property must be `abstract`. Gradle will take care of
  * instantiating the properties.
  */
-public interface LanguageSpecificExtension
+public interface LanguageConfig

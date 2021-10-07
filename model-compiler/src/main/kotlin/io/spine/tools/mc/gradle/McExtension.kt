@@ -41,14 +41,13 @@ import org.gradle.api.file.RegularFileProperty
  */
 public abstract class McExtension {
 
-    private val languageSpecificConfig: MutableMap<String, LanguageSpecificExtension> =
-        mutableMapOf()
+    private val config: MutableMap<String, LanguageConfig> = mutableMapOf()
 
     /**
      * The Model Compiler configurations specific for certain target languages.
      */
-    internal val languageConfigurations: Set<LanguageSpecificExtension>
-        get() = languageSpecificConfig.values.toSet()
+    internal val languageConfigurations: Set<LanguageConfig>
+        get() = config.values.toSet()
 
     /**
      * The absolute path to the main Protobuf descriptor set file.
@@ -73,7 +72,7 @@ public abstract class McExtension {
      * This method is a Kotlin-specific API. Use the overload from Java and Groovy.
      */
     public inline
-    fun <reified T : LanguageSpecificExtension> forLanguage(noinline config: T.() -> Unit) {
+    fun <reified T : LanguageConfig> forLanguage(noinline config: T.() -> Unit) {
         contract {
             callsInPlace(config, EXACTLY_ONCE)
         }
@@ -89,16 +88,16 @@ public abstract class McExtension {
      * a reified type parameter).
      */
     @Suppress("UNCHECKED_CAST")
-    public fun <T : LanguageSpecificExtension> forLanguage(cls: Class<T>, config: (T) -> Unit) {
+    public fun <T : LanguageConfig> forLanguage(cls: Class<T>, config: (T) -> Unit) {
         contract {
             callsInPlace(config, EXACTLY_ONCE)
         }
         val key = key(cls)
-        if (!languageSpecificConfig.containsKey(key)) {
+        if (!this.config.containsKey(key)) {
             val newInstance = project.objects.newInstance(cls)
-            languageSpecificConfig[key] = newInstance
+            this.config[key] = newInstance
         }
-        val ext = languageSpecificConfig[key]!! as T
+        val ext = this.config[key]!! as T
         config(ext)
     }
 
@@ -108,8 +107,8 @@ public abstract class McExtension {
      * Returns `null` if the Model Compiler hasn't been configured for the given language.
      */
     @Suppress("UNCHECKED_CAST")
-    public fun <T : LanguageSpecificExtension> languageConfig(cls: Class<T>): T? {
-        return languageSpecificConfig[key(cls)] as T?
+    public fun <T : LanguageConfig> languageConfig(cls: Class<T>): T? {
+        return config[key(cls)] as T?
     }
 
     private fun key(cls: Class<*>) = cls.canonicalName

@@ -26,10 +26,10 @@
 
 package io.spine.tools.mc.gradle.given
 
-import io.spine.tools.mc.gradle.LanguageSpecificExtension
+import io.spine.tools.mc.gradle.LanguageConfig
 import javax.inject.Inject
 
-open class TestConfig @Inject constructor() : LanguageSpecificExtension {
+open class TestConfig @Inject constructor() : LanguageConfig {
 
     var payload: String = ""
 }
