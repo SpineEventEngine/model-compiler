@@ -72,7 +72,8 @@ public abstract class McExtension {
      *
      * This method is a Kotlin-specific API. Use the overload from Java and Groovy.
      */
-    public inline fun <reified T : LanguageSpecificExtension> forLanguage(noinline config: T.() -> Unit) {
+    public inline
+    fun <reified T : LanguageSpecificExtension> forLanguage(noinline config: T.() -> Unit) {
         contract {
             callsInPlace(config, EXACTLY_ONCE)
         }
