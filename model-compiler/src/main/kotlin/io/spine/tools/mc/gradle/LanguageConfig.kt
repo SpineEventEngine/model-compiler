@@ -29,9 +29,6 @@ package io.spine.tools.mc.gradle
 /**
  * A part of the Model Compiler configuration specific for a certain target language.
  *
- * It's recommended to name the implementation classes after the programming languages they
- * represent, for example `Java` or `Dart`.
- *
  * Implementation classes must be open for inheritance and have a public zero-argument constructor
  * annotated with `javax.inject.Inject`. Gradle instantiates them via `project.getObjects()`.
  *
