@@ -41,13 +41,13 @@ import org.gradle.api.file.RegularFileProperty
  */
 public abstract class McExtension {
 
-    private val config: MutableMap<String, LanguageConfig<*>> = mutableMapOf()
+    private val configs: MutableMap<String, LanguageConfig<*>> = mutableMapOf()
 
     /**
      * The Model Compiler configurations specific for certain target languages.
      */
     internal val languageConfigurations: Set<LanguageConfig<*>>
-        get() = config.values.toSet()
+        get() = configs.values.toSet()
 
     /**
      * The absolute path to the main Protobuf descriptor set file.
@@ -93,11 +93,11 @@ public abstract class McExtension {
             callsInPlace(config, EXACTLY_ONCE)
         }
         val key = key(cls)
-        if (!this.config.containsKey(key)) {
+        if (!configs.containsKey(key)) {
             val newInstance = project.objects.newInstance(cls)
-            this.config[key] = newInstance
+            configs[key] = newInstance
         }
-        val ext = this.config[key]!! as C
+        val ext = configs[key]!! as C
         config(ext)
     }
 
@@ -108,7 +108,7 @@ public abstract class McExtension {
      */
     @Suppress("UNCHECKED_CAST")
     public fun <C : LanguageConfig<*>> languageConfig(cls: Class<C>): C? {
-        return config[key(cls)] as C?
+        return configs[key(cls)] as C?
     }
 
     private fun key(cls: Class<*>) = cls.canonicalName
