@@ -72,11 +72,11 @@ public abstract class McExtension {
      * This method is a Kotlin-specific API. Use the overload from Java and Groovy.
      */
     public inline
-    fun <reified T : LanguageConfig<*>> forLanguage(noinline config: T.() -> Unit) {
+    fun <reified C : LanguageConfig<*>> forLanguage(noinline config: C.() -> Unit) {
         contract {
             callsInPlace(config, EXACTLY_ONCE)
         }
-        val cls = T::class.java
+        val cls = C::class.java
         forLanguage(cls, config)
     }
 
@@ -88,7 +88,7 @@ public abstract class McExtension {
      * a reified type parameter).
      */
     @Suppress("UNCHECKED_CAST")
-    public fun <T : LanguageConfig<*>> forLanguage(cls: Class<T>, config: (T) -> Unit) {
+    public fun <C : LanguageConfig<*>> forLanguage(cls: Class<C>, config: (C) -> Unit) {
         contract {
             callsInPlace(config, EXACTLY_ONCE)
         }
@@ -97,7 +97,7 @@ public abstract class McExtension {
             val newInstance = project.objects.newInstance(cls)
             this.config[key] = newInstance
         }
-        val ext = this.config[key]!! as T
+        val ext = this.config[key]!! as C
         config(ext)
     }
 
@@ -107,8 +107,8 @@ public abstract class McExtension {
      * Returns `null` if the Model Compiler hasn't been configured for the given language.
      */
     @Suppress("UNCHECKED_CAST")
-    public fun <T : LanguageConfig<*>> languageConfig(cls: Class<T>): T? {
-        return config[key(cls)] as T?
+    public fun <C : LanguageConfig<*>> languageConfig(cls: Class<C>): C? {
+        return config[key(cls)] as C?
     }
 
     private fun key(cls: Class<*>) = cls.canonicalName
