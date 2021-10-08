@@ -28,6 +28,7 @@ package io.spine.tools.mc.gradle
 
 import com.google.common.truth.Truth.assertThat
 import io.spine.testing.Correspondences.type
+import io.spine.tools.mc.checks.Severity
 import io.spine.tools.mc.gradle.given.AbstractConfig
 import io.spine.tools.mc.gradle.given.TestConfig
 import java.io.File
@@ -36,7 +37,7 @@ import org.gradle.testfixtures.ProjectBuilder
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class `McExtension should` {
+class `'McExtension' should` {
 
     lateinit var ext: McExtension
 
@@ -119,5 +120,30 @@ class `McExtension should` {
             .isNotNull()
         assertThat(config!!.payload)
             .startsWith("a")
+    }
+
+    @Nested
+    inner class `configure language-neutral 'checks'` {
+
+        @Test
+        fun `having 'WARN' as the default severity level`() {
+            val severity = currentSeverity()
+            assertThat(severity)
+                .isEqualTo(Severity.WARN)
+        }
+
+        @Test
+        fun `with custom severity level`() {
+            val expected = Severity.ERROR
+            ext.checks {
+                defaultSeverity.set(expected)
+            }
+
+            val severity = currentSeverity()
+            assertThat(severity)
+                .isEqualTo(expected)
+        }
+
+        private fun currentSeverity() = ext.getChecks().defaultSeverity.get()
     }
 }

@@ -29,12 +29,14 @@ package io.spine.tools.mc.gradle
 import io.spine.logging.Logging
 import io.spine.tools.gradle.defaultMainDescriptors
 import io.spine.tools.gradle.defaultTestDescriptors
+import io.spine.tools.mc.checks.Severity
 import io.spine.tools.mc.gradle.McExtension.Companion.name
 import java.io.File
 import kotlin.contracts.InvocationKind.EXACTLY_ONCE
 import kotlin.contracts.contract
 import org.gradle.api.Project
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.tasks.Nested
 
 /**
  * Extends a Gradle project with the [`modelCompiler`][name] block.
@@ -48,6 +50,14 @@ public abstract class McExtension {
      */
     internal val languageConfigurations: Set<LanguageConfig>
         get() = configs.values.toSet()
+
+    /**
+     * Language-independent check settings.
+     *
+     * @see [checks]
+     */
+    @Nested
+    public abstract fun getChecks(): CommonChecks
 
     /**
      * The absolute path to the Protobuf descriptor set file in the `main` source set.
@@ -101,6 +111,8 @@ public abstract class McExtension {
         config(ext)
     }
 
+    private fun key(cls: Class<*>) = cls.canonicalName
+
     private fun <C : LanguageConfig> newInstance(cls: Class<C>) =
         project.objects.newInstance(cls)
 
@@ -114,7 +126,12 @@ public abstract class McExtension {
         return configs[key(cls)] as C?
     }
 
-    private fun key(cls: Class<*>) = cls.canonicalName
+    /**
+     * Configures the `checks` property using the passed action.
+     */
+    public fun checks(action: CommonChecks.() -> Unit) {
+        action.invoke(getChecks())
+    }
 
     public companion object : Logging {
 
@@ -131,6 +148,8 @@ public abstract class McExtension {
                 project = p
                 mainDescriptorSetFile.convention(regularFile(defaultMainDescriptors))
                 testDescriptorSetFile.convention(regularFile(defaultTestDescriptors))
+
+                getChecks().defaultSeverity.set(Severity.WARN)
             }
         }
 
