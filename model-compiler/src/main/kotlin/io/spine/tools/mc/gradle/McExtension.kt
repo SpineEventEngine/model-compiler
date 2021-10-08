@@ -50,24 +50,25 @@ public abstract class McExtension {
         get() = configs.values.toSet()
 
     /**
-     * The absolute path to the main Protobuf descriptor set file.
+     * The absolute path to the Protobuf descriptor set file in the `main` source set.
      *
      * The file must have the `.desc` extension.
      */
     public abstract val mainDescriptorSetFile: RegularFileProperty
 
     /**
-     * The absolute path to the test Protobuf descriptor set file.
+     * The absolute path to the Protobuf descriptor set file in the `test` source set.
      *
      * The file must have the `.desc` extension.
      */
     public abstract val testDescriptorSetFile: RegularFileProperty
 
+    /** The project to which this extension belongs. */
     private lateinit var project: Project
 
     /**
-     * Configure Model Compiler specifically for the given target language, e.g. Java, JavaScript,
-     * Dart, etc.
+     * Configure Model Compiler specifically for the given target language,
+     * e.g. Java, JavaScript, Dart, etc.
      *
      * This method is a Kotlin-specific API. Use the overload from Java and Groovy.
      */
@@ -81,8 +82,8 @@ public abstract class McExtension {
     }
 
     /**
-     * Configure Model Compiler specifically for the given target language, e.g. Java, JavaScript,
-     * Dart, etc.
+     * Configure Model Compiler specifically for the given target language,
+     * e.g. Java, JavaScript, Dart, etc.
      *
      * When using this API from Kotlin, consider a Kotlin-specific overload (an inlined method with
      * a reified type parameter).
@@ -94,12 +95,14 @@ public abstract class McExtension {
         }
         val key = key(cls)
         if (!configs.containsKey(key)) {
-            val newInstance = project.objects.newInstance(cls)
-            configs[key] = newInstance
+            configs[key] = newInstance(cls)
         }
         val ext = configs[key]!! as C
         config(ext)
     }
+
+    private fun <C : LanguageConfig> newInstance(cls: Class<C>) =
+        project.objects.newInstance(cls)
 
     /**
      * Obtains the Model Compiler configuration specific for a certain target language.
@@ -115,7 +118,8 @@ public abstract class McExtension {
 
     public companion object : Logging {
 
-        public const val name: String = "modelCompiler2"
+        /** The name of the extension. */
+        public const val name: String = "modelCompiler"
 
         /**
          * Adds this extension to the given [Project] and initializes the default values.
@@ -123,11 +127,11 @@ public abstract class McExtension {
         internal fun createIn(p: Project): Unit = with(p) {
             _debug().log("Adding the `$name` extension to the project `$p`.")
             val extension = extensions.create(name, McExtension::class.java)
-            extension.project = p
-            extension.mainDescriptorSetFile
-                .convention(regularFile(defaultMainDescriptors))
-            extension.testDescriptorSetFile
-                .convention(regularFile(defaultTestDescriptors))
+            with (extension) {
+                project = p
+                mainDescriptorSetFile.convention(regularFile(defaultMainDescriptors))
+                testDescriptorSetFile.convention(regularFile(defaultTestDescriptors))
+            }
         }
 
         private fun Project.regularFile(file: File) =

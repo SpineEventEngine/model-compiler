@@ -81,6 +81,11 @@ class `McExtension should` {
             .startsWith("foo")
     }
 
+    /**
+     * Abstract configuration files are convenient for declaring `abstract` properties,
+     * implementations for which will be automatically created by Gradle
+     * when `McExtension.newInstance()` is invoked.
+     */
     @Test
     fun `allow to register abstract configs`() {
         ext.forLanguage<AbstractConfig> {
