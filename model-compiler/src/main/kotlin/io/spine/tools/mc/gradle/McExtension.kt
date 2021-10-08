@@ -41,12 +41,12 @@ import org.gradle.api.file.RegularFileProperty
  */
 public abstract class McExtension {
 
-    private val configs: MutableMap<String, LanguageConfig<*>> = mutableMapOf()
+    private val configs: MutableMap<String, LanguageConfig> = mutableMapOf()
 
     /**
      * The Model Compiler configurations specific for certain target languages.
      */
-    internal val languageConfigurations: Set<LanguageConfig<*>>
+    internal val languageConfigurations: Set<LanguageConfig>
         get() = configs.values.toSet()
 
     /**
@@ -72,7 +72,7 @@ public abstract class McExtension {
      * This method is a Kotlin-specific API. Use the overload from Java and Groovy.
      */
     public inline
-    fun <reified C : LanguageConfig<*>> forLanguage(noinline config: C.() -> Unit) {
+    fun <reified C : LanguageConfig> forLanguage(noinline config: C.() -> Unit) {
         contract {
             callsInPlace(config, EXACTLY_ONCE)
         }
@@ -88,7 +88,7 @@ public abstract class McExtension {
      * a reified type parameter).
      */
     @Suppress("UNCHECKED_CAST")
-    public fun <C : LanguageConfig<*>> forLanguage(cls: Class<C>, config: (C) -> Unit) {
+    public fun <C : LanguageConfig> forLanguage(cls: Class<C>, config: (C) -> Unit) {
         contract {
             callsInPlace(config, EXACTLY_ONCE)
         }
@@ -107,7 +107,7 @@ public abstract class McExtension {
      * Returns `null` if the Model Compiler hasn't been configured for the given language.
      */
     @Suppress("UNCHECKED_CAST")
-    public fun <C : LanguageConfig<*>> languageConfig(cls: Class<C>): C? {
+    public fun <C : LanguageConfig> languageConfig(cls: Class<C>): C? {
         return configs[key(cls)] as C?
     }
 

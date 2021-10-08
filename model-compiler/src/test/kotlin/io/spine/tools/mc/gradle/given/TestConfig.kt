@@ -26,15 +26,11 @@
 
 package io.spine.tools.mc.gradle.given
 
-import io.spine.tools.mc.Language
 import io.spine.tools.mc.gradle.LanguageConfig
 import javax.inject.Inject
 
-object Testo: Language
-
-open class TestConfig @Inject constructor() : LanguageConfig<Testo> {
+open class TestConfig @Inject constructor() : LanguageConfig {
 
     var payload: String = ""
 
-    override val language: Testo = Testo
 }

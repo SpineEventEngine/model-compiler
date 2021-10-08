@@ -74,7 +74,7 @@ class `McExtension should` {
         }
         val configs = ext.languageConfigurations
         assertThat(configs)
-            .comparingElementsUsing(type<LanguageConfig<*>>())
+            .comparingElementsUsing(type<LanguageConfig>())
             .containsExactly(TestConfig::class.java)
         val testConfig = configs.first() as TestConfig
         assertThat(testConfig.payload)
@@ -83,12 +83,12 @@ class `McExtension should` {
 
     @Test
     fun `allow to register abstract configs`() {
-        ext.forLanguage<AbstractConfig<*>> {
+        ext.forLanguage<AbstractConfig> {
             property.set(ext.testDescriptorSetFile.get())
         }
         val configs = ext.languageConfigurations
         assertThat(configs)
-            .comparingElementsUsing(type<LanguageConfig<*>>())
+            .comparingElementsUsing(type<LanguageConfig>())
             .containsExactly(AbstractConfig::class.java)
         val config = configs.first() as AbstractConfig
         assertThat(config.property.isPresent)
