@@ -44,6 +44,7 @@ import io.spine.internal.gradle.github.pages.updateGitHubPages
 import io.spine.internal.gradle.javadoc.JavadocConfig
 import io.spine.internal.gradle.publish.PublishingRepos
 import io.spine.internal.gradle.publish.spinePublishing
+import io.spine.internal.gradle.report.pom.PomGenerator
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 repositories.applyStandard()
@@ -193,9 +194,7 @@ apply {
 
         // Generate a repository-wide report of 3rd-party dependencies and their licenses.
         from(repoLicenseReport(project))
-
-        // Generate a `pom.xml` file containing first-level dependency of all projects
-        // in the repository.
-        from(generatePom(project))
     }
 }
+
+PomGenerator.applyTo(project)
