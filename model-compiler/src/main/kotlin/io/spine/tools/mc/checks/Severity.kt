@@ -24,17 +24,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.internal.gradle
+package io.spine.tools.mc.checks
 
-import io.spine.internal.dependency.AssertK
-import io.spine.internal.dependency.BouncyCastle
-import io.spine.internal.dependency.JavaJwt
-import io.spine.internal.dependency.Klaxon
+/**
+ * The severity of Spine Model Compiler checks.
+ */
+public enum class Severity {
 
-@Suppress("unused")
-object Publishing {
-    const val klaxon = Klaxon.lib
-    const val oauthJwt = JavaJwt.lib
-    const val bouncyCastlePkcs = BouncyCastle.libPkcsJdk15
-    const val assertK = AssertK.libJvm
+    /** The check is not used. */
+    OFF,
+
+    /** Violating the check causes a warning during compile time. */
+    WARN,
+
+    /** Violating the check causes a compilation error. */
+    ERROR
 }

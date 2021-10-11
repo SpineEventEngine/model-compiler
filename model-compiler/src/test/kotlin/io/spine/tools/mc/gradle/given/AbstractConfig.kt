@@ -26,12 +26,13 @@
 
 package io.spine.tools.mc.gradle.given
 
-import io.spine.tools.mc.gradle.LanguageSpecificExtension
+import io.spine.tools.mc.gradle.LanguageConfig
 import javax.inject.Inject
 import org.gradle.api.file.RegularFileProperty
 
 abstract class AbstractConfig
-@Inject constructor() : LanguageSpecificExtension {
+@Inject constructor() : LanguageConfig {
 
     abstract val property: RegularFileProperty
+
 }

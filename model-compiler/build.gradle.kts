@@ -25,13 +25,10 @@
  */
 
 import io.spine.internal.dependency.Protobuf
-import io.spine.internal.dependency.Spine
 
 dependencies {
     api(project(":plugin-base"))
+    implementation(Protobuf.GradlePlugin.lib)
 
     testImplementation(project(":plugin-testlib"))
-    implementation(Protobuf.GradlePlugin.lib)
-    testImplementation(Spine(project).testlib)
-    testImplementation(gradleTestKit())
 }

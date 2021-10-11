@@ -29,77 +29,92 @@ package io.spine.tools.mc.gradle
 import io.spine.logging.Logging
 import io.spine.tools.gradle.defaultMainDescriptors
 import io.spine.tools.gradle.defaultTestDescriptors
+import io.spine.tools.mc.checks.Severity
 import io.spine.tools.mc.gradle.McExtension.Companion.name
 import java.io.File
 import kotlin.contracts.InvocationKind.EXACTLY_ONCE
 import kotlin.contracts.contract
 import org.gradle.api.Project
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.tasks.Nested
 
 /**
  * Extends a Gradle project with the [`modelCompiler`][name] block.
  */
-abstract class McExtension {
+public abstract class McExtension {
 
-    private val languageSpecificConfig: MutableMap<String, LanguageSpecificExtension> =
-        mutableMapOf()
+    private val configs: MutableMap<String, LanguageConfig> = mutableMapOf()
 
     /**
      * The Model Compiler configurations specific for certain target languages.
      */
-    internal val languageConfigurations: Set<LanguageSpecificExtension>
-        get() = languageSpecificConfig.values.toSet()
+    internal val languageConfigurations: Set<LanguageConfig>
+        get() = configs.values.toSet()
 
     /**
-     * The absolute path to the main Protobuf descriptor set file.
+     * Language-independent check settings.
+     *
+     * @see [checks]
+     */
+    @Nested
+    public abstract fun getChecks(): CommonChecks
+
+    /**
+     * The absolute path to the Protobuf descriptor set file in the `main` source set.
      *
      * The file must have the `.desc` extension.
      */
-    abstract val mainDescriptorSetFile: RegularFileProperty
+    public abstract val mainDescriptorSetFile: RegularFileProperty
 
     /**
-     * The absolute path to the test Protobuf descriptor set file.
+     * The absolute path to the Protobuf descriptor set file in the `test` source set.
      *
      * The file must have the `.desc` extension.
      */
-    abstract val testDescriptorSetFile: RegularFileProperty
+    public abstract val testDescriptorSetFile: RegularFileProperty
 
+    /** The project to which this extension belongs. */
     private lateinit var project: Project
 
     /**
-     * Configure Model Compiler specifically for the given target language, e.g. Java, JavaScript,
-     * Dart, etc.
+     * Configure Model Compiler specifically for the given target language,
+     * e.g. Java, JavaScript, Dart, etc.
      *
      * This method is a Kotlin-specific API. Use the overload from Java and Groovy.
      */
-    inline fun <reified T : LanguageSpecificExtension> forLanguage(noinline config: T.() -> Unit) {
+    public inline
+    fun <reified C : LanguageConfig> forLanguage(noinline config: C.() -> Unit) {
         contract {
             callsInPlace(config, EXACTLY_ONCE)
         }
-        val cls = T::class.java
+        val cls = C::class.java
         forLanguage(cls, config)
     }
 
     /**
-     * Configure Model Compiler specifically for the given target language, e.g. Java, JavaScript,
-     * Dart, etc.
+     * Configure Model Compiler specifically for the given target language,
+     * e.g. Java, JavaScript, Dart, etc.
      *
      * When using this API from Kotlin, consider a Kotlin-specific overload (an inlined method with
      * a reified type parameter).
      */
     @Suppress("UNCHECKED_CAST")
-    fun <T : LanguageSpecificExtension> forLanguage(cls: Class<T>, config: (T) -> Unit) {
+    public fun <C : LanguageConfig> forLanguage(cls: Class<C>, config: (C) -> Unit) {
         contract {
             callsInPlace(config, EXACTLY_ONCE)
         }
         val key = key(cls)
-        if (!languageSpecificConfig.containsKey(key)) {
-            val newInstance = project.objects.newInstance(cls)
-            languageSpecificConfig[key] = newInstance
+        if (!configs.containsKey(key)) {
+            configs[key] = newInstance(cls)
         }
-        val ext = languageSpecificConfig[key]!! as T
+        val ext = configs[key]!! as C
         config(ext)
     }
+
+    private fun key(cls: Class<*>) = cls.canonicalName
+
+    private fun <C : LanguageConfig> newInstance(cls: Class<C>) =
+        project.objects.newInstance(cls)
 
     /**
      * Obtains the Model Compiler configuration specific for a certain target language.
@@ -107,15 +122,21 @@ abstract class McExtension {
      * Returns `null` if the Model Compiler hasn't been configured for the given language.
      */
     @Suppress("UNCHECKED_CAST")
-    fun <T : LanguageSpecificExtension> languageConfig(cls: Class<T>): T? {
-        return languageSpecificConfig[key(cls)] as T?
+    public fun <C : LanguageConfig> languageConfig(cls: Class<C>): C? {
+        return configs[key(cls)] as C?
     }
 
-    private fun key(cls: Class<*>) = cls.canonicalName
+    /**
+     * Configures the `checks` property using the passed action.
+     */
+    public fun checks(action: CommonChecks.() -> Unit) {
+        action.invoke(getChecks())
+    }
 
-    companion object : Logging {
+    public companion object : Logging {
 
-        const val name = "modelCompiler2"
+        /** The name of the extension. */
+        public const val name: String = "modelCompiler"
 
         /**
          * Adds this extension to the given [Project] and initializes the default values.
@@ -123,29 +144,16 @@ abstract class McExtension {
         internal fun createIn(p: Project): Unit = with(p) {
             _debug().log("Adding the `$name` extension to the project `$p`.")
             val extension = extensions.create(name, McExtension::class.java)
-            extension.project = p
-            extension.mainDescriptorSetFile
-                .convention(regularFile(defaultMainDescriptors))
-            extension.testDescriptorSetFile
-                .convention(regularFile(defaultTestDescriptors))
+            with (extension) {
+                project = p
+                mainDescriptorSetFile.convention(regularFile(defaultMainDescriptors))
+                testDescriptorSetFile.convention(regularFile(defaultTestDescriptors))
+
+                getChecks().defaultSeverity.set(Severity.WARN)
+            }
         }
 
         private fun Project.regularFile(file: File) =
             layout.projectDirectory.file(file.toString())
     }
 }
-
-/**
- * A part of the Model Compiler configuration specific for a certain target language.
- *
- * It's recommended to name the implementation classes after the programming languages they
- * represent, for example `Java` or `Dart`.
- *
- * Implementation classes must be open for inheritance and have a public zero-argument constructor
- * annotated with `javax.inject.Inject`. Gradle instantiates them via `project.getObjects()`.
- *
- * When needed, implementation classes may also declare Gradle properties. In this case, both
- * the implementation class and the property must be `abstract`. Gradle will take care of
- * instantiating the properties.
- */
-interface LanguageSpecificExtension

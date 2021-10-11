@@ -24,33 +24,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-configurations {
-    excludeInternalDoclet
-}
+package io.spine.internal.gradle.report.pom
 
-dependencies {
-    /*
-       The variable spineBaseVersion must be defined in the `ext` section of the `version.gradle`
-       file of the project which imports `config` as a sub-module.
-      */
-    excludeInternalDoclet "io.spine.tools:spine-javadoc-filter:$spineBaseVersion"
-}
+import groovy.xml.MarkupBuilder
+import java.io.StringWriter
+import org.gradle.kotlin.dsl.withGroovyBuilder
 
-// This task uses constants defined in `javadoc-options.gradle`.
-task noInternalJavadoc(type: Javadoc) {
-    source = sourceSets.main.allJava.filter {
-        !it.absolutePath.contains('generated')
-    }
-    classpath = javadoc.getClasspath()
+/**
+ * The licensing information of Spine.
+ */
+internal object SpineLicense {
 
-    options {
-        tags = javadocOptions.tags
-        encoding = javadocOptions.encoding
+    private const val NAME = "Apache License, Version 2.0"
+    private const val URL = "https://www.apache.org/licenses/LICENSE-2.0.txt"
+    private const val DISTRIBUTION = "repo"
 
-        // Doclet fully qualified name.
-        doclet = 'io.spine.tools.javadoc.ExcludeInternalDoclet'
-
-        // Path to the JAR containing the doclet.
-        docletpath = configurations.excludeInternalDoclet.files.asType(List)
+    /**
+     * Returns the licensing information as an XML fragment compatible with `pom.xml` format.
+     */
+    override fun toString(): String {
+        val result = StringWriter()
+        val xml = MarkupBuilder(result)
+        xml.withGroovyBuilder {
+            "licenses" {
+                "license" {
+                    "name" { xml.text(NAME) }
+                    "url" { xml.text(URL) }
+                    "distribution" { xml.text(DISTRIBUTION) }
+                }
+            }
+        }
+        return result.toString()
     }
 }

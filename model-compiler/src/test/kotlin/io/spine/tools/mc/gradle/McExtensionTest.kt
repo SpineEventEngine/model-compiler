@@ -28,16 +28,18 @@ package io.spine.tools.mc.gradle
 
 import com.google.common.truth.Truth.assertThat
 import io.spine.testing.Correspondences.type
+import io.spine.tools.mc.checks.Severity
 import io.spine.tools.mc.gradle.given.AbstractConfig
 import io.spine.tools.mc.gradle.given.TestConfig
 import java.io.File
 import org.gradle.testfixtures.ProjectBuilder
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class `McExtension should` {
+class `'McExtension' should` {
 
-    private lateinit var ext: McExtension
+    lateinit var ext: McExtension
 
     @BeforeEach
     fun prepareExtension() {
@@ -51,48 +53,61 @@ class `McExtension should` {
         ext = project.extensions.getByType(McExtension::class.java)
     }
 
-    @Test
-    fun `provide default mainDescriptorSetFile`() {
-        val file = ext.mainDescriptorSetFile.asFile.get()
-        assertPath(file)
-            .endsWith("/build/descriptors/main/org.example_ext-test_42.desc")
-    }
+    @Nested
+    inner class `provide default` {
 
-    @Test
-    fun `provide default testDescriptorSetFile`() {
-        val file = ext.testDescriptorSetFile.asFile.get()
-        assertPath(file)
-            .endsWith("/build/descriptors/test/org.example_ext-test_42_test.desc")
-    }
-
-    private fun assertPath(file: File) = assertThat(file.invariantSeparatorsPath)
-
-    @Test
-    fun `allow to register custom language-specific configs`() {
-        ext.forLanguage<TestConfig> {
-            payload = "foo bar"
+        @Test
+        fun mainDescriptorSetFile() {
+            val file = ext.mainDescriptorSetFile.asFile.get()
+            assertPath(file)
+                .endsWith("/build/descriptors/main/org.example_ext-test_42.desc")
         }
-        val configs = ext.languageConfigurations
-        assertThat(configs)
-            .comparingElementsUsing(type<LanguageSpecificExtension>())
-            .containsExactly(TestConfig::class.java)
-        val testConfig = configs.first() as TestConfig
-        assertThat(testConfig.payload)
-            .startsWith("foo")
+
+        @Test
+        fun testDescriptorSetFile() {
+            val file = ext.testDescriptorSetFile.asFile.get()
+            assertPath(file)
+                .endsWith("/build/descriptors/test/org.example_ext-test_42_test.desc")
+        }
+
+        private fun assertPath(file: File) = assertThat(file.invariantSeparatorsPath)
     }
 
-    @Test
-    fun `allow to register abstract configs`() {
-        ext.forLanguage<AbstractConfig> {
-            property.set(ext.testDescriptorSetFile.get())
+    @Nested
+    inner class `allow to register` {
+
+        @Test
+        fun `custom language-specific configs`() {
+            ext.forLanguage<TestConfig> {
+                payload = "foo bar"
+            }
+            val configs = ext.languageConfigurations
+            assertThat(configs)
+                .comparingElementsUsing(type<LanguageConfig>())
+                .containsExactly(TestConfig::class.java)
+            val testConfig = configs.first() as TestConfig
+            assertThat(testConfig.payload)
+                .startsWith("foo")
         }
-        val configs = ext.languageConfigurations
-        assertThat(configs)
-            .comparingElementsUsing(type<LanguageSpecificExtension>())
-            .containsExactly(AbstractConfig::class.java)
-        val config = configs.first() as AbstractConfig
-        assertThat(config.property.isPresent)
-            .isTrue()
+
+        /**
+         * Abstract configuration files are convenient for declaring `abstract` properties,
+         * implementations for which will be automatically created by Gradle
+         * when `McExtension.newInstance()` is invoked.
+         */
+        @Test
+        fun `abstract configs`() {
+            ext.forLanguage<AbstractConfig> {
+                property.set(ext.testDescriptorSetFile.get())
+            }
+            val configs = ext.languageConfigurations
+            assertThat(configs)
+                .comparingElementsUsing(type<LanguageConfig>())
+                .containsExactly(AbstractConfig::class.java)
+            val config = configs.first() as AbstractConfig
+            assertThat(config.property.isPresent)
+                .isTrue()
+        }
     }
 
     @Test
@@ -105,5 +120,30 @@ class `McExtension should` {
             .isNotNull()
         assertThat(config!!.payload)
             .startsWith("a")
+    }
+
+    @Nested
+    inner class `configure language-neutral 'checks'` {
+
+        @Test
+        fun `having 'WARN' as the default severity level`() {
+            val severity = currentSeverity()
+            assertThat(severity)
+                .isEqualTo(Severity.WARN)
+        }
+
+        @Test
+        fun `with custom severity level`() {
+            val expected = Severity.ERROR
+            ext.checks {
+                defaultSeverity.set(expected)
+            }
+
+            val severity = currentSeverity()
+            assertThat(severity)
+                .isEqualTo(expected)
+        }
+
+        private fun currentSeverity() = ext.getChecks().defaultSeverity.get()
     }
 }

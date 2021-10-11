@@ -35,20 +35,26 @@ import io.spine.internal.dependency.Guava
 import io.spine.internal.dependency.JUnit
 import io.spine.internal.dependency.Protobuf
 import io.spine.internal.dependency.Truth
-import io.spine.internal.gradle.PublishingRepos
 import io.spine.internal.gradle.Scripts
 import io.spine.internal.gradle.applyGitHubPackages
 import io.spine.internal.gradle.applyStandard
 import io.spine.internal.gradle.excludeProtobufLite
 import io.spine.internal.gradle.forceVersions
-import io.spine.internal.gradle.spinePublishing
+import io.spine.internal.gradle.github.pages.updateGitHubPages
+import io.spine.internal.gradle.javadoc.JavadocConfig
+import io.spine.internal.gradle.publish.PublishingRepos
+import io.spine.internal.gradle.publish.spinePublishing
+import io.spine.internal.gradle.report.pom.PomGenerator
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 repositories.applyStandard()
 
 plugins {
     `java-library`
+    jacoco
     idea
+    pmd
+    `project-report`
     io.spine.internal.dependency.Protobuf.GradlePlugin.apply {
         id(id).version(version)
     }
@@ -101,7 +107,6 @@ subprojects {
             from(javacArgs(project))
             from(projectLicenseReport(project))
             from(testOutput(project))
-            from(javadocOptions(project))
             from(testArtifacts(project))
             from(slowTests(project))
         }
@@ -140,6 +145,8 @@ subprojects {
         targetCompatibility = javaVersion
     }
 
+    JavadocConfig.applyTo(project)
+
     kotlin {
         explicitApi()
     }
@@ -173,25 +180,21 @@ subprojects {
     tasks.clean {
         delete(generatedDir)
     }
+
+    val spineBaseVersion: String by extra
+    updateGitHubPages(spineBaseVersion) {
+        allowInternalJavadoc.set(true)
+        rootFolder.set(rootDir)
+    }
 }
 
 apply {
     with(Scripts) {
+        from(jacoco(project))
+
         // Generate a repository-wide report of 3rd-party dependencies and their licenses.
         from(repoLicenseReport(project))
-
-        // Generate a `pom.xml` file containing first-level dependency of all projects
-        // in the repository.
-        from(generatePom(project))
     }
 }
 
-// The JaCoCo config script uses `evaluationDependsOnChildren()` to scan subprojects to find all
-// the Java projects. Such an evaluation-time dependency, in some cases, causes Gradle to fail.
-// When applying the JaCoCo script after the evaluation is done, the error goes away.
-// See this Gradle discussion for the description of the issue:
-// https://discuss.gradle.org/t/gradle-7-fails-with-cannot-run-project-afterevaluate-action-when-the-project-is-already-evaluated/40296
-afterEvaluate {
-    // Aggregated coverage report across all subprojects.
-    apply(from = Scripts.jacoco(project))
-}
+PomGenerator.applyTo(project)
