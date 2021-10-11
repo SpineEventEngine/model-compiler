@@ -32,8 +32,8 @@ import io.spine.tools.mc.checks.Severity
 import io.spine.tools.mc.gradle.given.AbstractConfig
 import io.spine.tools.mc.gradle.given.TestConfig
 import java.io.File
-import org.junit.jupiter.api.Nested
 import org.gradle.testfixtures.ProjectBuilder
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
