@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, TeamDev. All rights reserved.
+ * Copyright 2021, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,5 +24,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-val versionToPublish: String by extra("0.0.6")
-val spineBaseVersion: String by extra("2.0.0-SNAPSHOT.67")
+package io.spine.tools.gradle;
+
+import io.spine.tools.gradle.given.StubProject;
+import org.gradle.api.Project;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import static io.spine.tools.gradle.given.ProjectConfigurations.assertCompileTasksContain;
+import static io.spine.tools.gradle.given.ProjectConfigurations.assertCompileTasksEmpty;
+
+@DisplayName("`JavaCompileTasks` should")
+class JavaCompileTasksTest {
+
+    private Project project;
+
+    @BeforeEach
+    void createProject() {
+        project = StubProject.createFor(getClass()).get();
+    }
+
+    @Test
+    @DisplayName("add arguments to Java compile tasks")
+    void someArgs() {
+        String firstArg = "firstArg";
+        String secondArg = "secondArg";
+        JavaCompileTasks.of(project).addArgs(firstArg, secondArg);
+        assertCompileTasksContain(project, firstArg, secondArg);
+    }
+
+    @Test
+    @DisplayName("not add arguments if none is specified")
+    void noArgs() {
+        JavaCompileTasks.of(project).addArgs();
+        assertCompileTasksEmpty(project);
+    }
+}

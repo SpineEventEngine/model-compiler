@@ -78,9 +78,7 @@ spinePublishing {
         ":plugin-base",
         ":plugin-testlib"
     )
-    // Skip the `spine-` part of the artifact name to avoid collisions with the currently "live"
-    // versions. See https://github.com/SpineEventEngine/model-compiler/issues/3
-    spinePrefix.set(false)
+    spinePrefix.set(true)
 }
 
 allprojects {

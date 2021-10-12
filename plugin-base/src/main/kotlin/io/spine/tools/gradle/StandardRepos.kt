@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, TeamDev. All rights reserved.
+ * Copyright 2021, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,5 +24,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-val versionToPublish: String by extra("0.0.6")
-val spineBaseVersion: String by extra("2.0.0-SNAPSHOT.67")
+@file:JvmName("StandardRepos")
+
+package io.spine.tools.gradle
+
+import java.net.URI
+import org.gradle.api.artifacts.dsl.RepositoryHandler
+
+/**
+ * Adds the standard Maven repositories to the receiver [RepositoryHandler].
+ *
+ * This is analogous to the eponymous method in the build scripts with the exception that this
+ * method is available at the module's test runtime.
+ *
+ * Note that not all the Maven repositories may be added to the test projects, but only those that
+ * are required for tests. We are not trying to keep these repositories is perfect synchrony with
+ * the ones defined in build scripts.
+ */
+public fun RepositoryHandler.applyStandard() {
+    mavenLocal()
+    mavenCentral()
+    val registryBaseUrl = "https://europe-maven.pkg.dev/spine-event-engine"
+    maven {
+        it.url = URI("$registryBaseUrl/releases")
+    }
+    maven {
+        it.url = URI("$registryBaseUrl/snapshots")
+    }
+}
