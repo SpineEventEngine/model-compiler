@@ -16,5 +16,5 @@ of the "Greater" Model Compiler
 
 ## Related repositories
 
-See [SpineEventEngine/mc-java](https://github.com/SpineEventEngine/mc-java) for the Java-specific
-tools.
+See [SpineEventEngine/mc-java](https://github.com/SpineEventEngine/mc-java) for
+the Java-specific tools.
