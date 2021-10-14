@@ -35,7 +35,9 @@ import io.spine.internal.dependency.Guava
 import io.spine.internal.dependency.JUnit
 import io.spine.internal.dependency.Protobuf
 import io.spine.internal.dependency.Truth
+import io.spine.internal.gradle.IncrementGuard
 import io.spine.internal.gradle.Scripts
+import io.spine.internal.gradle.VersionWriter
 import io.spine.internal.gradle.applyGitHubPackages
 import io.spine.internal.gradle.applyStandard
 import io.spine.internal.gradle.excludeProtobufLite
@@ -44,6 +46,7 @@ import io.spine.internal.gradle.github.pages.updateGitHubPages
 import io.spine.internal.gradle.javadoc.JavadocConfig
 import io.spine.internal.gradle.publish.PublishingRepos
 import io.spine.internal.gradle.publish.spinePublishing
+import io.spine.internal.gradle.report.coverage.JacocoConfig
 import io.spine.internal.gradle.report.pom.PomGenerator
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -72,12 +75,7 @@ spinePublishing {
             cloudArtifactRegistry
         )
     }
-    projectsToPublish.addAll(
-        ":model-compiler",
-        ":tool-base",
-        ":plugin-base",
-        ":plugin-testlib"
-    )
+    projectsToPublish.addAll(subprojects.map { it.path })
     spinePrefix.set(true)
 }
 
@@ -179,6 +177,9 @@ subprojects {
         delete(generatedDir)
     }
 
+    apply<IncrementGuard>()
+    apply<VersionWriter>()
+
     val spineBaseVersion: String by extra
     updateGitHubPages(spineBaseVersion) {
         allowInternalJavadoc.set(true)
@@ -188,11 +189,10 @@ subprojects {
 
 apply {
     with(Scripts) {
-        from(jacoco(project))
-
         // Generate a repository-wide report of 3rd-party dependencies and their licenses.
         from(repoLicenseReport(project))
     }
 }
 
+JacocoConfig.applyTo(project)
 PomGenerator.applyTo(project)

@@ -1,6 +1,3 @@
-import io.spine.internal.gradle.IncrementGuard
-import io.spine.internal.gradle.VersionWriter
-
 /*
  * Copyright 2021, TeamDev. All rights reserved.
  *
@@ -27,8 +24,27 @@ import io.spine.internal.gradle.VersionWriter
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-dependencies {
-    api(project(":plugin-base"))
+package io.spine.internal.gradle.report.coverage
 
-    testImplementation(project(":plugin-testlib"))
+import java.io.File
+
+/**
+ * Utilities for filtering the groups of `File`s.
+ */
+internal object FileFilter {
+
+    /**
+     * Excludes the generated files from this file collection, leaving only those which were
+     * created by human beings.
+     */
+    fun producedByHuman(files: Iterable<File>): Iterable<File> {
+        return files.filter { !it.isGenerated }
+    }
+
+    /**
+     * Filters this file collection so that only generated files are present.
+     */
+    fun generatedOnly(files: Iterable<File>): Iterable<File> {
+        return files.filter { it.isGenerated }
+    }
 }

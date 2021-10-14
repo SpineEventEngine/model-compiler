@@ -1,6 +1,3 @@
-import io.spine.internal.gradle.IncrementGuard
-import io.spine.internal.gradle.VersionWriter
-
 /*
  * Copyright 2021, TeamDev. All rights reserved.
  *
@@ -27,8 +24,16 @@ import io.spine.internal.gradle.VersionWriter
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-dependencies {
-    api(project(":plugin-base"))
+package io.spine.internal.gradle.report.coverage
 
-    testImplementation(project(":plugin-testlib"))
+/**
+ * The names of Gradle tasks involved into the JaCoCo reporting.
+ */
+@Suppress("EnumEntryName", "EnumNaming") /* Dubbing the actual values in Gradle. */
+internal enum class TaskName {
+    jacocoRootReport,
+    copyReports,
+
+    check,
+    jacocoTestReport
 }

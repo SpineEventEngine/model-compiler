@@ -1,6 +1,3 @@
-import io.spine.internal.gradle.IncrementGuard
-import io.spine.internal.gradle.VersionWriter
-
 /*
  * Copyright 2021, TeamDev. All rights reserved.
  *
@@ -27,8 +24,26 @@ import io.spine.internal.gradle.VersionWriter
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-dependencies {
-    api(project(":plugin-base"))
+package io.spine.internal.gradle.report.coverage
 
-    testImplementation(project(":plugin-testlib"))
+/**
+ * File extensions.
+ */
+internal enum class FileExtension(val value: String) {
+
+    /**
+     * Extension of a Java source file.
+     */
+    JAVA_SOURCE(".java"),
+
+    /**
+     * Extension of a Java compiled file.
+     */
+    COMPILED_CLASS(".class");
+
+    /**
+     * The number of symbols in the extension.
+     */
+    val length: Int
+        get() = this.value.length
 }
