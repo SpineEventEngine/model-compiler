@@ -44,6 +44,7 @@ import io.spine.internal.gradle.github.pages.updateGitHubPages
 import io.spine.internal.gradle.javadoc.JavadocConfig
 import io.spine.internal.gradle.publish.PublishingRepos
 import io.spine.internal.gradle.publish.spinePublishing
+import io.spine.internal.gradle.report.coverage.JacocoConfig
 import io.spine.internal.gradle.report.pom.PomGenerator
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -188,11 +189,10 @@ subprojects {
 
 apply {
     with(Scripts) {
-        from(jacoco(project))
-
         // Generate a repository-wide report of 3rd-party dependencies and their licenses.
         from(repoLicenseReport(project))
     }
 }
 
+JacocoConfig.applyTo(project)
 PomGenerator.applyTo(project)
