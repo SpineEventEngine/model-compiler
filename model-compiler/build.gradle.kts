@@ -1,3 +1,6 @@
+import io.spine.internal.gradle.IncrementGuard
+import io.spine.internal.gradle.VersionWriter
+
 /*
  * Copyright 2021, TeamDev. All rights reserved.
  *
@@ -24,11 +27,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.internal.dependency.Protobuf
-
 dependencies {
     api(project(":plugin-base"))
-    implementation(Protobuf.GradlePlugin.lib)
 
     testImplementation(project(":plugin-testlib"))
 }
