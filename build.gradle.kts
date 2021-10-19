@@ -44,10 +44,9 @@ import io.spine.internal.gradle.github.pages.updateGitHubPages
 import io.spine.internal.gradle.javadoc.JavadocConfig
 import io.spine.internal.gradle.publish.PublishingRepos
 import io.spine.internal.gradle.publish.spinePublishing
+import io.spine.internal.gradle.report.coverage.JacocoConfig
 import io.spine.internal.gradle.report.pom.PomGenerator
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
-repositories.applyStandard()
 
 plugins {
     `java-library`
@@ -91,6 +90,11 @@ allprojects {
 
     group = "io.spine.tools"
     version = extra["versionToPublish"]!!
+
+    with(repositories) {
+        applyGitHubPackages("base", project)
+        applyStandard()
+    }
 }
 
 subprojects {
@@ -108,11 +112,6 @@ subprojects {
             from(testArtifacts(project))
             from(slowTests(project))
         }
-    }
-
-    with(repositories) {
-        applyGitHubPackages("base", project)
-        applyStandard()
     }
 
     dependencies {
@@ -188,11 +187,10 @@ subprojects {
 
 apply {
     with(Scripts) {
-        from(jacoco(project))
-
         // Generate a repository-wide report of 3rd-party dependencies and their licenses.
         from(repoLicenseReport(project))
     }
 }
 
+JacocoConfig.applyTo(project)
 PomGenerator.applyTo(project)
