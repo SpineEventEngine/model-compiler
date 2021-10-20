@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, TeamDev. All rights reserved.
+ * Copyright 2021, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,5 +24,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-val versionToPublish: String by extra("0.0.9")
-val spineBaseVersion: String by extra("2.0.0-SNAPSHOT.68")
+package io.spine.internal.gradle.report.license
+
+import com.github.jk1.license.LicenseReportExtension
+import com.github.jk1.license.ProjectData
+import com.github.jk1.license.render.ReportRenderer
+import io.spine.internal.markup.MarkdownDocument
+import java.io.File
+import org.gradle.api.Project
+
+/**
+ * Renders the dependency report for a single [project][ProjectData] in Markdown.
+ */
+internal class MarkdownReportRenderer(
+    private val filename: String
+) : ReportRenderer {
+
+    override fun render(data: ProjectData) {
+        val project = data.project
+        val outputFile = outputFile(project)
+        val document = MarkdownDocument()
+        val template = Template(project, document)
+
+        template.writeHeader()
+        ProjectDependencies.of(data).printTo(document)
+        template.writeFooter()
+
+        document.appendToFile(outputFile)
+    }
+
+    private fun outputFile(project: Project): File {
+        val config =
+            project.extensions.findByName("licenseReport") as LicenseReportExtension
+        return File(config.outputDir).resolve(filename)
+    }
+}
+

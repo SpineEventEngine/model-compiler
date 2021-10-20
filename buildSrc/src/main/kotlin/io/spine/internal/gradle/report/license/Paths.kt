@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, TeamDev. All rights reserved.
+ * Copyright 2021, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,5 +24,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-val versionToPublish: String by extra("0.0.9")
-val spineBaseVersion: String by extra("2.0.0-SNAPSHOT.68")
+package io.spine.internal.gradle.report.license
+
+/**
+ * Filesystem paths used by [LicenseReporter].
+ */
+internal object Paths {
+
+    /**
+     * The output filename of the license report.
+     *
+     * The file with this name is placed to the root folder of the root Gradle project —
+     * as the result of the [LicenseReporter] work.
+     *
+     * Its contents describe the licensing information for each of the Java dependencies
+     * which are referenced by Gradle projects in the repository.
+     */
+    internal const val outputFilename = "license-report.md"
+
+    /**
+     * The path to a directory, to which a per-project report is generated.
+     */
+    internal const val relativePath = "reports/dependency-license/dependency"
+}

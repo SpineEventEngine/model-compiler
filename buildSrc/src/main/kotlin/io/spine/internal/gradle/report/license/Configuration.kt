@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, TeamDev. All rights reserved.
+ * Copyright 2021, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,5 +24,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-val versionToPublish: String by extra("0.0.9")
-val spineBaseVersion: String by extra("2.0.0-SNAPSHOT.68")
+package io.spine.internal.gradle.report.license
+
+import com.github.jk1.license.ConfigurationData
+
+/**
+ * The names of Gradle `Configuration`s.
+ */
+@Suppress("EnumEntryName", "EnumNaming")
+/* Dubbing the actual values in Gradle. */
+internal enum class Configuration {
+    runtime,
+    runtimeClasspath
+}
+
+/**
+ * Tells whether this configuration data is one of the passed `Configuration` types.
+ */
+internal fun ConfigurationData.isOneOf(vararg configs: Configuration): Boolean {
+    configs.forEach {
+        if (it.name == this.name) {
+            return true
+        }
+    }
+    return false
+}

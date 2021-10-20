@@ -26,8 +26,8 @@
 
 package io.spine.internal.gradle
 
-import org.gradle.api.Plugin
 import io.spine.internal.gradle.publish.PublishExtension
+import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.JavaPluginExtension
@@ -70,7 +70,6 @@ fun <T : Task> Project.findTask(name: String): T {
     val task = this.tasks.findByName(name)
     return task!! as T
 }
-
 
 /**
  * Obtains the Maven artifact ID of the project taking into account
