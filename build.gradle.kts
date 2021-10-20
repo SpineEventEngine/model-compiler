@@ -40,6 +40,7 @@ import io.spine.internal.gradle.Scripts
 import io.spine.internal.gradle.VersionWriter
 import io.spine.internal.gradle.applyGitHubPackages
 import io.spine.internal.gradle.applyStandard
+import io.spine.internal.gradle.checkstyle.CheckStyleConfig
 import io.spine.internal.gradle.excludeProtobufLite
 import io.spine.internal.gradle.forceVersions
 import io.spine.internal.gradle.github.pages.updateGitHubPages
@@ -47,6 +48,7 @@ import io.spine.internal.gradle.javadoc.JavadocConfig
 import io.spine.internal.gradle.publish.PublishingRepos
 import io.spine.internal.gradle.publish.spinePublishing
 import io.spine.internal.gradle.report.coverage.JacocoConfig
+import io.spine.internal.gradle.report.license.LicenseReporter
 import io.spine.internal.gradle.report.pom.PomGenerator
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -104,7 +106,6 @@ subprojects {
 
         with(Scripts) {
             from(javacArgs(project))
-            from(projectLicenseReport(project))
             from(testOutput(project))
             from(testArtifacts(project))
             from(slowTests(project))
@@ -139,7 +140,9 @@ subprojects {
         targetCompatibility = javaVersion
     }
 
+    CheckStyleConfig.applyTo(project)
     JavadocConfig.applyTo(project)
+    LicenseReporter.generateReportIn(project)
 
     kotlin {
         explicitApi()
@@ -185,12 +188,6 @@ subprojects {
     }
 }
 
-apply {
-    with(Scripts) {
-        // Generate a repository-wide report of 3rd-party dependencies and their licenses.
-        from(repoLicenseReport(project))
-    }
-}
-
 JacocoConfig.applyTo(project)
 PomGenerator.applyTo(project)
+LicenseReporter.mergeAllReports(project)
