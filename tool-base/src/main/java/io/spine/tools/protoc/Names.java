@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, TeamDev. All rights reserved.
+ * Copyright 2021, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,5 +24,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-val versionToPublish: String by extra("0.0.8")
-val spineBaseVersion: String by extra("2.0.0-SNAPSHOT.67")
+package io.spine.tools.protoc;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+import static io.spine.util.Preconditions2.checkNotEmptyOrBlank;
+
+/**
+ * Utilities for creating name objects of the {@code io.spine.tools.protoc} package.
+ */
+public final class Names {
+
+    /**
+     * Prevents the utility class instantiation.
+     */
+    private Names() {
+    }
+
+    /**
+     * Obtains a {@code JavaClassName} with the given value.
+     */
+    public static JavaClassName className(String canonicalName) {
+        checkNotEmptyOrBlank(canonicalName, "Class name must not be `null` or empty.");
+        return JavaClassName.newBuilder()
+                .setCanonical(canonicalName)
+                .build();
+    }
+
+    /**
+     * Obtains a {@code JavaClassName} for the given class.
+     */
+    public static JavaClassName className(Class<?> cls) {
+        checkNotNull(cls, "Class must not be `null`.");
+        return className(cls.getCanonicalName());
+    }
+}

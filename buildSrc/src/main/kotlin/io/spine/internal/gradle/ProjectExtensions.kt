@@ -27,6 +27,7 @@
 package io.spine.internal.gradle
 
 import org.gradle.api.Plugin
+import io.spine.internal.gradle.publish.PublishExtension
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.JavaPluginExtension
@@ -69,3 +70,19 @@ fun <T : Task> Project.findTask(name: String): T {
     val task = this.tasks.findByName(name)
     return task!! as T
 }
+
+
+/**
+ * Obtains the Maven artifact ID of the project taking into account
+ * the value of the [PublishExtension.spinePrefix] property.
+ *
+ * If the project has a [PublishExtension] installed, then the extension is used for
+ * [obtaining][PublishExtension.artifactId] the artifact ID.
+ *
+ * Otherwise, the project name is returned.
+ */
+val Project.artifactId: String
+    get() {
+        val publishExtension = rootProject.extensions.findByType(PublishExtension::class.java)
+        return publishExtension?.artifactId(this) ?: name
+    }

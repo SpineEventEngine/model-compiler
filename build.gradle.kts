@@ -50,8 +50,6 @@ import io.spine.internal.gradle.report.coverage.JacocoConfig
 import io.spine.internal.gradle.report.pom.PomGenerator
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-repositories.applyStandard()
-
 plugins {
     `java-library`
     jacoco
@@ -89,6 +87,11 @@ allprojects {
 
     group = "io.spine.tools"
     version = extra["versionToPublish"]!!
+
+    with(repositories) {
+        applyGitHubPackages("base", project)
+        applyStandard()
+    }
 }
 
 subprojects {
@@ -106,11 +109,6 @@ subprojects {
             from(testArtifacts(project))
             from(slowTests(project))
         }
-    }
-
-    with(repositories) {
-        applyGitHubPackages("base", project)
-        applyStandard()
     }
 
     dependencies {
