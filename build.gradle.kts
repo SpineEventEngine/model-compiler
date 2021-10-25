@@ -92,7 +92,7 @@ allprojects {
     version = extra["versionToPublish"]!!
 
     with(repositories) {
-        applyGitHubPackages("model-compiler", project)
+        applyGitHubPackages("base", project)
         applyStandard()
     }
 }
