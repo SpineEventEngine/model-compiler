@@ -45,6 +45,7 @@ import io.spine.internal.gradle.excludeProtobufLite
 import io.spine.internal.gradle.forceVersions
 import io.spine.internal.gradle.github.pages.updateGitHubPages
 import io.spine.internal.gradle.javadoc.JavadocConfig
+import io.spine.internal.gradle.publish.Publish.Companion.publishProtoArtifact
 import io.spine.internal.gradle.publish.PublishingRepos
 import io.spine.internal.gradle.publish.spinePublishing
 import io.spine.internal.gradle.report.coverage.JacocoConfig
@@ -180,6 +181,8 @@ subprojects {
 
     apply<IncrementGuard>()
     apply<VersionWriter>()
+
+    publishProtoArtifact(project)
 
     val spineBaseVersion: String by extra
     updateGitHubPages(spineBaseVersion) {
