@@ -93,6 +93,7 @@ allprojects {
 
     with(repositories) {
         applyGitHubPackages("base", project)
+        applyGitHubPackages("tool-base", project)
         applyStandard()
     }
 }
