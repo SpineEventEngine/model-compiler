@@ -24,5 +24,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-val versionToPublish: String by extra("0.1.2")
 val spineBaseVersion: String by extra("2.0.0-SNAPSHOT.70")
+val toolBaseVersion: String by extra("0.1.3")
+val versionToPublish: String by extra("0.1.3")
