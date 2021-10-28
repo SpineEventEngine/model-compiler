@@ -1,6 +1,3 @@
-import io.spine.internal.gradle.IncrementGuard
-import io.spine.internal.gradle.VersionWriter
-
 /*
  * Copyright 2021, TeamDev. All rights reserved.
  *
@@ -27,8 +24,11 @@ import io.spine.internal.gradle.VersionWriter
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-dependencies {
-    api(project(":plugin-base"))
+val toolBaseVersion: String by extra
 
-    testImplementation(project(":plugin-testlib"))
+dependencies {
+    api(gradleApi())
+    api("io.spine.tools:spine-plugin-base:${toolBaseVersion}")
+
+    testImplementation("io.spine.tools:spine-plugin-testlib:${toolBaseVersion}")
 }
