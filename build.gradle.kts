@@ -63,7 +63,7 @@ plugins {
         id(id).version(version)
     }
     io.spine.internal.dependency.ErrorProne.GradlePlugin.apply {
-        id(id).version(version)
+        id(id)
     }
     kotlin("jvm") version io.spine.internal.dependency.Kotlin.version
 }
@@ -107,7 +107,6 @@ subprojects {
         plugin(Protobuf.GradlePlugin.id)
 
         with(Scripts) {
-            from(javacArgs(project))
             from(testOutput(project))
             from(testArtifacts(project))
             from(slowTests(project))
@@ -140,6 +139,11 @@ subprojects {
     java {
         sourceCompatibility = javaVersion
         targetCompatibility = javaVersion
+    }
+
+    tasks.withType<JavaCompile> {
+        configureJavac()
+        configureErrorProne()
     }
 
     CheckStyleConfig.applyTo(project)
