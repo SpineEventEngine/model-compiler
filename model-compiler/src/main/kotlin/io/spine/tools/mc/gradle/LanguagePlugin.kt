@@ -33,18 +33,20 @@ import org.gradle.api.plugins.ExtensionAware
 /**
  * A sub-plugin configuring code generation for a programming language.
  */
-public abstract class LanguagePlugin: SubPlugin() {
+public abstract class LanguagePlugin(
 
     /**
      * A name of the programming language handled by this plugin in `camelLowerCase`
      * (e.g. `typeScript`).
      */
-    protected abstract val languageName: String
+    protected val languageName: String,
 
     /**
      * A class of the extension object of this plugin.
      */
-    protected abstract val extensionClass: Class<*>
+    protected val extensionClass: Class<*>
+
+) : SubPlugin() {
 
     /**
      * Extends the DSL of `modelCompiler` with the [clause][languageName] for the programming

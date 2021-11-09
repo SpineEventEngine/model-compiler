@@ -28,9 +28,7 @@ package io.spine.tools.mc.gradle.given
 
 import io.spine.tools.mc.gradle.LanguagePlugin
 
-class McCobolPlugin: LanguagePlugin() {
-
-    override val languageName: String = "cobol"
-    override val extensionClass: Class<*> = McCobolExtension::class.java
-
-}
+class McCobolPlugin : LanguagePlugin(
+    languageName = "cobol",
+    extensionClass = McCobolExtension::class.java
+)
