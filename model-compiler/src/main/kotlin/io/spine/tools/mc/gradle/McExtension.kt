@@ -79,8 +79,9 @@ public abstract class McExtension {
          * Adds this extension to the given [Project] and initializes the default values.
          */
         internal fun createIn(p: Project): Unit = with(p) {
-            _debug().log("Adding the `$name` extension to the project `$p`.")
-            val extension = extensions.create(name, McExtension::class.java)
+            val extensionName: String = this@Companion.name
+            _debug().log("Adding the `$extensionName` extension to the project `$p`.")
+            val extension = extensions.create(extensionName, McExtension::class.java)
             with (extension) {
                 mainDescriptorSetFile.convention(regularFile(defaultMainDescriptors))
                 testDescriptorSetFile.convention(regularFile(defaultTestDescriptors))
