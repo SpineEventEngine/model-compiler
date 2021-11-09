@@ -30,6 +30,5 @@ dependencies {
     api(gradleApi())
     api(gradleKotlinDsl())
     api("io.spine.tools:spine-plugin-base:${toolBaseVersion}")
-
     testImplementation("io.spine.tools:spine-plugin-testlib:${toolBaseVersion}")
 }
