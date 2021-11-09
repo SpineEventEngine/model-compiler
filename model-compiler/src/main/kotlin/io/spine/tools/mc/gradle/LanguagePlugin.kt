@@ -26,6 +26,7 @@
 
 package io.spine.tools.mc.gradle
 
+import com.google.errorprone.annotations.OverridingMethodsMustInvokeSuper
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware
 
@@ -51,6 +52,7 @@ public abstract class LanguagePlugin: SubPlugin() {
      *
      * @see extensionClass
      */
+    @OverridingMethodsMustInvokeSuper
     override fun apply(project: Project) {
         super.apply(project)
         val outerExtension = project.outerExtension
