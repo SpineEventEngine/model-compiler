@@ -26,11 +26,9 @@
 
 package io.spine.tools.mc.gradle.given
 
-import io.spine.tools.mc.gradle.LanguageConfig
-import javax.inject.Inject
+import io.spine.tools.mc.gradle.LanguagePlugin
 
-open class TestConfig @Inject constructor() : LanguageConfig {
-
-    var payload: String = ""
-
-}
+class McCobolPlugin : LanguagePlugin(
+    languageName = "cobol",
+    extensionClass = McCobolExtension::class
+)

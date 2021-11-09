@@ -24,39 +24,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*
- * This plugin configured the test output as follows:
+package io.spine.tools.mc.gradle
+
+import com.google.errorprone.annotations.OverridingMethodsMustInvokeSuper
+import org.gradle.api.Plugin
+import org.gradle.api.Project
+import org.gradle.kotlin.dsl.findByType
+
+/**
+ * A Gradle plugin which relies on existence of [McPlugin] (the outer plugin) in the project to
+ * which the sub-plugin is going to be applied.
  *
- *  - the standard streams of the tests execution are logged;
- *  - exceptions thrown in tests are logged;
- *  - after all the tests are executed, a short test summary is logged; the summary shown the number
- *    of tests and their results.
+ * More specifically, a sub-plugin needs an instance of [McExtension], which the plugin is going to
+ * consume or extend. If the outer plugin is not yet applied, it's automatically created and
+ * [applied][apply] to the project by the sub-plugin.
  */
+public abstract class SubPlugin: Plugin<Project> {
 
-println("`test-output.gradle` script is deprecated. Please use `Test.configureLogging()` instead.")
-
-tasks.withType(Test).each {
-    it.testLogging {
-        showStandardStreams = true
-        showExceptions = true
-        showStackTraces = true
-        showCauses = true
-        exceptionFormat = 'full'
-    }
-
-    it.afterSuite { final testDescriptor, final result ->
-        // If the descriptor has no parent, then it is the root test suite, i.e. it includes the
-        // info about all the run tests.
-        if (!testDescriptor.parent) {
-            logger.lifecycle(
-                    """
-                    Test summary:
-                    >> ${result.testCount} tests
-                    >> ${result.successfulTestCount} succeeded
-                    >> ${result.failedTestCount} failed
-                    >> ${result.skippedTestCount} skipped
-                    """
-            )
+    /**
+     * Verifies if [McPlugin] is available in the given project. If not, creates and applies it.
+     */
+    @OverridingMethodsMustInvokeSuper
+    override fun apply(project: Project) {
+        if (project.outerExtension == null) {
+            val outerPlugin = McPlugin()
+            outerPlugin.apply(project)
         }
     }
+
+    /**
+     * Obtains an instance of the outer extension from the given project.
+     */
+    protected val Project.outerExtension: McExtension?
+        get() = extensions.findByType()
 }

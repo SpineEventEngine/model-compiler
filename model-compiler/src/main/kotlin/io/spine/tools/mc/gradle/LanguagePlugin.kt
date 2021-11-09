@@ -26,17 +26,39 @@
 
 package io.spine.tools.mc.gradle
 
+import com.google.errorprone.annotations.OverridingMethodsMustInvokeSuper
+import org.gradle.api.Project
+import org.gradle.api.plugins.ExtensionAware
+import kotlin.reflect.KClass
+
 /**
- * A part of the Model Compiler configuration specific for a certain target language.
- *
- * It's recommended to name the implementation classes after the programming languages they
- * represent, for example `Java` or `Dart`.
- *
- * Implementation classes must be open for inheritance and have a public zero-argument constructor
- * annotated with `javax.inject.Inject`. Gradle instantiates them via `project.getObjects()`.
- *
- * When needed, implementation classes may also declare Gradle properties. In this case, both
- * the implementation class and the property must be `abstract`. Gradle will take care of
- * instantiating the properties.
+ * A sub-plugin configuring code generation for a programming language.
  */
-public interface LanguageConfig
+public abstract class LanguagePlugin(
+
+    /**
+     * A name of the programming language handled by this plugin in `camelLowerCase`
+     * (e.g. `typeScript`).
+     */
+    protected val languageName: String,
+
+    /**
+     * A class of the extension object of this plugin.
+     */
+    protected val extensionClass: KClass<*>
+
+) : SubPlugin() {
+
+    /**
+     * Extends the DSL of `modelCompiler` with the [clause][languageName] for the programming
+     * language handled by this plugin.
+     *
+     * @see extensionClass
+     */
+    @OverridingMethodsMustInvokeSuper
+    override fun apply(project: Project) {
+        super.apply(project)
+        val outerExtension = project.outerExtension
+        (outerExtension as ExtensionAware).extensions.create(languageName, extensionClass.java)
+    }
+}
