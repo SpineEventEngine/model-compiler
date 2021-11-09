@@ -24,12 +24,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-val toolBaseVersion: String by extra
+package io.spine.tools.mc.gradle
 
-dependencies {
-    api(gradleApi())
-    api(gradleKotlinDsl())
-    api("io.spine.tools:spine-plugin-base:${toolBaseVersion}")
+import org.gradle.api.Project
+import org.gradle.api.plugins.ExtensionAware
 
-    testImplementation("io.spine.tools:spine-plugin-testlib:${toolBaseVersion}")
+/**
+ * A sub-plugin configuring code generation for a programming language.
+ */
+public abstract class LanguagePlugin: SubPlugin() {
+
+    /**
+     * A name of the programming language handled by this plugin in `camelLowerCase`
+     * (e.g. `typeScript`).
+     */
+    protected abstract val languageName: String
+
+    /**
+     * A class of the extension object of this plugin.
+     */
+    protected abstract val extensionClass: Class<*>
+
+    /**
+     * Extends the DSL of `modelCompiler` with the [clause][languageName] for the programming
+     * language handled by this plugin.
+     *
+     * @see extensionClass
+     */
+    override fun apply(project: Project) {
+        super.apply(project)
+        val outerExtension = project.outerExtension
+        (outerExtension as ExtensionAware).extensions.create(languageName, extensionClass)
+    }
 }

@@ -24,12 +24,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-val toolBaseVersion: String by extra
+package io.spine.tools.mc.gradle
 
-dependencies {
-    api(gradleApi())
-    api(gradleKotlinDsl())
-    api("io.spine.tools:spine-plugin-base:${toolBaseVersion}")
+import com.google.errorprone.annotations.OverridingMethodsMustInvokeSuper
+import org.gradle.api.Plugin
+import org.gradle.api.Project
+import org.gradle.kotlin.dsl.findByType
 
-    testImplementation("io.spine.tools:spine-plugin-testlib:${toolBaseVersion}")
+/**
+ * A Gradle plugin which relies on existence of [McPlugin] (the outer plugin) in the project to
+ * which the sub-plugin is going to be applied.
+ *
+ * More specifically, a sub-plugin needs an instance of [McExtension], which the plugin is going to
+ * consume or extend. If the outer plugin is not yet applied, it's automatically created and
+ * [applied][apply] to the project by the sub-plugin.
+ */
+public abstract class SubPlugin: Plugin<Project> {
+
+    /**
+     * Verifies if [McPlugin] is available in the given project. If not, creates and applies it.
+     */
+    @OverridingMethodsMustInvokeSuper
+    override fun apply(project: Project) {
+        if (project.outerExtension == null) {
+            val outerPlugin = McPlugin()
+            outerPlugin.apply(project)
+        }
+    }
+
+    /**
+     * Obtains an instance of the outer extension from the given project.
+     */
+    protected val Project.outerExtension: McExtension?
+        get() = extensions.findByType()
 }

@@ -24,12 +24,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-val toolBaseVersion: String by extra
+package io.spine.tools.mc.gradle.given
 
-dependencies {
-    api(gradleApi())
-    api(gradleKotlinDsl())
-    api("io.spine.tools:spine-plugin-base:${toolBaseVersion}")
+import io.spine.tools.mc.gradle.LanguagePlugin
 
-    testImplementation("io.spine.tools:spine-plugin-testlib:${toolBaseVersion}")
+class McCobolPlugin: LanguagePlugin() {
+
+    override val languageName: String = "cobol"
+    override val extensionClass: Class<*> = McCobolExtension::class.java
+
 }

@@ -24,12 +24,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-val toolBaseVersion: String by extra
+package io.spine.tools.mc.gradle.given
 
-dependencies {
-    api(gradleApi())
-    api(gradleKotlinDsl())
-    api("io.spine.tools:spine-plugin-base:${toolBaseVersion}")
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
+import org.gradle.kotlin.dsl.property
 
-    testImplementation("io.spine.tools:spine-plugin-testlib:${toolBaseVersion}")
+open class McCobolExtension constructor(objectFactory: ObjectFactory) {
+    
+    @get:Input val dialect: Property<CobolDialect> =
+        objectFactory.property<CobolDialect>().convention(CobolDialect.COBOL_2002)
+}
+
+@Suppress("unused")
+enum class CobolDialect {
+    COBOL_60,
+    COBOL_61,
+    COBOL_65,
+    COBOL_68,
+    COBOL_74,
+    COBOL_85,
+    COBOL_2002,
+    COBOL_2014
 }

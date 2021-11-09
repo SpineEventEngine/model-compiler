@@ -32,9 +32,10 @@ import io.spine.tools.mc.checks.Severity
 import io.spine.tools.mc.gradle.given.AbstractConfig
 import io.spine.tools.mc.gradle.given.TestConfig
 import java.io.File
+import org.gradle.kotlin.dsl.getByType
 import org.gradle.testfixtures.ProjectBuilder
-import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 class `'McExtension' should` {
@@ -50,7 +51,7 @@ class `'McExtension' should` {
         project.version = "42"
         project.apply(mapOf("plugin" to "java"))
         McPlugin().apply(project)
-        ext = project.extensions.getByType(McExtension::class.java)
+        ext = project.extensions.getByType()
     }
 
     @Nested
