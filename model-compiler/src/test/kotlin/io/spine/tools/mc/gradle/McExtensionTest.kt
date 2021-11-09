@@ -60,6 +60,21 @@ class `'McExtension' should` {
         assertThat(found).isInstanceOf(McExtension::class.java)
     }
 
+    @Test
+    fun `extend 'Project' with 'modelCompiler' property`() {
+        assertThat(project.modelCompiler)
+            .isInstanceOf(McExtension::class.java)
+    }
+
+    @Test
+    fun `provide the configuration action for 'modelCompiler'`() {
+        project.modelCompiler {
+            it.checks { defaultSeverity.set(Severity.OFF) }
+        }
+        assertThat(project.modelCompiler.getChecks().defaultSeverity.get())
+            .isEqualTo(Severity.OFF)
+    }
+
     @Nested
     inner class `provide default` {
 

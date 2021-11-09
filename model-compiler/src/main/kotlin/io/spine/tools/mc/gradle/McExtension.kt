@@ -32,9 +32,11 @@ import io.spine.tools.gradle.defaultTestDescriptors
 import io.spine.tools.mc.checks.Severity
 import io.spine.tools.mc.gradle.McExtension.Companion.name
 import java.io.File
+import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.Nested
+import org.gradle.kotlin.dsl.getByName
 
 /**
  * Extends a Gradle project with the [`modelCompiler`][name] block.
@@ -93,4 +95,17 @@ public abstract class McExtension {
         private fun Project.regularFile(file: File) =
             layout.projectDirectory.file(file.toString())
     }
+}
+
+/**
+ * Obtains the extension configured in this project.
+ */
+public val Project.modelCompiler: McExtension
+    get() = this.extensions.getByName<McExtension>(McExtension.name)
+
+/**
+ * Configures the extension using the passed action.
+ */
+public fun Project.modelCompiler(action: Action<in McExtension>) {
+    extensions.configure(McExtension.name, action)
 }
