@@ -29,6 +29,7 @@ package io.spine.tools.mc.gradle
 import com.google.errorprone.annotations.OverridingMethodsMustInvokeSuper
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware
+import kotlin.reflect.KClass
 
 /**
  * A sub-plugin configuring code generation for a programming language.
@@ -44,7 +45,7 @@ public abstract class LanguagePlugin(
     /**
      * A class of the extension object of this plugin.
      */
-    protected val extensionClass: Class<*>
+    protected val extensionClass: KClass<*>
 
 ) : SubPlugin() {
 
@@ -58,6 +59,6 @@ public abstract class LanguagePlugin(
     override fun apply(project: Project) {
         super.apply(project)
         val outerExtension = project.outerExtension
-        (outerExtension as ExtensionAware).extensions.create(languageName, extensionClass)
+        (outerExtension as ExtensionAware).extensions.create(languageName, extensionClass.java)
     }
 }

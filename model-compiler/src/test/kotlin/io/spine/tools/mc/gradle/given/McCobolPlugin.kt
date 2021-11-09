@@ -30,5 +30,5 @@ import io.spine.tools.mc.gradle.LanguagePlugin
 
 class McCobolPlugin : LanguagePlugin(
     languageName = "cobol",
-    extensionClass = McCobolExtension::class.java
+    extensionClass = McCobolExtension::class
 )
