@@ -29,6 +29,7 @@ package io.spine.tools.mc.gradle
 import com.google.common.truth.Truth.assertThat
 import io.spine.tools.mc.checks.Severity
 import java.io.File
+import org.gradle.api.Project
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.jupiter.api.BeforeEach
@@ -37,11 +38,12 @@ import org.junit.jupiter.api.Test
 
 class `'McExtension' should` {
 
+    lateinit var project: Project
     lateinit var ext: McExtension
 
     @BeforeEach
     fun prepareExtension() {
-        val project = ProjectBuilder.builder()
+        project = ProjectBuilder.builder()
             .withName("ext-test")
             .build()
         project.group = "org.example"
@@ -49,6 +51,13 @@ class `'McExtension' should` {
         project.apply(mapOf("plugin" to "java"))
         McPlugin().apply(project)
         ext = project.extensions.getByType()
+    }
+
+    @Test
+    fun `register itself with the name`() {
+        val found = project.extensions.findByName(McExtension.name)
+
+        assertThat(found).isInstanceOf(McExtension::class.java)
     }
 
     @Nested
