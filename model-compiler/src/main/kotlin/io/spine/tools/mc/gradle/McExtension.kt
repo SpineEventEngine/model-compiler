@@ -32,8 +32,6 @@ import io.spine.tools.gradle.defaultTestDescriptors
 import io.spine.tools.mc.checks.Severity
 import io.spine.tools.mc.gradle.McExtension.Companion.name
 import java.io.File
-import kotlin.contracts.InvocationKind.EXACTLY_ONCE
-import kotlin.contracts.contract
 import org.gradle.api.Project
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.Nested
@@ -42,14 +40,6 @@ import org.gradle.api.tasks.Nested
  * Extends a Gradle project with the [`modelCompiler`][name] block.
  */
 public abstract class McExtension {
-
-    private val configs: MutableMap<String, LanguageConfig> = mutableMapOf()
-
-    /**
-     * The Model Compiler configurations specific for certain target languages.
-     */
-    internal val languageConfigurations: Set<LanguageConfig>
-        get() = configs.values.toSet()
 
     /**
      * Language-independent check settings.
@@ -73,59 +63,6 @@ public abstract class McExtension {
      */
     public abstract val testDescriptorSetFile: RegularFileProperty
 
-    /** The project to which this extension belongs. */
-    private lateinit var project: Project
-
-    /**
-     * Configure Model Compiler specifically for the given target language,
-     * e.g. Java, JavaScript, Dart, etc.
-     *
-     * This method is a Kotlin-specific API. Use the overload from Java and Groovy.
-     */
-    public inline
-    fun <reified C : LanguageConfig> forLanguage(noinline config: C.() -> Unit) {
-        contract {
-            callsInPlace(config, EXACTLY_ONCE)
-        }
-        val cls = C::class.java
-        forLanguage(cls, config)
-    }
-
-    /**
-     * Configure Model Compiler specifically for the given target language,
-     * e.g. Java, JavaScript, Dart, etc.
-     *
-     * When using this API from Kotlin, consider a Kotlin-specific overload (an inlined method with
-     * a reified type parameter).
-     */
-    @Suppress("UNCHECKED_CAST")
-    public fun <C : LanguageConfig> forLanguage(cls: Class<C>, config: (C) -> Unit) {
-        contract {
-            callsInPlace(config, EXACTLY_ONCE)
-        }
-        val key = key(cls)
-        if (!configs.containsKey(key)) {
-            configs[key] = newInstance(cls)
-        }
-        val ext = configs[key]!! as C
-        config(ext)
-    }
-
-    private fun key(cls: Class<*>) = cls.canonicalName
-
-    private fun <C : LanguageConfig> newInstance(cls: Class<C>) =
-        project.objects.newInstance(cls)
-
-    /**
-     * Obtains the Model Compiler configuration specific for a certain target language.
-     *
-     * Returns `null` if the Model Compiler hasn't been configured for the given language.
-     */
-    @Suppress("UNCHECKED_CAST")
-    public fun <C : LanguageConfig> languageConfig(cls: Class<C>): C? {
-        return configs[key(cls)] as C?
-    }
-
     /**
      * Configures the `checks` property using the passed action.
      */
@@ -145,7 +82,6 @@ public abstract class McExtension {
             _debug().log("Adding the `$name` extension to the project `$p`.")
             val extension = extensions.create(name, McExtension::class.java)
             with (extension) {
-                project = p
                 mainDescriptorSetFile.convention(regularFile(defaultMainDescriptors))
                 testDescriptorSetFile.convention(regularFile(defaultTestDescriptors))
 

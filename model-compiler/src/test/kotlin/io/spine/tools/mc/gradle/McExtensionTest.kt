@@ -27,10 +27,7 @@
 package io.spine.tools.mc.gradle
 
 import com.google.common.truth.Truth.assertThat
-import io.spine.testing.Correspondences.type
 import io.spine.tools.mc.checks.Severity
-import io.spine.tools.mc.gradle.given.AbstractConfig
-import io.spine.tools.mc.gradle.given.TestConfig
 import java.io.File
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.testfixtures.ProjectBuilder
@@ -72,55 +69,6 @@ class `'McExtension' should` {
         }
 
         private fun assertPath(file: File) = assertThat(file.invariantSeparatorsPath)
-    }
-
-    @Nested
-    inner class `allow to register` {
-
-        @Test
-        fun `custom language-specific configs`() {
-            ext.forLanguage<TestConfig> {
-                payload = "foo bar"
-            }
-            val configs = ext.languageConfigurations
-            assertThat(configs)
-                .comparingElementsUsing(type<LanguageConfig>())
-                .containsExactly(TestConfig::class.java)
-            val testConfig = configs.first() as TestConfig
-            assertThat(testConfig.payload)
-                .startsWith("foo")
-        }
-
-        /**
-         * Abstract configuration files are convenient for declaring `abstract` properties,
-         * implementations for which will be automatically created by Gradle
-         * when `McExtension.newInstance()` is invoked.
-         */
-        @Test
-        fun `abstract configs`() {
-            ext.forLanguage<AbstractConfig> {
-                property.set(ext.testDescriptorSetFile.get())
-            }
-            val configs = ext.languageConfigurations
-            assertThat(configs)
-                .comparingElementsUsing(type<LanguageConfig>())
-                .containsExactly(AbstractConfig::class.java)
-            val config = configs.first() as AbstractConfig
-            assertThat(config.property.isPresent)
-                .isTrue()
-        }
-    }
-
-    @Test
-    fun `obtain a language-specific config by type`() {
-        ext.forLanguage<TestConfig> {
-            payload = "aaa"
-        }
-        val config = ext.languageConfig(TestConfig::class.java)
-        assertThat(config)
-            .isNotNull()
-        assertThat(config!!.payload)
-            .startsWith("a")
     }
 
     @Nested
