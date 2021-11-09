@@ -33,6 +33,8 @@ import org.gradle.kotlin.dsl.register
 /**
  * Registers [slowTest][SlowTest] and [fastTest][FastTest] tasks in this [TaskContainer].
  *
+ * Slow tests are registered to run after all fast tests.
+ *
  * Usage example:
  *
  * ```
@@ -41,6 +43,7 @@ import org.gradle.kotlin.dsl.register
  * }
  * ```
  */
+@Suppress("unused")
 fun TaskContainer.registerTestTasks() {
     register<FastTest>("fastTest").let {
         register<SlowTest>("slowTest") {
