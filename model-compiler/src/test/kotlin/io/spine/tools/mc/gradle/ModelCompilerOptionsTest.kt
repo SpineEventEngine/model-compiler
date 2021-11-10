@@ -36,10 +36,10 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
-class `'McExtension' should` {
+class `'ModelCompilerOptions' should` {
 
     lateinit var project: Project
-    lateinit var ext: McExtension
+    lateinit var ext: ModelCompilerOptions
 
     @BeforeEach
     fun prepareExtension() {
@@ -55,11 +55,30 @@ class `'McExtension' should` {
 
     @Test
     fun `register itself with the name`() {
-        val found = project.extensions.findByName(McExtension.name)
+        val found = project.extensions.findByName(ModelCompilerOptions.name)
 
-        assertThat(found).isInstanceOf(McExtension::class.java)
+        assertThat(found).isInstanceOf(ModelCompilerOptions::class.java)
     }
 
+    @Test
+    fun `extend 'Project' with 'modelCompiler' property`() {
+        assertThat(project.modelCompiler)
+            .isInstanceOf(ModelCompilerOptions::class.java)
+    }
+
+    @Test
+    fun `provide the configuration action for 'modelCompiler'`() {
+        project.modelCompiler {
+            it.checks { defaultSeverity.set(Severity.OFF) }
+        }
+        assertThat(project.modelCompiler.checks.defaultSeverity.get())
+            .isEqualTo(Severity.OFF)
+    }
+
+    /**
+     * The path values hard-coded in the test below are composed using
+     * the artifact coordinates that match those specified in [prepareExtension].
+     */
     @Nested
     inner class `provide default` {
 
@@ -102,6 +121,6 @@ class `'McExtension' should` {
                 .isEqualTo(expected)
         }
 
-        private fun currentSeverity() = ext.getChecks().defaultSeverity.get()
+        private fun currentSeverity() = ext.checks.defaultSeverity.get()
     }
 }
