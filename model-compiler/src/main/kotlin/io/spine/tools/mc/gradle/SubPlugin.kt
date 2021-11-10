@@ -35,7 +35,7 @@ import org.gradle.kotlin.dsl.findByType
  * A Gradle plugin which relies on existence of [McPlugin] (the outer plugin) in the project to
  * which the sub-plugin is going to be applied.
  *
- * More specifically, a sub-plugin needs an instance of [McExtension], which the plugin is going to
+ * More specifically, a sub-plugin needs an instance of [ModelCompilerOptions], which the plugin is going to
  * consume or extend. If the outer plugin is not yet applied, it's automatically created and
  * [applied][apply] to the project by the sub-plugin.
  */
@@ -55,6 +55,6 @@ public abstract class SubPlugin: Plugin<Project> {
     /**
      * Obtains an instance of the outer extension from the given project.
      */
-    protected val Project.outerExtension: McExtension?
+    protected val Project.outerExtension: ModelCompilerOptions?
         get() = extensions.findByType()
 }

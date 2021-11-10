@@ -96,7 +96,7 @@ class `'LanguagePlugin' should` {
                 .findByName(languageName) as McCobolExtension?
     }
 
-    private val outerExtension: McExtension?
+    private val outerExtension: ModelCompilerOptions?
         get() = project.extensions.findByType()
 
     private val nestedExtension: McCobolExtension?

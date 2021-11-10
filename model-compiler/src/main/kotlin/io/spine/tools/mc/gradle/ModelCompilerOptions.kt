@@ -30,7 +30,7 @@ import io.spine.logging.Logging
 import io.spine.tools.gradle.defaultMainDescriptors
 import io.spine.tools.gradle.defaultTestDescriptors
 import io.spine.tools.mc.checks.Severity
-import io.spine.tools.mc.gradle.McExtension.Companion.name
+import io.spine.tools.mc.gradle.ModelCompilerOptions.Companion.name
 import java.io.File
 import org.gradle.api.Action
 import org.gradle.api.Project
@@ -41,15 +41,14 @@ import org.gradle.kotlin.dsl.getByName
 /**
  * Extends a Gradle project with the [`modelCompiler`][name] block.
  */
-public abstract class McExtension {
+public abstract class ModelCompilerOptions {
 
     /**
      * Language-independent check settings.
      *
      * @see [checks]
      */
-    @Nested
-    public abstract fun getChecks(): CommonChecks
+    @get:Nested public abstract val checks: CommonChecks
 
     /**
      * The absolute path to the Protobuf descriptor set file in the `main` source set.
@@ -69,7 +68,7 @@ public abstract class McExtension {
      * Configures the `checks` property using the passed action.
      */
     public fun checks(action: CommonChecks.() -> Unit) {
-        action.invoke(getChecks())
+        action.invoke(checks)
     }
 
     public companion object : Logging {
@@ -83,12 +82,12 @@ public abstract class McExtension {
         internal fun createIn(p: Project): Unit = with(p) {
             val extensionName: String = this@Companion.name
             _debug().log("Adding the `$extensionName` extension to the project `$p`.")
-            val extension = extensions.create(extensionName, McExtension::class.java)
+            val extension = extensions.create(extensionName, ModelCompilerOptions::class.java)
             with (extension) {
                 mainDescriptorSetFile.convention(regularFile(defaultMainDescriptors))
                 testDescriptorSetFile.convention(regularFile(defaultTestDescriptors))
 
-                getChecks().defaultSeverity.set(Severity.WARN)
+                checks.defaultSeverity.set(Severity.WARN)
             }
         }
 
@@ -100,12 +99,12 @@ public abstract class McExtension {
 /**
  * Obtains the extension configured in this project.
  */
-public val Project.modelCompiler: McExtension
-    get() = this.extensions.getByName<McExtension>(McExtension.name)
+public val Project.modelCompiler: ModelCompilerOptions
+    get() = this.extensions.getByName<ModelCompilerOptions>(ModelCompilerOptions.name)
 
 /**
  * Configures the extension using the passed action.
  */
-public fun Project.modelCompiler(action: Action<in McExtension>) {
-    extensions.configure(McExtension.name, action)
+public fun Project.modelCompiler(action: Action<in ModelCompilerOptions>) {
+    extensions.configure(ModelCompilerOptions.name, action)
 }
