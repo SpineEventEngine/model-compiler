@@ -75,6 +75,10 @@ class `'McExtension' should` {
             .isEqualTo(Severity.OFF)
     }
 
+    /**
+     * The path values hard-coded in the test below are composed using
+     * the artifact coordinates that match those specified in [prepareExtension].
+     */
     @Nested
     inner class `provide default` {
 
