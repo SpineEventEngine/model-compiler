@@ -28,7 +28,6 @@ package io.spine.tools.mc.gradle
 
 import com.google.common.truth.Truth.assertThat
 import io.spine.tools.mc.checks.Severity
-import java.io.File
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.testfixtures.ProjectBuilder
@@ -73,30 +72,6 @@ class `'ModelCompilerOptions' should` {
         }
         assertThat(project.modelCompiler.checks.defaultSeverity.get())
             .isEqualTo(Severity.OFF)
-    }
-
-    /**
-     * The path values hard-coded in the test below are composed using
-     * the artifact coordinates that match those specified in [prepareExtension].
-     */
-    @Nested
-    inner class `provide default` {
-
-        @Test
-        fun mainDescriptorSetFile() {
-            val file = ext.mainDescriptorSetFile.asFile.get()
-            assertPath(file)
-                .endsWith("/build/descriptors/main/org.example_ext-test_42.desc")
-        }
-
-        @Test
-        fun testDescriptorSetFile() {
-            val file = ext.testDescriptorSetFile.asFile.get()
-            assertPath(file)
-                .endsWith("/build/descriptors/test/org.example_ext-test_42_test.desc")
-        }
-
-        private fun assertPath(file: File) = assertThat(file.invariantSeparatorsPath)
     }
 
     @Nested

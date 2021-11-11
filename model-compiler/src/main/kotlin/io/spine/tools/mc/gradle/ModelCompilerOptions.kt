@@ -27,14 +27,10 @@
 package io.spine.tools.mc.gradle
 
 import io.spine.logging.Logging
-import io.spine.tools.gradle.defaultMainDescriptors
-import io.spine.tools.gradle.defaultTestDescriptors
 import io.spine.tools.mc.checks.Severity
 import io.spine.tools.mc.gradle.ModelCompilerOptions.Companion.name
-import java.io.File
 import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.Nested
 import org.gradle.kotlin.dsl.getByName
 
@@ -49,20 +45,6 @@ public abstract class ModelCompilerOptions {
      * @see [checks]
      */
     @get:Nested public abstract val checks: CommonChecks
-
-    /**
-     * The absolute path to the Protobuf descriptor set file in the `main` source set.
-     *
-     * The file must have the `.desc` extension.
-     */
-    public abstract val mainDescriptorSetFile: RegularFileProperty
-
-    /**
-     * The absolute path to the Protobuf descriptor set file in the `test` source set.
-     *
-     * The file must have the `.desc` extension.
-     */
-    public abstract val testDescriptorSetFile: RegularFileProperty
 
     /**
      * Configures the `checks` property using the passed action.
@@ -82,17 +64,9 @@ public abstract class ModelCompilerOptions {
         internal fun createIn(p: Project): Unit = with(p) {
             val extensionName: String = this@Companion.name
             _debug().log("Adding the `$extensionName` extension to the project `$p`.")
-            val extension = extensions.create(extensionName, ModelCompilerOptions::class.java)
-            with (extension) {
-                mainDescriptorSetFile.convention(regularFile(defaultMainDescriptors))
-                testDescriptorSetFile.convention(regularFile(defaultTestDescriptors))
-
-                checks.defaultSeverity.set(Severity.WARN)
-            }
+            val options = extensions.create(extensionName, ModelCompilerOptions::class.java)
+            options.checks.defaultSeverity.set(Severity.WARN)
         }
-
-        private fun Project.regularFile(file: File) =
-            layout.projectDirectory.file(file.toString())
     }
 }
 
@@ -100,7 +74,7 @@ public abstract class ModelCompilerOptions {
  * Obtains the extension configured in this project.
  */
 public val Project.modelCompiler: ModelCompilerOptions
-    get() = this.extensions.getByName<ModelCompilerOptions>(ModelCompilerOptions.name)
+    get() = extensions.getByName<ModelCompilerOptions>(ModelCompilerOptions.name)
 
 /**
  * Configures the extension using the passed action.
