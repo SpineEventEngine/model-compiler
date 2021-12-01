@@ -143,12 +143,14 @@ subprojects {
     JavadocConfig.applyTo(project)
     LicenseReporter.generateReportIn(project)
 
+    val javaVersion = 8
     kotlin {
-        applyJvmToolchain(11)
+        applyJvmToolchain(javaVersion)
         explicitApi()
     }
 
     tasks.withType<KotlinCompile>().configureEach {
+        kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
         setFreeCompilerArgs()
     }
 
