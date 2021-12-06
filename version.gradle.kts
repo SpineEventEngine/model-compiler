@@ -26,4 +26,4 @@
 
 val spineBaseVersion: String by extra("2.0.0-SNAPSHOT.77")
 val toolBaseVersion: String by extra("2.0.0-SNAPSHOT.82")
-val versionToPublish: String by extra("2.0.0-SNAPSHOT.85")
+val versionToPublish: String by extra("2.0.0-SNAPSHOT.86")
