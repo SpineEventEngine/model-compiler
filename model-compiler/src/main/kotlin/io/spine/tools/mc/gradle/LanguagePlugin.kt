@@ -49,6 +49,10 @@ public abstract class LanguagePlugin(
 
 ) : SubPlugin() {
 
+    /** Creates a new instance with the specified language name and the class of the extension. */
+    public constructor(languageName: String, extensionClass: Class<*>) :
+            this(languageName, extensionClass.kotlin)
+
     /**
      * Extends the DSL of `modelCompiler` with the [clause][languageName] for the programming
      * language handled by this plugin.

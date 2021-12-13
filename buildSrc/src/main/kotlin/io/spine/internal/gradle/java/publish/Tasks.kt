@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, TeamDev. All rights reserved.
+ * Copyright 2021, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-val baseVersion: String by extra("2.0.0-SNAPSHOT.80")
-val toolBaseVersion: String by extra("2.0.0-SNAPSHOT.85")
-val versionToPublish: String by extra("2.0.0-SNAPSHOT.87")
+package io.spine.internal.gradle.java.publish
+
+import org.gradle.api.Task
+import org.gradle.api.tasks.TaskContainer
+import org.gradle.api.tasks.TaskProvider
+
+/**
+ * Locates `publish` task in this [TaskContainer].
+ *
+ * This task publishes all defined publications to all defined repositories. To achieve that,
+ * the task depends on all `publish`*PubName*`PublicationTo`*RepoName*`Repository` tasks.
+ *
+ * Please note, task execution would not copy publications to the local Maven cache.
+ *
+ * @see <a href="https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:tasks">
+ *     Tasks | Maven Publish Plugin</a>
+ */
+internal val TaskContainer.publish: TaskProvider<Task>
+    get() = named("publish")

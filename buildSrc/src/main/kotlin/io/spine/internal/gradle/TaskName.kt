@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, TeamDev. All rights reserved.
+ * Copyright 2021, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-val baseVersion: String by extra("2.0.0-SNAPSHOT.80")
-val toolBaseVersion: String by extra("2.0.0-SNAPSHOT.85")
-val versionToPublish: String by extra("2.0.0-SNAPSHOT.87")
+package io.spine.internal.gradle
+
+import kotlin.reflect.KClass
+import org.gradle.api.Task
+import org.gradle.api.tasks.TaskContainer
+import org.gradle.kotlin.dsl.named
+import org.gradle.kotlin.dsl.register
+
+/**
+ * A name and a type of a Gradle task.
+ */
+internal class TaskName<T : Task>(
+    val value: String,
+    val clazz: KClass<T>,
+) {
+    companion object {
+
+        fun of(name: String) = TaskName(name, Task::class)
+
+        fun <T : Task> of(name: String, clazz: KClass<T>) = TaskName(name, clazz)
+    }
+}
+
+/**
+ * Locates [the task][TaskName] in this [TaskContainer].
+ */
+internal fun <T : Task> TaskContainer.named(name: TaskName<T>) = named(name.value, name.clazz)
+
+/**
+ * Registers [the task][TaskName] in this [TaskContainer].
+ */
+internal fun <T : Task> TaskContainer.register(name: TaskName<T>, init: T.() -> Unit) =
+    register(name.value, name.clazz, init)

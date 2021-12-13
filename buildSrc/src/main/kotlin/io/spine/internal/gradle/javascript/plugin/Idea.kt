@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, TeamDev. All rights reserved.
+ * Copyright 2021, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-val baseVersion: String by extra("2.0.0-SNAPSHOT.80")
-val toolBaseVersion: String by extra("2.0.0-SNAPSHOT.85")
-val versionToPublish: String by extra("2.0.0-SNAPSHOT.87")
+package io.spine.internal.gradle.javascript.plugin
+
+import org.gradle.kotlin.dsl.configure
+import org.gradle.plugins.ide.idea.model.IdeaModel
+
+/**
+ * Applies and configures `idea` plugin to work with a JavaScript module.
+ *
+ * In particular, this method:
+ *
+ *  1. Specifies directories for production and test sources.
+ *  2. Excludes directories with generated code and build artifacts.
+ *
+ * @see JsPlugins
+ */
+fun JsPlugins.idea() {
+
+    plugins {
+        apply("org.gradle.idea")
+    }
+
+    extensions.configure<IdeaModel> {
+
+        module {
+            sourceDirs.add(srcDir)
+            testSourceDirs.add(testSrcDir)
+
+            excludeDirs.addAll(
+                listOf(
+                    nodeModules,
+                    nycOutput,
+                    genProtoMain,
+                    genProtoTest
+                )
+            )
+        }
+    }
+}

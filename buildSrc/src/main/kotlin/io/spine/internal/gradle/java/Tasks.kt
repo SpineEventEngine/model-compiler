@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, TeamDev. All rights reserved.
+ * Copyright 2021, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-val baseVersion: String by extra("2.0.0-SNAPSHOT.80")
-val toolBaseVersion: String by extra("2.0.0-SNAPSHOT.85")
-val versionToPublish: String by extra("2.0.0-SNAPSHOT.87")
+package io.spine.internal.gradle.java
+
+import org.gradle.api.tasks.TaskContainer
+import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.tasks.testing.Test
+import org.gradle.kotlin.dsl.named
+
+/**
+ * Locates `test` task in this [TaskContainer].
+ *
+ * Runs the unit tests using JUnit or TestNG.
+ *
+ * Depends on `testClasses`, and all tasks which produce the test runtime classpath.
+ *
+ * @see <a href="https://docs.gradle.org/current/userguide/java_plugin.html#sec:java_tasks">
+ *     Tasks | The Java Plugin</a>
+ */
+val TaskContainer.test: TaskProvider<Test>
+    get() = named<Test>("test")

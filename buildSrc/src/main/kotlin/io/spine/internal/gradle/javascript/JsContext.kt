@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, TeamDev. All rights reserved.
+ * Copyright 2021, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-val baseVersion: String by extra("2.0.0-SNAPSHOT.80")
-val toolBaseVersion: String by extra("2.0.0-SNAPSHOT.85")
-val versionToPublish: String by extra("2.0.0-SNAPSHOT.87")
+package io.spine.internal.gradle.javascript
+
+import java.io.File
+import org.gradle.api.Project
+
+/**
+ * Provides access to the current [JsEnvironment] and shortcuts for running `npm` tool.
+ */
+open class JsContext(jsEnv: JsEnvironment, internal val project: Project)
+    : JsEnvironment by jsEnv
+{
+    /**
+     * Executes `npm` command in a separate process.
+     *
+     * [JsEnvironment.projectDir] is used as a working directory.
+     */
+    fun npm(vararg args: String) = projectDir.npm(*args)
+
+    /**
+     * Executes `npm` command in a separate process.
+     *
+     * This [File] is used as a working directory.
+     */
+    fun File.npm(vararg args: String) = project.exec {
+
+        workingDir(this@npm)
+        commandLine(npmExecutable)
+        args(*args)
+
+        // Using private packages in a CI/CD workflow | npm Docs
+        // https://docs.npmjs.com/using-private-packages-in-a-ci-cd-workflow
+
+        environment["NPM_TOKEN"] = npmAuthToken
+    }
+}

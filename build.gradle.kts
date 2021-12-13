@@ -66,7 +66,7 @@ plugins {
     pmd
     `project-report`
     io.spine.internal.dependency.Protobuf.GradlePlugin.apply {
-        id(id).version(version)
+        id(id)
     }
     io.spine.internal.dependency.ErrorProne.GradlePlugin.apply {
         id(id)
@@ -182,8 +182,8 @@ subprojects {
     publishProtoArtifact(project)
     exposeTestArtifacts()
 
-    val spineBaseVersion: String by extra
-    updateGitHubPages(spineBaseVersion) {
+    val baseVersion: String by extra
+    updateGitHubPages(baseVersion) {
         allowInternalJavadoc.set(true)
         rootFolder.set(rootDir)
     }

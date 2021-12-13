@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, TeamDev. All rights reserved.
+ * Copyright 2021, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-val baseVersion: String by extra("2.0.0-SNAPSHOT.80")
-val toolBaseVersion: String by extra("2.0.0-SNAPSHOT.85")
-val versionToPublish: String by extra("2.0.0-SNAPSHOT.87")
+package io.spine.internal.gradle.report.license
+
+import org.gradle.api.Task
+import org.gradle.api.tasks.TaskContainer
+import org.gradle.api.tasks.TaskProvider
+
+/**
+ * Locates `generateLicenseReport` in this [TaskContainer].
+ *
+ * The task generates a license report for a specific Gradle project. License report includes
+ * information of all dependencies and their licenses.
+ */
+val TaskContainer.generateLicenseReport: TaskProvider<Task>
+    get() = named("generateLicenseReport")
