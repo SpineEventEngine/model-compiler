@@ -36,7 +36,6 @@ import io.spine.internal.dependency.JUnit
 import io.spine.internal.dependency.Protobuf
 import io.spine.internal.dependency.Truth
 import io.spine.internal.gradle.IncrementGuard
-import io.spine.internal.gradle.Scripts
 import io.spine.internal.gradle.VersionWriter
 import io.spine.internal.gradle.applyGitHubPackages
 import io.spine.internal.gradle.applyStandard
@@ -63,13 +62,9 @@ plugins {
     idea
     pmd
     `project-report`
-    io.spine.internal.dependency.Protobuf.GradlePlugin.apply {
-        id(id).version(version)
-    }
-    io.spine.internal.dependency.ErrorProne.GradlePlugin.apply {
-        id(id)
-    }
-    kotlin("jvm") version io.spine.internal.dependency.Kotlin.version
+    id(io.spine.internal.dependency.Protobuf.GradlePlugin.id)
+    id(io.spine.internal.dependency.ErrorProne.GradlePlugin.id)
+    kotlin("jvm")
 }
 
 spinePublishing {
@@ -109,17 +104,10 @@ subprojects {
         plugin("net.ltgt.errorprone")
         plugin("pmd-settings")
         plugin(Protobuf.GradlePlugin.id)
-
-        with(Scripts) {
-            from(testOutput(project))
-            from(testArtifacts(project))
-            from(slowTests(project))
-        }
     }
 
     dependencies {
         errorprone(ErrorProne.core)
-        errorproneJavac(ErrorProne.javacPlugin)
 
         compileOnlyApi(FindBugs.annotations)
         compileOnlyApi(CheckerFramework.annotations)
