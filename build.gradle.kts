@@ -47,6 +47,8 @@ import io.spine.internal.gradle.github.pages.updateGitHubPages
 import io.spine.internal.gradle.javac.configureErrorProne
 import io.spine.internal.gradle.javac.configureJavac
 import io.spine.internal.gradle.javadoc.JavadocConfig
+import io.spine.internal.gradle.kotlin.applyJvmToolchain
+import io.spine.internal.gradle.kotlin.setFreeCompilerArgs
 import io.spine.internal.gradle.publish.Publish.Companion.publishProtoArtifact
 import io.spine.internal.gradle.publish.PublishingRepos
 import io.spine.internal.gradle.publish.spinePublishing
@@ -136,11 +138,18 @@ subprojects {
         excludeProtobufLite()
     }
 
-    val javaVersion = JavaVersion.VERSION_1_8
+    val javaVersion = JavaVersion.VERSION_11.toString()
+    kotlin {
+        applyJvmToolchain(javaVersion)
+        explicitApi()
+    }
 
-    java {
-        sourceCompatibility = javaVersion
-        targetCompatibility = javaVersion
+    CheckStyleConfig.applyTo(project)
+    JavadocConfig.applyTo(project)
+
+    tasks.withType<KotlinCompile>().configureEach {
+        kotlinOptions.jvmTarget = javaVersion
+        setFreeCompilerArgs()
     }
 
     tasks.withType<JavaCompile> {
@@ -151,21 +160,6 @@ subprojects {
     CheckStyleConfig.applyTo(project)
     JavadocConfig.applyTo(project)
     LicenseReporter.generateReportIn(project)
-
-    kotlin {
-        explicitApi()
-    }
-
-    tasks.withType<KotlinCompile>().configureEach {
-        kotlinOptions {
-            jvmTarget = javaVersion.toString()
-            freeCompilerArgs = listOf(
-                "-Xskip-prerelease-check",
-                "-Xjvm-default=all",
-                "-Xopt-in=kotlin.contracts.ExperimentalContracts"
-            )
-        }
-    }
 
     tasks.test {
         useJUnitPlatform {
