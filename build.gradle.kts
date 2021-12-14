@@ -65,12 +65,8 @@ plugins {
     idea
     pmd
     `project-report`
-    io.spine.internal.dependency.Protobuf.GradlePlugin.apply {
-        id(id)
-    }
-    io.spine.internal.dependency.ErrorProne.GradlePlugin.apply {
-        id(id)
-    }
+    id(io.spine.internal.dependency.Protobuf.GradlePlugin.id)
+    id(io.spine.internal.dependency.ErrorProne.GradlePlugin.id)
     kotlin("jvm")
 }
 
@@ -133,6 +129,20 @@ subprojects {
         excludeProtobufLite()
     }
 
+    val javaVersion = JavaVersion.VERSION_11.toString()
+    kotlin {
+        applyJvmToolchain(javaVersion)
+        explicitApi()
+    }
+
+    CheckStyleConfig.applyTo(project)
+    JavadocConfig.applyTo(project)
+
+    tasks.withType<KotlinCompile>().configureEach {
+        kotlinOptions.jvmTarget = javaVersion
+        setFreeCompilerArgs()
+    }
+
     tasks.withType<JavaCompile> {
         configureJavac()
         configureErrorProne()
@@ -142,14 +152,8 @@ subprojects {
     JavadocConfig.applyTo(project)
     LicenseReporter.generateReportIn(project)
 
-    val javaVersion = 11
-    kotlin {
-        applyJvmToolchain(javaVersion)
-        explicitApi()
-    }
-
     tasks.withType<KotlinCompile>().configureEach {
-        kotlinOptions.jvmTarget = JavaVersion.VERSION_11.toString()
+        kotlinOptions.jvmTarget = javaVersion
         setFreeCompilerArgs()
     }
 
