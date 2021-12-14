@@ -54,6 +54,9 @@ import io.spine.internal.gradle.publish.spinePublishing
 import io.spine.internal.gradle.report.coverage.JacocoConfig
 import io.spine.internal.gradle.report.license.LicenseReporter
 import io.spine.internal.gradle.report.pom.PomGenerator
+import io.spine.internal.gradle.testing.configureLogging
+import io.spine.internal.gradle.testing.exposeTestArtifacts
+import io.spine.internal.gradle.testing.registerTestTasks
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -149,9 +152,18 @@ subprojects {
     JavadocConfig.applyTo(project)
     LicenseReporter.generateReportIn(project)
 
-    tasks.test {
-        useJUnitPlatform {
-            includeEngines("junit-jupiter")
+    tasks.withType<KotlinCompile>().configureEach {
+        kotlinOptions.jvmTarget = javaVersion
+        setFreeCompilerArgs()
+    }
+
+    tasks {
+        registerTestTasks()
+        test {
+            useJUnitPlatform {
+                includeEngines("junit-jupiter")
+            }
+            configureLogging()
         }
     }
 
@@ -172,9 +184,10 @@ subprojects {
     apply<VersionWriter>()
 
     publishProtoArtifact(project)
+    exposeTestArtifacts()
 
-    val spineBaseVersion: String by extra
-    updateGitHubPages(spineBaseVersion) {
+    val baseVersion: String by extra
+    updateGitHubPages(baseVersion) {
         allowInternalJavadoc.set(true)
         rootFolder.set(rootDir)
     }

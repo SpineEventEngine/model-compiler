@@ -36,6 +36,6 @@ import org.gradle.api.Project
 public class McPlugin: Plugin<Project>, Logging {
 
     public override fun apply(project: Project) {
-        McExtension.createIn(project)
+        ModelCompilerOptions.createIn(project)
     }
 }

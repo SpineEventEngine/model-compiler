@@ -24,15 +24,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.tools.mc.gradle.given
+package io.spine.tools.mc.gradle
 
-import io.spine.tools.mc.gradle.LanguageConfig
-import javax.inject.Inject
-import org.gradle.api.file.RegularFileProperty
+import com.google.errorprone.annotations.OverridingMethodsMustInvokeSuper
+import org.gradle.api.Plugin
+import org.gradle.api.Project
+import org.gradle.kotlin.dsl.findByType
 
-abstract class AbstractConfig
-@Inject constructor() : LanguageConfig {
+/**
+ * A Gradle plugin which relies on existence of [McPlugin] (the outer plugin) in the project to
+ * which the sub-plugin is going to be applied.
+ *
+ * More specifically, a sub-plugin needs an instance of [ModelCompilerOptions], which the plugin is going to
+ * consume or extend. If the outer plugin is not yet applied, it's automatically created and
+ * [applied][apply] to the project by the sub-plugin.
+ */
+public abstract class SubPlugin: Plugin<Project> {
 
-    abstract val property: RegularFileProperty
+    /**
+     * Verifies if [McPlugin] is available in the given project. If not, creates and applies it.
+     */
+    @OverridingMethodsMustInvokeSuper
+    override fun apply(project: Project) {
+        if (project.outerExtension == null) {
+            val outerPlugin = McPlugin()
+            outerPlugin.apply(project)
+        }
+    }
 
+    /**
+     * Obtains an instance of the outer extension from the given project.
+     */
+    protected val Project.outerExtension: ModelCompilerOptions?
+        get() = extensions.findByType()
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, TeamDev. All rights reserved.
+ * Copyright 2021, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-val baseVersion: String by extra("2.0.0-SNAPSHOT.80")
-val toolBaseVersion: String by extra("2.0.0-SNAPSHOT.85")
-val versionToPublish: String by extra("2.0.0-SNAPSHOT.87")
+package io.spine.tools.mc.gradle.given
+
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
+import org.gradle.kotlin.dsl.property
+
+open class McCobolExtension constructor(objectFactory: ObjectFactory) {
+    
+    @get:Input val dialect: Property<CobolDialect> =
+        objectFactory.property<CobolDialect>().convention(CobolDialect.COBOL_2002)
+}
+
+@Suppress("unused")
+enum class CobolDialect {
+    COBOL_60,
+    COBOL_61,
+    COBOL_65,
+    COBOL_68,
+    COBOL_74,
+    COBOL_85,
+    COBOL_2002,
+    COBOL_2014
+}
