@@ -53,6 +53,7 @@ import io.spine.internal.gradle.report.license.LicenseReporter
 import io.spine.internal.gradle.report.pom.PomGenerator
 import io.spine.internal.gradle.testing.configureLogging
 import io.spine.internal.gradle.testing.registerTestTasks
+import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -64,6 +65,9 @@ plugins {
     kotlin("jvm")
     id(io.spine.internal.dependency.Protobuf.GradlePlugin.id)
     id(io.spine.internal.dependency.ErrorProne.GradlePlugin.id)
+
+    val dokka = io.spine.internal.dependency.Dokka
+    id(dokka.pluginId) version(dokka.version)
 }
 
 spinePublishing {
@@ -100,6 +104,7 @@ subprojects {
         plugin("java-library")
         plugin("kotlin")
         plugin("net.ltgt.errorprone")
+        plugin("org.jetbrains.dokka")
         plugin("pmd-settings")
         plugin(Protobuf.GradlePlugin.id)
     }
@@ -134,12 +139,20 @@ subprojects {
                 kotlinOptions.jvmTarget = javaVersion
                 setFreeCompilerArgs()
             }
+
             registerTestTasks()
             test {
                 useJUnitPlatform {
                     includeEngines("junit-jupiter")
                 }
                 configureLogging()
+            }
+
+            val dokkaJavadoc by getting(DokkaTask::class)
+            register("javadocJar", Jar::class) {
+                from(dokkaJavadoc.outputDirectory)
+                archiveClassifier.set("javadoc")
+                dependsOn(dokkaJavadoc)
             }
         }
     }
@@ -162,6 +175,8 @@ subprojects {
         allowInternalJavadoc.set(true)
         rootFolder.set(rootDir)
     }
+
+
 
     CheckStyleConfig.applyTo(project)
     JavadocConfig.applyTo(project)
