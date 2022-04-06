@@ -35,7 +35,7 @@ import io.spine.internal.dependency.Guava
 import io.spine.internal.dependency.JUnit
 import io.spine.internal.dependency.Protobuf
 import io.spine.internal.dependency.Truth
-import io.spine.internal.gradle.IncrementGuard
+import io.spine.internal.gradle.publish.IncrementGuard
 import io.spine.internal.gradle.VersionWriter
 import io.spine.internal.gradle.applyGitHubPackages
 import io.spine.internal.gradle.applyStandard
@@ -43,20 +43,17 @@ import io.spine.internal.gradle.checkstyle.CheckStyleConfig
 import io.spine.internal.gradle.excludeProtobufLite
 import io.spine.internal.gradle.forceVersions
 import io.spine.internal.gradle.github.pages.updateGitHubPages
-import io.spine.internal.gradle.javac.configureErrorProne
-import io.spine.internal.gradle.javac.configureJavac
 import io.spine.internal.gradle.javadoc.JavadocConfig
 import io.spine.internal.gradle.kotlin.applyJvmToolchain
 import io.spine.internal.gradle.kotlin.setFreeCompilerArgs
-import io.spine.internal.gradle.publish.Publish.Companion.publishProtoArtifact
 import io.spine.internal.gradle.publish.PublishingRepos
 import io.spine.internal.gradle.publish.spinePublishing
 import io.spine.internal.gradle.report.coverage.JacocoConfig
 import io.spine.internal.gradle.report.license.LicenseReporter
 import io.spine.internal.gradle.report.pom.PomGenerator
 import io.spine.internal.gradle.testing.configureLogging
-import io.spine.internal.gradle.testing.exposeTestArtifacts
 import io.spine.internal.gradle.testing.registerTestTasks
+import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -65,25 +62,23 @@ plugins {
     idea
     pmd
     `project-report`
-    io.spine.internal.dependency.Protobuf.GradlePlugin.apply {
-        id(id)
-    }
-    io.spine.internal.dependency.ErrorProne.GradlePlugin.apply {
-        id(id)
-    }
     kotlin("jvm")
+    id(io.spine.internal.dependency.Protobuf.GradlePlugin.id)
+    id(io.spine.internal.dependency.ErrorProne.GradlePlugin.id)
+
+    val dokka = io.spine.internal.dependency.Dokka
+    id(dokka.pluginId) version(dokka.version)
 }
 
 spinePublishing {
-    with(PublishingRepos) {
-        targetRepositories.addAll(
+    modules = setOf("model-compiler")
+    destinations = with(PublishingRepos) {
+        setOf(
             cloudRepo,
             gitHub("model-compiler"),
             cloudArtifactRegistry
         )
     }
-    projectsToPublish.addAll(subprojects.map { it.path })
-    spinePrefix.set(true)
 }
 
 allprojects {
@@ -97,7 +92,7 @@ allprojects {
     group = "io.spine.tools"
     version = extra["versionToPublish"]!!
 
-    with(repositories) {
+    repositories {
         applyGitHubPackages("base", project)
         applyGitHubPackages("tool-base", project)
         applyStandard()
@@ -109,6 +104,7 @@ subprojects {
         plugin("java-library")
         plugin("kotlin")
         plugin("net.ltgt.errorprone")
+        plugin("org.jetbrains.dokka")
         plugin("pmd-settings")
         plugin(Protobuf.GradlePlugin.id)
     }
@@ -128,65 +124,63 @@ subprojects {
         testRuntimeOnly(JUnit.runner)
     }
 
-    with(configurations) {
+    configurations {
         forceVersions()
         excludeProtobufLite()
     }
 
-    tasks.withType<JavaCompile> {
-        configureJavac()
-        configureErrorProne()
-    }
-
-    CheckStyleConfig.applyTo(project)
-    JavadocConfig.applyTo(project)
-    LicenseReporter.generateReportIn(project)
-
-    val javaVersion = 11
     kotlin {
+        val javaVersion = JavaVersion.VERSION_11.toString()
         applyJvmToolchain(javaVersion)
         explicitApi()
-    }
 
-    tasks.withType<KotlinCompile>().configureEach {
-        kotlinOptions.jvmTarget = JavaVersion.VERSION_11.toString()
-        setFreeCompilerArgs()
-    }
-
-    tasks {
-        registerTestTasks()
-        test {
-            useJUnitPlatform {
-                includeEngines("junit-jupiter")
+        tasks {
+            withType<KotlinCompile>().configureEach {
+                kotlinOptions.jvmTarget = javaVersion
+                setFreeCompilerArgs()
             }
-            configureLogging()
+
+            registerTestTasks()
+            test {
+                useJUnitPlatform {
+                    includeEngines("junit-jupiter")
+                }
+                configureLogging()
+            }
+
+            val dokkaJavadoc by getting(DokkaTask::class)
+            register("javadocJar", Jar::class) {
+                from(dokkaJavadoc.outputDirectory)
+                archiveClassifier.set("javadoc")
+                dependsOn(dokkaJavadoc)
+            }
         }
     }
 
-    val generatedDir = "$projectDir/generated"
-
     protobuf {
-        generatedFilesBaseDir = generatedDir
+        generatedFilesBaseDir = "$projectDir/generated"
         protoc {
             artifact = Protobuf.compiler
         }
-    }
-
-    tasks.clean {
-        delete(generatedDir)
+        tasks.clean {
+            delete(generatedFilesBaseDir)
+        }
     }
 
     apply<IncrementGuard>()
     apply<VersionWriter>()
-
-    publishProtoArtifact(project)
-    exposeTestArtifacts()
 
     val baseVersion: String by extra
     updateGitHubPages(baseVersion) {
         allowInternalJavadoc.set(true)
         rootFolder.set(rootDir)
     }
+
+
+
+    CheckStyleConfig.applyTo(project)
+    JavadocConfig.applyTo(project)
+    LicenseReporter.generateReportIn(project)
 }
 
 JacocoConfig.applyTo(project)
