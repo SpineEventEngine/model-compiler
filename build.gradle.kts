@@ -64,9 +64,6 @@ plugins {
     kotlin("jvm")
     id(io.spine.internal.dependency.Protobuf.GradlePlugin.id)
     id(io.spine.internal.dependency.ErrorProne.GradlePlugin.id)
-
-    val dokka = io.spine.internal.dependency.Dokka
-    id(dokka.pluginId) version(dokka.version)
 }
 
 spinePublishing {
@@ -174,8 +171,6 @@ subprojects {
         allowInternalJavadoc.set(true)
         rootFolder.set(rootDir)
     }
-
-
 
     CheckStyleConfig.applyTo(project)
     JavadocConfig.applyTo(project)
