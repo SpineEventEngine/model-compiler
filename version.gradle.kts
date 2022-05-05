@@ -24,6 +24,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-val baseVersion: String by extra("2.0.0-SNAPSHOT.88")
-val toolBaseVersion: String by extra("2.0.0-SNAPSHOT.88")
-val versionToPublish: String by extra("2.0.0-SNAPSHOT.89")
+val baseVersion: String by extra("2.0.0-SNAPSHOT.91")
+val toolBaseVersion: String by extra("2.0.0-SNAPSHOT.92")
+val versionToPublish: String by extra("2.0.0-SNAPSHOT.90")
