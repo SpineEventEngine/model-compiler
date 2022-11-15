@@ -33,12 +33,12 @@ import org.gradle.api.provider.Property
  * Settings for language-neutral checks configured under the `checks` block
  * of the `modelCompiler`.
  */
-public abstract class CommonChecks {
+public interface CommonChecks {
 
     /**
      * The level of severity a model check has, if not defined explicitly.
      *
      * The default value is [Severity.WARN].
      */
-    public abstract val defaultSeverity: Property<Severity>
+    public val defaultSeverity: Property<Severity>
 }
