@@ -24,21 +24,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.tools.mc.gradle
+package io.spine.internal.gradle.github.pages
 
-import io.spine.tools.mc.checks.Severity
-import org.gradle.api.provider.Property
+import io.spine.internal.gradle.RepoSlug
+import io.spine.internal.gradle.git.Branch
+import io.spine.internal.gradle.git.Repository
+import io.spine.internal.gradle.git.UserInfo
 
 /**
- * Settings for language-neutral checks configured under the `checks` block
- * of the `modelCompiler`.
+ * Clones the current project repository with the branch dedicated to publishing
+ * documentation to GitHub Pages checked out.
+ *
+ * The repository's GitHub SSH URL is derived from the `REPO_SLUG` environment
+ * variable. The [branch][Branch.documentation] dedicated to publishing documentation
+ * is automatically checked out in this repository. Also, the username and the email
+ * of the git user are automatically configured. The username is set
+ * to "UpdateGitHubPages Plugin", and the email is derived from
+ * the `FORMAL_GIT_HUB_PAGES_AUTHOR` environment variable.
+ *
+ * @throws org.gradle.api.GradleException if any of the environment variables described above
+ *         is not set.
  */
-public interface CommonChecks {
+internal fun Repository.Factory.forPublishingDocumentation(): Repository {
+    val host = RepoSlug.fromVar().gitHost()
 
-    /**
-     * The level of severity a model check has, if not defined explicitly.
-     *
-     * The default value is [Severity.WARN].
-     */
-    public val defaultSeverity: Property<Severity>
+    val username = "UpdateGitHubPages Plugin"
+    val userEmail = AuthorEmail.fromVar().toString()
+    val user = UserInfo(username, userEmail)
+
+    val branch = Branch.documentation
+
+    return of(host, user, branch)
 }

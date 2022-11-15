@@ -24,32 +24,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import org.gradle.api.Project
-import org.gradle.api.tasks.javadoc.Javadoc
-import org.gradle.external.javadoc.CoreJavadocOptions
-import org.gradle.kotlin.dsl.named
+package io.spine.internal.gradle.git
 
-@Suppress("unused")
-object TravisLogs {
-
-    /**
-     * Specific setup for a Travis build, which prevents warning messages related to
-     * `javadoc` tasks in build logs.
-     *
-     * It is expected that warnings are viewed and analyzed during local builds.
-     */
-    fun hideJavadocWarnings(p: Project) {
-        //
-        val isTravis = System.getenv("TRAVIS") == "true"
-        if (isTravis) {
-            // Set the maximum number of Javadoc warnings to print.
-            // If the parameter value is zero, all warnings will be printed.
-            p.tasks.named<Javadoc>("javadoc") {
-                val opt = options
-                if (opt is CoreJavadocOptions) {
-                    opt.addStringOption("Xmaxwarns", "1")
-                }
-            }
-        }
+/**
+ * Contains information about a Git user.
+ *
+ * Determines the author and committer fields of a commit.
+ *
+ * @constructor throws an [IllegalArgumentException] if the name or the email
+ *              is an empty string.
+ */
+data class UserInfo(val name: String, val email: String) {
+    init {
+        require(name.isNotBlank()) { "Name cannot be an empty string." }
+        require(email.isNotBlank()) { "Email cannot be an empty string." }
     }
 }

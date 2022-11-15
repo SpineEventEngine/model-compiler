@@ -34,10 +34,12 @@ import org.gradle.api.plugins.ExtensionAware
 import org.gradle.kotlin.dsl.findByType
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
-class `'LanguagePlugin' should` {
+@DisplayName("`LanguagePlugin` should")
+internal class LanguagePluginSpec {
 
     lateinit var project: Project
 
