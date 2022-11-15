@@ -32,10 +32,12 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
-class `'ModelCompilerOptions' should` {
+@DisplayName("`ModelCompilerOptions` should")
+internal class ModelCompilerOptionsSpec {
 
     lateinit var project: Project
     lateinit var ext: ModelCompilerOptions
