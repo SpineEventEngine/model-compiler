@@ -37,8 +37,6 @@ import io.spine.internal.dependency.Protobuf
 import io.spine.internal.dependency.Truth
 import io.spine.internal.gradle.publish.IncrementGuard
 import io.spine.internal.gradle.VersionWriter
-import io.spine.internal.gradle.applyGitHubPackages
-import io.spine.internal.gradle.applyStandard
 import io.spine.internal.gradle.checkstyle.CheckStyleConfig
 import io.spine.internal.gradle.excludeProtobufLite
 import io.spine.internal.gradle.forceVersions
@@ -51,6 +49,7 @@ import io.spine.internal.gradle.publish.spinePublishing
 import io.spine.internal.gradle.report.coverage.JacocoConfig
 import io.spine.internal.gradle.report.license.LicenseReporter
 import io.spine.internal.gradle.report.pom.PomGenerator
+import io.spine.internal.gradle.standardToSpineSdk
 import io.spine.internal.gradle.testing.configureLogging
 import io.spine.internal.gradle.testing.registerTestTasks
 import org.jetbrains.dokka.gradle.DokkaTask
@@ -58,12 +57,12 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     `java-library`
+    kotlin("jvm")
     jacoco
     idea
     `project-report`
-    kotlin("jvm")
-    id(io.spine.internal.dependency.Protobuf.GradlePlugin.id)
-    id(io.spine.internal.dependency.ErrorProne.GradlePlugin.id)
+    protobuf
+    errorprone
 }
 
 spinePublishing {
@@ -89,9 +88,7 @@ allprojects {
     version = extra["versionToPublish"]!!
 
     repositories {
-        applyGitHubPackages("base", project)
-        applyGitHubPackages("tool-base", project)
-        applyStandard()
+        standardToSpineSdk()
     }
 }
 
