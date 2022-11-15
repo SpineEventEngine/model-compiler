@@ -24,11 +24,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-val toolBaseVersion: String by extra
+import io.spine.internal.dependency.Spine
 
 dependencies {
     api(gradleApi())
     api(gradleKotlinDsl())
-    api("io.spine.tools:spine-plugin-base:${toolBaseVersion}")
-    testImplementation("io.spine.tools:spine-plugin-testlib:${toolBaseVersion}")
+
+    val spine = Spine(project)
+    api(spine.toolBase)
+    testImplementation(spine.pluginTestlib)
 }

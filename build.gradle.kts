@@ -33,6 +33,7 @@ import io.spine.internal.dependency.ErrorProne
 import io.spine.internal.dependency.FindBugs
 import io.spine.internal.dependency.Guava
 import io.spine.internal.dependency.JUnit
+import io.spine.internal.dependency.Spine
 import io.spine.internal.dependency.Protobuf
 import io.spine.internal.dependency.Truth
 import io.spine.internal.gradle.publish.IncrementGuard
@@ -163,8 +164,8 @@ subprojects {
     apply<IncrementGuard>()
     apply<VersionWriter>()
 
-    val baseVersion: String by extra
-    updateGitHubPages(baseVersion) {
+    val spine = Spine(project)
+    updateGitHubPages(spine.base) {
         allowInternalJavadoc.set(true)
         rootFolder.set(rootDir)
     }

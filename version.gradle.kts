@@ -24,6 +24,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-val baseVersion: String by extra("2.0.0-SNAPSHOT.91")
-val toolBaseVersion: String by extra("2.0.0-SNAPSHOT.92")
+/**
+ * The version of this library for publishing.
+ *
+ * For dependencies on Spine modules please see [io.spine.internal.dependency.Spine].
+ */
 val versionToPublish: String by extra("2.0.0-SNAPSHOT.90")
