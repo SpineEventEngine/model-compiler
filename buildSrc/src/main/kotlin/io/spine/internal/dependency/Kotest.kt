@@ -24,26 +24,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-println("`slow-tests.gradle` script is deprecated. " +
-        "Please use `TaskContainer.registerTestTasks()` instead.")
+package io.spine.internal.dependency
 
-final def slowTag = 'slow' // See io.spine.testing.SlowTest
-
-task fastTest(type: Test) {
-    description = 'Executes all JUnit tests but the ones tagged as "slow".'
-    group = 'Verification'
-
-    useJUnitPlatform {
-        excludeTags slowTag
-    }
-}
-
-task slowTest(type: Test) {
-    description = 'Executes JUnit tests tagged as "slow".'
-    group = 'Verification'
-
-    useJUnitPlatform {
-        includeTags slowTag
-    }
-    shouldRunAfter fastTest
+/**
+ * Testing framework for Kotlin.
+ *
+ * @see <a href="https://kotest.io/">Kotest site</a>
+ */
+object Kotest {
+    const val version = "5.5.4"
+    const val group = "io.kotest"
+    const val assertions = "$group:kotest-assertions-core:$version"
 }

@@ -26,8 +26,6 @@
 
 @file:Suppress("RemoveRedundantQualifierName") // To prevent IDEA replacing FQN imports.
 
-import com.google.protobuf.gradle.protobuf
-import com.google.protobuf.gradle.protoc
 import io.spine.internal.dependency.CheckerFramework
 import io.spine.internal.dependency.ErrorProne
 import io.spine.internal.dependency.FindBugs
@@ -64,6 +62,7 @@ plugins {
     `project-report`
     protobuf
     errorprone
+    `gradle-doctor`
 }
 
 spinePublishing {
@@ -88,12 +87,30 @@ allprojects {
     group = "io.spine.tools"
     version = extra["versionToPublish"]!!
 
-    repositories {
-        standardToSpineSdk()
-    }
+    repositories.standardToSpineSdk()
+}
+
+object BuildSettings {
+    val javaVersion = JavaLanguageVersion.of(11)
 }
 
 subprojects {
+    applyPlugins()
+    setDependencies()
+    forceConfigurations()
+    setupKotlin(BuildSettings.javaVersion)
+    setupProtobuf()
+    configureTesting()
+    setupDocPublishing()
+}
+
+JacocoConfig.applyTo(project)
+PomGenerator.applyTo(project)
+LicenseReporter.mergeAllReports(project)
+
+typealias Subproject = Project
+
+fun Subproject.applyPlugins() {
     apply {
         plugin("java-library")
         plugin("kotlin")
@@ -102,7 +119,27 @@ subprojects {
         plugin("pmd-settings")
         plugin(Protobuf.GradlePlugin.id)
     }
+    apply<IncrementGuard>()
+    apply<VersionWriter>()
 
+    CheckStyleConfig.applyTo(project)
+    JavadocConfig.applyTo(project)
+    LicenseReporter.generateReportIn(project)
+}
+
+fun Subproject.forceConfigurations() {
+    configurations {
+        forceVersions()
+        excludeProtobufLite()
+        all {
+            resolutionStrategy {
+                force(io.spine.internal.dependency.JUnit.runner)
+            }
+        }
+    }
+}
+
+fun Project.setDependencies() {
     dependencies {
         errorprone(ErrorProne.core)
 
@@ -117,40 +154,23 @@ subprojects {
         Truth.libs.forEach { testImplementation(it) }
         testRuntimeOnly(JUnit.runner)
     }
+}
 
-    configurations {
-        forceVersions()
-        excludeProtobufLite()
-    }
-
+fun Subproject.setupKotlin(javaVersion: JavaLanguageVersion) {
     kotlin {
-        val javaVersion = JavaVersion.VERSION_11.toString()
-        applyJvmToolchain(javaVersion)
+        applyJvmToolchain(javaVersion.asInt())
         explicitApi()
 
         tasks {
             withType<KotlinCompile>().configureEach {
-                kotlinOptions.jvmTarget = javaVersion
+                kotlinOptions.jvmTarget = javaVersion.toString()
                 setFreeCompilerArgs()
-            }
-
-            registerTestTasks()
-            test {
-                useJUnitPlatform {
-                    includeEngines("junit-jupiter")
-                }
-                configureLogging()
-            }
-
-            val dokkaJavadoc by getting(DokkaTask::class)
-            register("javadocJar", Jar::class) {
-                from(dokkaJavadoc.outputDirectory)
-                archiveClassifier.set("javadoc")
-                dependsOn(dokkaJavadoc)
             }
         }
     }
+}
 
+fun Subproject.setupProtobuf() {
     protobuf {
         generatedFilesBaseDir = "$projectDir/generated"
         protoc {
@@ -160,21 +180,33 @@ subprojects {
             delete(generatedFilesBaseDir)
         }
     }
+}
 
-    apply<IncrementGuard>()
-    apply<VersionWriter>()
+fun Subproject.setupDocPublishing() {
+    tasks {
+        val dokkaJavadoc by getting(DokkaTask::class)
+        register("javadocJar", Jar::class) {
+            from(dokkaJavadoc.outputDirectory)
+            archiveClassifier.set("javadoc")
+            dependsOn(dokkaJavadoc)
+        }
+    }
 
     val spine = Spine(project)
     updateGitHubPages(spine.base) {
         allowInternalJavadoc.set(true)
         rootFolder.set(rootDir)
     }
-
-    CheckStyleConfig.applyTo(project)
-    JavadocConfig.applyTo(project)
-    LicenseReporter.generateReportIn(project)
 }
 
-JacocoConfig.applyTo(project)
-PomGenerator.applyTo(project)
-LicenseReporter.mergeAllReports(project)
+fun Subproject.configureTesting() {
+    tasks {
+        registerTestTasks()
+        test {
+            useJUnitPlatform {
+                includeEngines("junit-jupiter")
+            }
+            configureLogging()
+        }
+    }
+}

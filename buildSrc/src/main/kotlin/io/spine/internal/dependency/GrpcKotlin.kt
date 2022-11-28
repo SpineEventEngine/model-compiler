@@ -26,8 +26,17 @@
 
 package io.spine.internal.dependency
 
-// https://github.com/google/auto
-object AutoValue {
-    private const val version = "1.9"
-    const val annotations = "com.google.auto.value:auto-value-annotations:${version}"
+/**
+ * gRPC-Kotlin/JVM.
+ *
+ * @see <a href="https://github.com/grpc/grpc-kotlin">GitHub project</a>
+ */
+object GrpcKotlin {
+    const val version = "1.3.0"
+    const val stub = "io.grpc:grpc-kotlin-stub:$version"
+
+    object ProtocPlugin {
+        const val id = "grpckt"
+        const val artifact = "io.grpc:protoc-gen-grpc-kotlin:$version:jdk8@jar"
+    }
 }

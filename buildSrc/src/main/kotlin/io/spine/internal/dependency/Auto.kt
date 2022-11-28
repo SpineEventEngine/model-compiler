@@ -24,22 +24,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// Apply this script if it is needed to use test classes of the current project in other projects.
-// The dependency looks like this:
-//
-// testCompile project(path: ":projectWithTests", configuration: 'testArtifacts')
-//
+package io.spine.internal.dependency
 
-println("`test-artifacts.gradle` script is deprecated. " +
-        "Please use the `Project.exposeTestArtifacts()` utility instead.")
+// https://github.com/google/auto
+object AutoCommon {
+    private const val version = "1.2.1"
+    const val lib = "com.google.auto:auto-common:${version}"
+}
 
-configurations {
-    testArtifacts.extendsFrom testRuntime
+// https://github.com/google/auto
+object AutoService {
+    private const val version = "1.0.1"
+    const val annotations = "com.google.auto.service:auto-service-annotations:${version}"
+    @Suppress("unused")
+    const val processor   = "com.google.auto.service:auto-service:${version}"
 }
-task testJar(type: Jar) {
-    classifier "test"
-    from sourceSets.test.output
-}
-artifacts {
-    testArtifacts testJar
+
+// https://github.com/google/auto
+object AutoValue {
+    private const val version = "1.10.1"
+    const val annotations = "com.google.auto.value:auto-value-annotations:${version}"
 }
