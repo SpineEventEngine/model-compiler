@@ -37,8 +37,6 @@ import io.spine.internal.dependency.Truth
 import io.spine.internal.gradle.publish.IncrementGuard
 import io.spine.internal.gradle.VersionWriter
 import io.spine.internal.gradle.checkstyle.CheckStyleConfig
-import io.spine.internal.gradle.excludeProtobufLite
-import io.spine.internal.gradle.forceVersions
 import io.spine.internal.gradle.github.pages.updateGitHubPages
 import io.spine.internal.gradle.javadoc.JavadocConfig
 import io.spine.internal.gradle.kotlin.applyJvmToolchain
@@ -133,7 +131,11 @@ fun Subproject.forceConfigurations() {
         excludeProtobufLite()
         all {
             resolutionStrategy {
-                force(io.spine.internal.dependency.JUnit.runner)
+                force(
+                    io.spine.internal.dependency.JUnit.runner,
+                    Spine.base,
+                    Spine.logging
+                )
             }
         }
     }
@@ -192,8 +194,7 @@ fun Subproject.setupDocPublishing() {
         }
     }
 
-    val spine = Spine(project)
-    updateGitHubPages(spine.base) {
+    updateGitHubPages(Spine.base) {
         allowInternalJavadoc.set(true)
         rootFolder.set(rootDir)
     }

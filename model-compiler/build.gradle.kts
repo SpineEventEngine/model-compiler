@@ -34,7 +34,7 @@ dependencies {
     api(gradleApi())
     api(gradleKotlinDsl())
 
-    val spine = Spine(project)
-    api(spine.toolBase)
-    testImplementation(spine.pluginTestlib)
+    api(Spine.toolBase)
+    api(Spine.logging)
+    testImplementation(Spine.pluginTestlib)
 }

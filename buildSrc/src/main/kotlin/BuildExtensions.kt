@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,20 +26,19 @@
 
 @file:Suppress("UnusedReceiverParameter", "unused", "TopLevelPropertyNaming", "ObjectPropertyName")
 
-import org.gradle.kotlin.dsl.ScriptHandlerScope
-
-import io.spine.internal.gradle.standardToSpineSdk
-import io.spine.internal.dependency.Spine
-import io.spine.internal.dependency.Spine.ProtoData
-import org.gradle.plugin.use.PluginDependenciesSpec
-
 import io.spine.internal.dependency.ErrorProne
 import io.spine.internal.dependency.GradleDoctor
+import io.spine.internal.dependency.Kotest
+import io.spine.internal.dependency.Kover
+import io.spine.internal.dependency.ProtoData
 import io.spine.internal.dependency.Protobuf
-import org.gradle.plugin.use.PluginDependencySpec
-
+import io.spine.internal.dependency.Spine
+import io.spine.internal.gradle.standardToSpineSdk
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.kotlin.dsl.ScriptHandlerScope
+import org.gradle.plugin.use.PluginDependenciesSpec
+import org.gradle.plugin.use.PluginDependencySpec
 
 /**
  * Applies [standard][standardToSpineSdk] repositories to this `buildscript`.
@@ -80,7 +79,7 @@ val PluginDependenciesSpec.mcJava: Spine.McJava
     get() = Spine.McJava
 
 /**
- * Shortcut to [Spine.ProtoData] dependency object.
+ * Shortcut to [ProtoData] dependency object.
  *
  * This plugin is in Gradle Portal. But when used in pair with [mcJava], it cannot be applied
  * directly to a project. It is so, because [mcJava] uses [protoData] as its dependency.
@@ -121,13 +120,21 @@ val PluginDependenciesSpec.protobuf: PluginDependencySpec
 val PluginDependenciesSpec.`gradle-doctor`: PluginDependencySpec
     get() = id(GradleDoctor.pluginId).version(GradleDoctor.version)
 
+val PluginDependenciesSpec.kotest: PluginDependencySpec
+    get() = Kotest.MultiplatformGradlePlugin.let {
+        return id(it.id).version(it.version)
+    }
+
+val PluginDependenciesSpec.kover: PluginDependencySpec
+    get() = id(Kover.id).version(Kover.version)
+
 /**
  * Configures the dependencies between third-party Gradle tasks
  * and those defined via ProtoData and Spine Model Compiler.
  *
  * It is required in order to avoid warnings in build logs, detecting the undeclared
  * usage of Spine-specific task output by other tasks,
- * e.g. the output of `launchProtoDataMain` is used by `compileKotlin`.
+ * e.g. the output of `launchProtoData` is used by `compileKotlin`.
  */
 @Suppress("unused")
 fun Project.configureTaskDependencies() {
@@ -151,15 +158,21 @@ fun Project.configureTaskDependencies() {
     }
 
     afterEvaluate {
-        "compileKotlin".dependOn("launchProtoDataMain")
-        "compileTestKotlin".dependOn("launchProtoDataTest")
-        "sourcesJar".dependOn("generateProto")
-        "sourcesJar".dependOn("launchProtoDataMain")
-        "sourcesJar".dependOn("createVersionFile")
-        "sourcesJar".dependOn("prepareProtocConfigVersions")
-        "dokkaHtml".dependOn("generateProto")
-        "dokkaHtml".dependOn("launchProtoDataMain")
-        "dokkaJavadoc".dependOn("launchProtoDataMain")
-        "publishPluginJar".dependOn("createVersionFile")
+        val launchProtoData = "launchProtoData"
+        val launchTestProtoData = "launchTestProtoData"
+        val generateProto = "generateProto"
+        val createVersionFile = "createVersionFile"
+        "compileKotlin".dependOn(launchProtoData)
+        "compileTestKotlin".dependOn(launchTestProtoData)
+        val sourcesJar = "sourcesJar"
+        sourcesJar.dependOn(generateProto)
+        sourcesJar.dependOn(launchProtoData)
+        sourcesJar.dependOn(createVersionFile)
+        sourcesJar.dependOn("prepareProtocConfigVersions")
+        val dokkaHtml = "dokkaHtml"
+        dokkaHtml.dependOn(generateProto)
+        dokkaHtml.dependOn(launchProtoData)
+        "dokkaJavadoc".dependOn(launchProtoData)
+        "publishPluginJar".dependOn(createVersionFile)
     }
 }
