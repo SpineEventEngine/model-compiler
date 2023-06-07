@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,19 +24,50 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.internal.dependency
+import io.spine.internal.dependency.Kotest
+import io.spine.internal.dependency.Spine
+import io.spine.internal.dependency.JUnit
+import io.spine.internal.gradle.kotlin.applyJvmToolchain
+import io.spine.internal.gradle.kotlin.setFreeCompilerArgs
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-/**
- * gRPC-Kotlin/JVM.
- *
- * @see <a href="https://github.com/grpc/grpc-kotlin">GitHub project</a>
- */
-object GrpcKotlin {
-    const val version = "1.3.0"
-    const val stub = "io.grpc:grpc-kotlin-stub:$version"
+plugins {
+    id("java-module")
+    kotlin("jvm")
+    id("io.kotest")
+    id("org.jetbrains.kotlinx.kover")
+    id("detekt-code-analysis")
+    id("dokka-for-kotlin")
+}
 
-    object ProtocPlugin {
-        const val id = "grpckt"
-        const val artifact = "io.grpc:protoc-gen-grpc-kotlin:$version:jdk8@jar"
+kotlin {
+    applyJvmToolchain(BuildSettings.javaVersion.asInt())
+    explicitApi()
+}
+
+dependencies {
+    testImplementation(Spine.testlib)
+    testImplementation(Kotest.frameworkEngine)
+    testImplementation(Kotest.datatest)
+    testImplementation(Kotest.runnerJUnit5Jvm)
+    testImplementation(JUnit.runner)
+}
+
+tasks {
+    withType<KotlinCompile>().configureEach {
+        kotlinOptions.jvmTarget = BuildSettings.javaVersion.toString()
+        setFreeCompilerArgs()
+    }
+}
+
+kover {
+    useJacocoTool()
+}
+
+koverReport {
+    defaults {
+        xml {
+            onCheck = true
+        }
     }
 }

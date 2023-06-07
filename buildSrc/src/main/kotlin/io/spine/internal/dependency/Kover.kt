@@ -1,5 +1,5 @@
 /*
- * Copyright 2022, TeamDev. All rights reserved.
+ * Copyright 2023, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,15 +26,9 @@
 
 package io.spine.internal.dependency
 
-/**
- * Kotlin Coroutines.
- * 
- * @see <a href="https://github.com/Kotlin/kotlinx.coroutines">GitHub projecet</a>
- */
-object Coroutines {
-    public const val version = "1.6.4"
-    public const val jdk8 = "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$version"
-    public const val core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$version"
-    public const val bom = "org.jetbrains.kotlinx:kotlinx-coroutines-bom:$version"
-    public const val coreJvm = "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:$version"
+// https://github.com/Kotlin/kotlinx-kover
+object Kover {
+    const val version = "0.7.0-Beta"
+    const val id = "org.jetbrains.kotlinx.kover"
+    const val classpath = "org.jetbrains.kotlinx:kover-gradle-plugin:$version"
 }
