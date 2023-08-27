@@ -4,6 +4,7 @@ on: pull_request
 
 jobs:
   build:
+    name: Build under Windows
     runs-on: windows-latest
 
     steps:
@@ -16,6 +17,9 @@ jobs:
           java-version: 11
           distribution: zulu
           cache: gradle
+
+      - name: Configure Pagefile
+        uses: al-cheb/configure-pagefile-action@v1.2
 
       - name: Build project and run tests
         shell: cmd
