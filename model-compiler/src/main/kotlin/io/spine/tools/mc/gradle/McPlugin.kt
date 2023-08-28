@@ -26,14 +26,13 @@
 
 package io.spine.tools.mc.gradle
 
-import io.spine.logging.Logging
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
 /**
  * A root Gradle plugin of Spine Model Compiler.
  */
-public class McPlugin: Plugin<Project>, Logging {
+public class McPlugin: Plugin<Project> {
 
     public override fun apply(project: Project) {
         ModelCompilerOptions.createIn(project)

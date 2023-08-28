@@ -134,7 +134,8 @@ fun Subproject.forceConfigurations() {
                 force(
                     io.spine.internal.dependency.JUnit.runner,
                     Spine.base,
-                    Spine.logging
+                    Spine.Logging.lib,
+                    Spine.Logging.floggerApi,
                 )
             }
         }

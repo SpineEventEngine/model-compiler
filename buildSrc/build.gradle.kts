@@ -62,7 +62,7 @@ val grGitVersion = "4.1.1"
  * Please check that this value matches one defined in
  *  [io.spine.internal.dependency.Kotlin.version].
  */
-val kotlinVersion = "1.8.10"
+val kotlinVersion = "1.8.22"
 
 /**
  * The version of Guava used in `buildSrc`.
@@ -70,7 +70,7 @@ val kotlinVersion = "1.8.10"
  * Always use the same version as the one specified in [io.spine.internal.dependency.Guava].
  * Otherwise, when testing Gradle plugins, clashes may occur.
  */
-val guavaVersion = "31.1-jre"
+val guavaVersion = "32.1.2-jre"
 
 /**
  * The version of ErrorProne Gradle plugin.
@@ -80,7 +80,7 @@ val guavaVersion = "31.1-jre"
  * @see <a href="https://github.com/tbroyer/gradle-errorprone-plugin/releases">
  *     Error Prone Gradle Plugin Releases</a>
  */
-val errorPronePluginVersion = "3.0.1"
+val errorPronePluginVersion = "3.1.0"
 
 /**
  * The version of Protobuf Gradle Plugin.
@@ -90,7 +90,7 @@ val errorPronePluginVersion = "3.0.1"
  * @see <a href="https://github.com/google/protobuf-gradle-plugin/releases">
  *     Protobuf Gradle Plugins Releases</a>
  */
-val protobufPluginVersion = "0.9.2"
+val protobufPluginVersion = "0.9.4"
 
 /**
  * The version of Dokka Gradle Plugins.
@@ -100,14 +100,14 @@ val protobufPluginVersion = "0.9.2"
  * @see <a href="https://github.com/Kotlin/dokka/releases">
  *     Dokka Releases</a>
  */
-val dokkaVersion = "1.8.10"
+val dokkaVersion = "1.8.20"
 
 /**
  * The version of Detekt Gradle Plugin.
  *
  * @see <a href="https://github.com/detekt/detekt/releases">Detekt Releases</a>
  */
-val detektVersion = "1.22.0"
+val detektVersion = "1.23.0"
 
 /**
  * @see [io.spine.internal.dependency.Kotest]
@@ -117,7 +117,7 @@ val kotestJvmPluginVersion = "0.4.10"
 /**
  * @see [io.spine.internal.dependency.Kover]
  */
-val koverVersion = "0.7.0-Beta"
+val koverVersion = "0.7.2"
 
 configurations.all {
     resolutionStrategy {

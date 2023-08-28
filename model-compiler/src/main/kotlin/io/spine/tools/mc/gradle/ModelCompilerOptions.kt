@@ -26,7 +26,6 @@
 
 package io.spine.tools.mc.gradle
 
-import io.spine.logging.Logging
 import io.spine.tools.mc.checks.Severity
 import io.spine.tools.mc.gradle.ModelCompilerOptions.Companion.name
 import org.gradle.api.Action
@@ -53,7 +52,7 @@ public abstract class ModelCompilerOptions {
         action.invoke(checks)
     }
 
-    public companion object : Logging {
+    public companion object {
 
         /** The name of the extension. */
         public const val name: String = "modelCompiler"
@@ -63,7 +62,7 @@ public abstract class ModelCompilerOptions {
          */
         internal fun createIn(p: Project): Unit = with(p) {
             val extensionName: String = this@Companion.name
-            _debug().log("Adding the `$extensionName` extension to the project `$p`.")
+            logger.debug("Adding the `{}` extension to the project `{}`.", extensionName, p)
             val options = extensions.create(extensionName, ModelCompilerOptions::class.java)
             options.checks.defaultSeverity.set(Severity.WARN)
         }

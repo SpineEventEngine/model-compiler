@@ -33,10 +33,11 @@ package io.spine.internal.dependency
  * The primary purpose of having this dependency object is working in combination with
  * [Flogger.Runtime.slf4JBackend].
  *
- * Some third-party libraries may clash with different versions of the library. Thus, we specify
- * this version and force it via [io.spine.internal.gradle.forceVersions].
+ * Some third-party libraries may clash with different versions of the library.
+ * Thus, we specify this version and force it via [forceVersions].
+ * Please see `DependencyResolution.kt` for details.
  */
-@Suppress("unused")
+@Suppress("unused", "ConstPropertyName")
 object Slf4J {
     private const val version = "2.0.7"
     const val lib = "org.slf4j:slf4j-api:${version}"
