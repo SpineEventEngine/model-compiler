@@ -26,31 +26,31 @@
 
 @file:Suppress("RemoveRedundantQualifierName") // To prevent IDEA replacing FQN imports.
 
-import io.spine.internal.dependency.CheckerFramework
-import io.spine.internal.dependency.ErrorProne
-import io.spine.internal.dependency.FindBugs
-import io.spine.internal.dependency.Guava
-import io.spine.internal.dependency.JUnit
-import io.spine.internal.dependency.Spine
-import io.spine.internal.dependency.Protobuf
-import io.spine.internal.dependency.Truth
-import io.spine.internal.gradle.publish.IncrementGuard
-import io.spine.internal.gradle.VersionWriter
-import io.spine.internal.gradle.checkstyle.CheckStyleConfig
-import io.spine.internal.gradle.github.pages.updateGitHubPages
-import io.spine.internal.gradle.javadoc.JavadocConfig
-import io.spine.internal.gradle.kotlin.applyJvmToolchain
-import io.spine.internal.gradle.kotlin.setFreeCompilerArgs
-import io.spine.internal.gradle.publish.PublishingRepos
-import io.spine.internal.gradle.publish.spinePublishing
-import io.spine.internal.gradle.report.coverage.JacocoConfig
-import io.spine.internal.gradle.report.license.LicenseReporter
-import io.spine.internal.gradle.report.pom.PomGenerator
-import io.spine.internal.gradle.standardToSpineSdk
-import io.spine.internal.gradle.testing.configureLogging
-import io.spine.internal.gradle.testing.registerTestTasks
+import io.spine.dependency.build.CheckerFramework
+import io.spine.dependency.build.ErrorProne
+import io.spine.dependency.build.FindBugs
+import io.spine.dependency.lib.Guava
+import io.spine.dependency.test.JUnit
+import io.spine.dependency.local.Spine
+import io.spine.dependency.local.Base
+import io.spine.dependency.local.Logging
+import io.spine.dependency.lib.Protobuf
+import io.spine.dependency.test.Truth
+import io.spine.gradle.publish.IncrementGuard
+import io.spine.gradle.VersionWriter
+import io.spine.gradle.checkstyle.CheckStyleConfig
+import io.spine.gradle.github.pages.updateGitHubPages
+import io.spine.gradle.javadoc.JavadocConfig
+import io.spine.gradle.kotlin.setFreeCompilerArgs
+import io.spine.gradle.publish.PublishingRepos
+import io.spine.gradle.publish.spinePublishing
+import io.spine.gradle.report.coverage.JacocoConfig
+import io.spine.gradle.report.license.LicenseReporter
+import io.spine.gradle.report.pom.PomGenerator
+import io.spine.gradle.standardToSpineSdk
+import io.spine.gradle.testing.configureLogging
+import io.spine.gradle.testing.registerTestTasks
 import org.jetbrains.dokka.gradle.DokkaTask
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     `java-library`
@@ -67,7 +67,6 @@ spinePublishing {
     modules = setOf("model-compiler")
     destinations = with(PublishingRepos) {
         setOf(
-            cloudRepo,
             gitHub("model-compiler"),
             cloudArtifactRegistry
         )
@@ -88,15 +87,11 @@ allprojects {
     repositories.standardToSpineSdk()
 }
 
-object BuildSettings {
-    val javaVersion = JavaLanguageVersion.of(11)
-}
-
 subprojects {
     applyPlugins()
     setDependencies()
     forceConfigurations()
-    setupKotlin(BuildSettings.javaVersion)
+    setupKotlin()
     setupProtobuf()
     configureTesting()
     setupDocPublishing()
@@ -125,6 +120,7 @@ fun Subproject.applyPlugins() {
     LicenseReporter.generateReportIn(project)
 }
 
+@Suppress("UnstableApiUsage")
 fun Subproject.forceConfigurations() {
     configurations {
         forceVersions()
@@ -132,10 +128,10 @@ fun Subproject.forceConfigurations() {
         all {
             resolutionStrategy {
                 force(
-                    io.spine.internal.dependency.JUnit.runner,
-                    Spine.base,
-                    Spine.Logging.lib,
-                    Spine.Logging.floggerApi,
+                    io.spine.dependency.test.JUnit.runner,
+                    Base.lib,
+                    Logging.lib,
+                    Logging.middleware,
                 )
             }
         }
@@ -159,16 +155,12 @@ fun Project.setDependencies() {
     }
 }
 
-fun Subproject.setupKotlin(javaVersion: JavaLanguageVersion) {
+fun Subproject.setupKotlin() {
     kotlin {
-        applyJvmToolchain(javaVersion.asInt())
         explicitApi()
-
-        tasks {
-            withType<KotlinCompile>().configureEach {
-                kotlinOptions.jvmTarget = javaVersion.toString()
-                setFreeCompilerArgs()
-            }
+        compilerOptions {
+            jvmTarget.set(BuildSettings.jvmTarget)
+            setFreeCompilerArgs()
         }
     }
 }
@@ -204,11 +196,17 @@ fun Subproject.setupDocPublishing() {
 fun Subproject.configureTesting() {
     tasks {
         registerTestTasks()
-        test {
+        test.configure {
             useJUnitPlatform {
                 includeEngines("junit-jupiter")
             }
             configureLogging()
+
+            // See https://github.com/gradle/gradle/issues/18647.
+            jvmArgs(
+                "--add-opens", "java.base/java.lang=ALL-UNNAMED",
+                "--add-opens", "java.base/java.util=ALL-UNNAMED"
+            )
         }
     }
 }

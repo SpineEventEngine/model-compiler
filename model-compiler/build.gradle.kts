@@ -24,17 +24,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import io.spine.internal.dependency.Spine
+import io.spine.dependency.local.Spine
+import io.spine.dependency.local.ToolBase
 
 plugins {
     `detekt-code-analysis`
 }
 
 dependencies {
-    api(gradleApi())
-    api(gradleKotlinDsl())
+    compileOnlyApi(gradleApi())
+    compileOnlyApi(gradleKotlinDsl())
 
-    api(Spine.toolBase)
-    api(Spine.logging)
-    testImplementation(Spine.pluginTestlib)
+    api(ToolBase.lib)
+
+    testImplementation(ToolBase.pluginTestlib)
+    testImplementation(gradleApi())
+    testImplementation(gradleKotlinDsl())
 }
