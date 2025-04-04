@@ -24,6 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+@file:Suppress("DEPRECATION") // Still need to use until the migration is complete.
+
 package io.spine.tools.mc.gradle.given
 
 import io.spine.tools.mc.gradle.LanguagePlugin
