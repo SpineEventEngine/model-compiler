@@ -31,7 +31,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.kotlin.dsl.property
 
-open class McCobolExtension constructor(objectFactory: ObjectFactory) {
+open class McCobolExtension(objectFactory: ObjectFactory) {
     
     @get:Input val dialect: Property<CobolDialect> =
         objectFactory.property<CobolDialect>().convention(CobolDialect.COBOL_2002)
